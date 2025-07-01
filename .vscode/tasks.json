@@ -1,24 +1,25 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build C++ (cl.exe)",
-            "type": "shell",
-            "command": "cl.exe",
-            "args": [
-                "/Zi",
-                "/EHsc",
-                "/Fe${workspaceFolder}\\main.exe",
-                "${workspaceFolder}\\main.cpp"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": "$msCompile",
-            "detail": "Compila main.cpp usando cl.exe (Visual Studio C++ Compiler)"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compilar SFML Game",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-Iinclude",
+        "-IC:/msys64/mingw64/include",
+        "src/main.cpp",
+        "-LC:/msys64/mingw64/lib",
+        "-lsfml-graphics",
+        "-lsfml-window",
+        "-lsfml-system",
+        "-o",
+        "bin/game.exe"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
 }
