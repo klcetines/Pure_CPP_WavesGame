@@ -39,6 +39,7 @@ class Character {
         void handleDead();
         float getLife() const;
         float getSize() const;
+        CharacterData getData() const;
 
     private:
         string _name;

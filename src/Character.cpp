@@ -80,7 +80,8 @@ void Character::handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float
 }
 
 void Character::handleDead() {
-    
+    _data.Life->setLife(0);
+    shape.setFillColor(Color::Red);
 }
 
 float Character::getLife() const {
@@ -101,4 +102,8 @@ void Character::updateCooldown(float dt) {
 
 float Character::getSize() const {
     return _size;
+}
+
+CharacterData Character::getData() const {
+    return _data;
 }

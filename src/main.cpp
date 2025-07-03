@@ -7,6 +7,8 @@
 #include <EnemiesManager.h>
 #include <ProjectilesManager.h>
 #include <PlayerProjectile.h>
+#include <GameState.h>
+#include <GameSession.h>
 
 using namespace std;
 using namespace sf;
@@ -145,35 +147,92 @@ void renderGame(RenderWindow& window, Background& background, shared_ptr<Charact
     window.display();
 }
 
+void showMainMenu(RenderWindow& window, Font& font, GameState& gameState) {
+    Text title("TU JUEGO", font, 60);
+    title.setFillColor(Color::White);
+    title.setPosition(SCREEN_WIDTH/2 - title.getLocalBounds().width/2, 150);
+
+    Text start("Pulsa ENTER para jugar", font, 30);
+    start.setFillColor(Color::Green);
+    start.setPosition(SCREEN_WIDTH/2 - start.getLocalBounds().width/2, 300);
+
+    window.clear(Color::Black);
+    window.draw(title);
+    window.draw(start);
+    window.display();
+
+    while (window.isOpen() && gameState.isMainMenu()) {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) window.close();
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter)
+                gameState.setState(GameStateType::Playing);
+        }
+        sf::sleep(sf::milliseconds(10));
+    }
+}
+
+void showGameOverMenu(RenderWindow& window, Font& font, GameState& gameState) {
+    Text over("GAME OVER", font, 60);
+    over.setFillColor(Color::Red);
+    over.setPosition(SCREEN_WIDTH/2 - over.getLocalBounds().width/2, 150);
+
+    Text retry("Pulsa R para reiniciar o ESC para salir", font, 30);
+    retry.setFillColor(Color::White);
+    retry.setPosition(SCREEN_WIDTH/2 - retry.getLocalBounds().width/2, 300);
+
+    window.clear(Color::Black);
+    window.draw(over);
+    window.draw(retry);
+    window.display();
+
+    while (window.isOpen() && gameState.isGameOver()) {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) window.close();
+            if (event.type == Event::KeyPressed) {
+                if (event.key.code == Keyboard::R)
+                    gameState.setState(GameStateType::Playing);
+                if (event.key.code == Keyboard::Escape)
+                    window.close();
+            }
+        }
+        sf::sleep(sf::milliseconds(10));
+    }
+}
+
 int main() {
     RenderWindow window(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "WaveControl 0.0.0");
     window.setFramerateLimit(60);
 
-    Background background("assets/textures/cobblestone_1.png");
-    shared_ptr<Character> player = make_shared<Character>("TouMate", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    shared_ptr<EnemiesManager> enemiesManager = make_shared<EnemiesManager>();
-    shared_ptr<ProjectilesManager> projectilesManager = make_shared<ProjectilesManager>();
-
     Font font = loadFont("assets/fonts/circle.otf");
-    Text positionText = instanciateText(font, "Pos: (0, 0)", 20, Color::White);
-    Text lifeText = instanciateText(font, "Life: 100", 20, Color::Red);
-
-    Clock clock;
+    GameState gameState;
 
     while (window.isOpen()) {
-        processEvents(window);
+        if (gameState.isMainMenu()) {
+            showMainMenu(window, font, gameState);
+        }
 
-        handleInput(*player);
-        handleScreenText(*player, positionText);
+        GameSession session(font);
+        Clock clock;
 
-        auto posPlayer = player->getPosition();
-        float offsetX = SCREEN_WIDTH / 2 - posPlayer.first;
-        float offsetY = SCREEN_HEIGHT / 2 - posPlayer.second;
+        while (window.isOpen() && gameState.isPlaying()) {
+            processEvents(window);
 
-        float dt = clock.restart().asSeconds();
+            float dt = clock.restart().asSeconds();
+            session.update(dt);
+            window.clear();
+            session.render(window);
+            window.display();
 
-        updateGame(player, enemiesManager, projectilesManager, dt, offsetX, offsetY, lifeText);
-        renderGame(window, background, player, enemiesManager, projectilesManager, positionText, lifeText, offsetX, offsetY);
+            if (session.isPlayerDead()) {
+                gameState.setState(GameStateType::GameOver);
+            }
+        }
+
+        if (gameState.isGameOver()) {
+            showGameOverMenu(window, font, gameState);
+        }
     }
     return 0;
 }
