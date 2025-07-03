@@ -19,8 +19,10 @@ public:
 
     void draw(RenderWindow& window, float offsetX, float offsetY);
 
+    const vector<shared_ptr<Projectile>>& getProjectiles() const;
+
 private:
-    vector<shared_ptr<Projectile>> projectiles;
+    vector<shared_ptr<Projectile>> _projectiles;
 };
 
 #endif

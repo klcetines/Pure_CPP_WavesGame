@@ -24,6 +24,15 @@ void EnemiesManager::update(float dt, const pair<float, float>& playerPos) {
             enemy->move(vx, vy);
         }
     }
+    
+    enemies.erase(
+        remove_if(enemies.begin(), enemies.end(),
+            [](const shared_ptr<Enemy>& e) {
+                return e->getData().Life->getLife() <= 0;
+            }),
+        enemies.end()
+    );
+
 }
 
 void EnemiesManager::draw(RenderWindow& window, float offsetX, float offsetY) {

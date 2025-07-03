@@ -2,9 +2,9 @@
 #include <cmath>
 #include <cstdlib>
 
-PlayerProjectile::PlayerProjectile(sf::Vector2f start, sf::Vector2f target, float speed): position(start), _alive(true){
+PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage): position(start), _alive(true), _damage(damage) {
     shape.setRadius(6);
-    shape.setFillColor(Color::Yellow);
+    shape.setFillColor(Color::Black);
     shape.setOrigin(6, 6);
 
     Vector2f dir = target - start;
@@ -33,4 +33,12 @@ bool PlayerProjectile::isAlive() const {
 
 Vector2f PlayerProjectile::getPosition() const {
     return position;
+}
+
+float PlayerProjectile::getDamage() const {
+    return _damage;
+}
+
+void PlayerProjectile::destroy() {
+    _alive = false;
 }

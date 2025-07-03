@@ -38,6 +38,7 @@ class Character {
         void handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY);
         void handleDead();
         float getLife() const;
+        float getSize() const;
 
     private:
         string _name;
@@ -46,6 +47,7 @@ class Character {
         Position _position;
         CharacterData _data;
         float _damageCooldown;
+        float _shootCooldown;
 
         void updateCooldown(float dt);
 

@@ -2,20 +2,24 @@
 
 Character::Character(const string& name, float x, float y)
 {
+    _size = 20.0f;
     _name = name;
     shape.setRadius(20);
     shape.setPointCount(30);
     shape.setFillColor(Color::Green);
     shape.setPosition(x, y);
+
+    shape.setOrigin(_size, _size);
+
     _position.x = 0;
     _position.y = 0;
-    _size = 20.0f;
     _data.Life = new Life(100.0f);
     _data.Speed = 5.0f;
-    _data.Damage = 10.0f;
+    _data.Damage = 50.0f;
     _data.BulletsNumber = 1;
     _data.AttackSpeed = 1.0f;
     _damageCooldown = 0.0f;
+    _shootCooldown = 0.0f;
 }
 
 void Character::update(float dt) {
@@ -40,11 +44,11 @@ void Character::draw(RenderWindow& window) {
 }
 
 shared_ptr<PlayerProjectile> Character::atack(const pair<float, float>& target) {
-    if (_damageCooldown <= 0) {
-        _damageCooldown = _data.AttackSpeed;
+    if (_shootCooldown <= 0) {
+        _shootCooldown = _data.AttackSpeed;
         Vector2f from(_position.x, _position.y);
         Vector2f to(target.first, target.second);
-        return make_shared<PlayerProjectile>(from, to);
+        return make_shared<PlayerProjectile>(from, to, 200, _data.Damage);
     }
     return nullptr;
 }
@@ -88,4 +92,13 @@ void Character::updateCooldown(float dt) {
         _damageCooldown -= dt;
     if (_damageCooldown < 0)
         _damageCooldown = 0;
+    
+    if (_shootCooldown > 0)
+        _shootCooldown -= dt;
+    if (_shootCooldown < 0)
+        _shootCooldown = 0;
+}
+
+float Character::getSize() const {
+    return _size;
 }

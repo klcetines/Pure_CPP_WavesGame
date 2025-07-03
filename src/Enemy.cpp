@@ -7,6 +7,9 @@ Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _po
     shape.setFillColor(Color::Red);
     shape.setPosition(x, y);
 
+    float _size = shape.getRadius();
+    shape.setOrigin(_size, _size);
+
     _data.Speed = 2.0f;
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
@@ -42,4 +45,8 @@ float Enemy::getSize() const {
 
 float Enemy::getDamage() const {
     return _data.Damage;
+}
+
+EnemyData Enemy::getData() const {
+    return _data;
 }

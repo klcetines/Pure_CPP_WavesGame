@@ -28,6 +28,7 @@ class Enemy {
         float getDamage() const;
         pair<float, float> getPosition() const;
         float getSize() const;
+        EnemyData getData() const;
 
     private:
         string _name;
