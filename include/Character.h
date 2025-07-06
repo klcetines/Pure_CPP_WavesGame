@@ -1,6 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
@@ -13,6 +14,8 @@
 
 using namespace sf;
 using namespace std;
+
+class Effect;
 
 struct CharacterData
 {
@@ -34,12 +37,13 @@ class Character {
         void draw(RenderWindow& window);
         shared_ptr<PlayerProjectile> atack(const pair<float, float>& target);
         string getName() const;
-        pair<float, float> getPosition() const; // Añadido para obtener la posición
+        pair<float, float> getPosition() const;
         void handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY);
         void handleDead();
         float getLife() const;
         float getSize() const;
         CharacterData getData() const;
+        void upgradeStats(const Effect& effect);
 
     private:
         string _name;

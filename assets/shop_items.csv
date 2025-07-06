@@ -1,0 +1,8 @@
+Health Upgrade,10,Increases your health by 50.,health,50
+Damage Upgrade,15,Increases your damage by 10.,damage,10
+Speed Upgrade,10,Increases your speed by 2.,speed,2
+Bullet Upgrade,25,Increases the number of bullets fired per shot.,bullets,1
+Health Upgrade,50,Increases your health by 25.,health,25
+Damage Upgrade,30,Increases your damage by 20.,damage,20
+Speed Upgrade,20,Increases your speed by 5.,speed,5
+Bullet Upgrade,50,Increases the number of bullets fired per shot.,bullets,2

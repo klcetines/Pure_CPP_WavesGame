@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Effect.h"
 
 Character::Character(const string& name, float x, float y)
 {
@@ -15,7 +16,7 @@ Character::Character(const string& name, float x, float y)
     _position.y = 0;
     _data.Life = new Life(100.0f);
     _data.Speed = 5.0f;
-    _data.Damage = 50.0f;
+    _data.Damage = 25.0f;
     _data.BulletsNumber = 1;
     _data.AttackSpeed = 1.0f;
     _damageCooldown = 0.0f;
@@ -106,4 +107,16 @@ float Character::getSize() const {
 
 CharacterData Character::getData() const {
     return _data;
+}
+
+void Character::upgradeStats(const Effect& effect) {
+    // Aplica el efecto al personaje
+    if (effect.getType() == "health") {
+        _data.Life->heal(effect.getValue());
+    } else if (effect.getType() == "damage") {
+        _data.Damage += effect.getValue();
+    } else if (effect.getType() == "speed") {
+        _data.Speed += effect.getValue();
+    }
+    // Puedes añadir más efectos aquí
 }

@@ -2,8 +2,8 @@
 #include <cmath>
 #include <cstdlib>
 
-EnemiesManager::EnemiesManager()
-    : spawnTimer(0), spawnInterval(2.0f){}
+EnemiesManager::EnemiesManager(shared_ptr<GameStatistics> stats)
+    : stats(stats), spawnTimer(0), spawnInterval(2.0f){}
 
 void EnemiesManager::update(float dt, const pair<float, float>& playerPos) {
 
@@ -24,14 +24,16 @@ void EnemiesManager::update(float dt, const pair<float, float>& playerPos) {
             enemy->move(vx, vy);
         }
     }
-    
-    enemies.erase(
-        remove_if(enemies.begin(), enemies.end(),
-            [](const shared_ptr<Enemy>& e) {
-                return e->getData().Life->getLife() <= 0;
-            }),
-        enemies.end()
-    );
+
+    auto it = remove_if(enemies.begin(), enemies.end(),
+        [this](const shared_ptr<Enemy>& e) {
+            if (e->getData().Life->getLife() <= 0) {
+                if (stats) stats->addKill();
+                return true;
+            }
+            return false;
+        });
+    enemies.erase(it, enemies.end());
 
 }
 
@@ -41,7 +43,7 @@ void EnemiesManager::draw(RenderWindow& window, float offsetX, float offsetY) {
 }
 
 void EnemiesManager::spawnEnemyNear(const pair<float, float>& playerPos) {
-    auto pos = getRandomSpawnPosition(playerPos, 100.0f);
+    auto pos = getRandomSpawnPosition(playerPos, 250.0f);
     auto enemy = make_shared<Enemy>("Enemy", pos.first, pos.second);
     enemies.push_back(enemy);
 }

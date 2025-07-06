@@ -5,13 +5,14 @@
 #include <vector>
 #include <memory>
 #include "Enemy.h"
+#include "GameStatistics.h"
 
 using namespace sf;
 using namespace std;
 
 class EnemiesManager {
     public:
-        EnemiesManager();
+        EnemiesManager(shared_ptr<GameStatistics> stats);
         void update(float dt, const pair<float, float>& playerPos);
         void draw(RenderWindow& window, float offsetX, float offsetY);
         void spawnEnemyNear(const pair<float, float>& playerPos);
@@ -19,6 +20,7 @@ class EnemiesManager {
         shared_ptr<Enemy> getClosestEnemy(const pair<float, float>& playerPos) const;
 
     private:
+        shared_ptr<GameStatistics> stats;
         vector<shared_ptr<Enemy>> enemies;
         float spawnTimer;
         float spawnInterval;

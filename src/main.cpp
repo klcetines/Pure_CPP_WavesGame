@@ -81,12 +81,7 @@ void handleScreenText(Character& player, Text& positionText)
     FloatRect textRect = positionText.getLocalBounds();
     positionText.setPosition(SCREEN_WIDTH - textRect.width - 10, SCREEN_HEIGHT - textRect.height - 10);
 }
-void handleLifeText(Character& player, Text& lifeText) {
-    int life = static_cast<int>(player.getLife());
-    lifeText.setString("Life: " + to_string(life));
-    // Puedes posicionarlo arriba a la izquierda, por ejemplo:
-    lifeText.setPosition(10, 10);
-}
+
 void processEvents(RenderWindow& window) {
     Event event;
     while (window.pollEvent(event))
@@ -114,24 +109,6 @@ void handleProjectileEnemyCollisions(ProjectilesManager& projectilesManager, Ene
             }
         }
     }
-}
-
-void updateGame(shared_ptr<Character>& player, shared_ptr<EnemiesManager>& enemiesManager, shared_ptr<ProjectilesManager>& projectilesManager, float dt, float offsetX, float offsetY, Text& lifeText) {
-    enemiesManager->update(dt, player->getPosition());
-    player->update(dt);
-    player->handleCollisions(enemiesManager->getEnemies(), offsetX, offsetY);
-    handleLifeText(*player, lifeText);
-
-    auto closest = enemiesManager->getClosestEnemy(player->getPosition());
-    if (closest) {
-        auto proj = player->atack(closest->getPosition());
-        if (proj) {
-            projectilesManager->add(proj);
-        }
-    }
-    projectilesManager->update(dt);
-    handleProjectileEnemyCollisions(*projectilesManager, *enemiesManager);
-
 }
 
 void renderGame(RenderWindow& window, Background& background, shared_ptr<Character>& player, shared_ptr<EnemiesManager>& enemiesManager, shared_ptr<ProjectilesManager>& projectilesManager, Text& positionText, Text& lifeText, float offsetX, float offsetY) {
@@ -220,7 +197,7 @@ int main() {
             processEvents(window);
 
             float dt = clock.restart().asSeconds();
-            session.update(dt);
+            session.update(dt, window);
             window.clear();
             session.render(window);
             window.display();
