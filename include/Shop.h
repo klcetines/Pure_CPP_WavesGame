@@ -34,11 +34,15 @@ private:
     shared_ptr<GameStatistics> _stats;
     GameSession& _gameSession;
     vector<ShopItem> items;
+    vector<ShopItem> _showcaseItems;
     int selectedIndex = 0;
+    int _maxShopItems = 4;
 
     void render(RenderWindow& window, Font& font);
     void handleInput(bool& running);
     void loadItemsFromFile(const string& filename);
+    void restockShowcaseItems();
+    void restockShowcaseSingleItem(int index);
 };
 
 #endif

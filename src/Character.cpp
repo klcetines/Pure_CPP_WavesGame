@@ -19,6 +19,7 @@ Character::Character(const string& name, float x, float y)
     _data.Damage = 25.0f;
     _data.BulletsNumber = 1;
     _data.AttackSpeed = 1.0f;
+    _data.ProjectileSpeed = 200.0f;
     _damageCooldown = 0.0f;
     _shootCooldown = 0.0f;
 }
@@ -44,14 +45,29 @@ void Character::draw(RenderWindow& window) {
     }
 }
 
-shared_ptr<PlayerProjectile> Character::atack(const pair<float, float>& target) {
-    if (_shootCooldown <= 0) {
-        _shootCooldown = _data.AttackSpeed;
-        Vector2f from(_position.x, _position.y);
-        Vector2f to(target.first, target.second);
-        return make_shared<PlayerProjectile>(from, to, 200, _data.Damage);
+shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::atack(const pair<float, float>& target) {
+    vector<shared_ptr<PlayerProjectile>> projectiles;
+    if (_shootCooldown > 0) {
+        return make_shared<vector<shared_ptr<PlayerProjectile>>>(projectiles);
     }
-    return nullptr;
+    _shootCooldown = _data.AttackSpeed;
+
+    Vector2f origin(_position.x, _position.y);
+    Vector2f to(target.first, target.second);
+
+    Vector2f dir = to - origin;
+    float length = sqrt(dir.x * dir.x + dir.y * dir.y);
+    if (length == 0) length = 1;
+    dir /= length;
+
+    float spacing = 15.0f; 
+
+    for (int i = 0; i < _data.BulletsNumber; i++) {
+        Vector2f offset = dir * (i * spacing);
+        Vector2f spawnPos = origin + offset;
+        projectiles.push_back(make_shared<PlayerProjectile>(spawnPos, to, _data.ProjectileSpeed, _data.Damage));
+    }
+    return make_shared<vector<shared_ptr<PlayerProjectile>>>(projectiles);
 }
 
 string Character::getName() const {
@@ -110,13 +126,19 @@ CharacterData Character::getData() const {
 }
 
 void Character::upgradeStats(const Effect& effect) {
-    // Aplica el efecto al personaje
     if (effect.getType() == "health") {
         _data.Life->heal(effect.getValue());
-    } else if (effect.getType() == "damage") {
+    } 
+    else if (effect.getType() == "damage") {
         _data.Damage += effect.getValue();
-    } else if (effect.getType() == "speed") {
+    } 
+    else if (effect.getType() == "speed") {
         _data.Speed += effect.getValue();
     }
-    // Puedes añadir más efectos aquí
+    else if (effect.getType() == "attack_speed") {
+        _data.AttackSpeed += effect.getValue();
+    } 
+    else if (effect.getType() == "bullets") {
+        _data.BulletsNumber += static_cast<int>(effect.getValue());
+    }
 }

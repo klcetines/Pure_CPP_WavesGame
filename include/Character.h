@@ -24,6 +24,7 @@ struct CharacterData
     float Damage;
     int BulletsNumber;
     float AttackSpeed;
+    float ProjectileSpeed;
 };
 
 const float DAMAGE_COOLDOWN = 0.5f;
@@ -35,7 +36,7 @@ class Character {
         void update(float dt);
         void move(float dx, float dy);
         void draw(RenderWindow& window);
-        shared_ptr<PlayerProjectile> atack(const pair<float, float>& target);
+        shared_ptr<vector<shared_ptr<PlayerProjectile>>> atack(const pair<float, float>& target);
         string getName() const;
         pair<float, float> getPosition() const;
         void handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY);

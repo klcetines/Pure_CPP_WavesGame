@@ -5,6 +5,9 @@
 
 Shop::Shop(shared_ptr<GameStatistics> stats, GameSession& gameSession) : _stats(stats), _gameSession(gameSession) {
     loadItemsFromFile("assets/shop_items.csv");
+    _maxShopItems = min(static_cast<int>(items.size()), 4);
+    _showcaseItems.resize(_maxShopItems);
+    restockShowcaseItems();
 }
 
 void Shop::addItem(const ShopItem& item) {
@@ -22,17 +25,15 @@ void Shop::open(RenderWindow& window, Font& font) {
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Up)
-                    selectedIndex = (selectedIndex + items.size() - 1) % items.size();
+                    selectedIndex = (selectedIndex + _showcaseItems.size() - 1) % _showcaseItems.size();
                 if (event.key.code == Keyboard::Down)
-                    selectedIndex = (selectedIndex + 1) % items.size();
-                if (event.key.code == Keyboard::Escape)
+                    selectedIndex = (selectedIndex + 1) % _showcaseItems.size();
+                if (event.key.code == Keyboard::Escape || event.key.code == Keyboard::Space)
                     running = false;
                 if (event.key.code == Keyboard::Enter) {
-                    if (_stats->spendCurrency(items[selectedIndex].cost)) {
-                        _gameSession.applyUpgrade(items[selectedIndex].effect);
-                    }
-                    else {
-                        cout << "Not enough currency to buy " << items[selectedIndex].name << endl;
+                    if (_stats->spendCurrency(_showcaseItems[selectedIndex].cost)) {
+                        _gameSession.applyUpgrade(_showcaseItems[selectedIndex].effect);
+                        restockShowcaseSingleItem(selectedIndex);
                     }
                 }
             }
@@ -50,13 +51,13 @@ void Shop::render(RenderWindow& window, Font& font) {
     title.setPosition(30, 20);
     window.draw(title);
 
-    for (size_t i = 0; i < items.size(); ++i) {
-        Text itemText(items[i].name + " (" + to_string(items[i].cost) + ")", font, 24);
+    for (int i = 0; i < _maxShopItems; ++i) {
+        Text itemText(_showcaseItems[i].name + " (" + to_string(_showcaseItems[i].cost) + ")", font, 24);
         itemText.setPosition(50, 80 + i * 40);
         itemText.setFillColor(i == selectedIndex ? Color::Green : Color::White);
         window.draw(itemText);
 
-        Text desc(items[i].description, font, 16);
+        Text desc(_showcaseItems[i].description, font, 16);
         desc.setPosition(300, 85 + i * 40);
         desc.setFillColor(Color(180, 180, 180));
         window.draw(desc);
@@ -87,5 +88,23 @@ void Shop::loadItemsFromFile(const string& filename) {
             float effectValue = stof(effectValueStr);
             items.push_back({name, cost, description, Effect(effectType, effectValue)});
         }
+    }
+}
+
+void Shop::restockShowcaseItems(){
+    for (int i = 0; i < _maxShopItems; ++i) {
+        restockShowcaseSingleItem(i);
+    }
+}
+
+void Shop::restockShowcaseSingleItem(int index) {
+    if (index < 0 || index >= _maxShopItems) return;
+    if (items.empty()){
+        _showcaseItems[index] = {"EMPTY", 0, "Sold Out!", Effect()};
+    } 
+    else{
+        int newIndex = rand() % items.size();
+        _showcaseItems[index] = items[newIndex];
+        items.erase(items.begin() + newIndex);
     }
 }

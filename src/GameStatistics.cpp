@@ -4,7 +4,7 @@
 
     void GameStatistics::addKill() { 
         enemiesKilled++; 
-        currency++; 
+        currency+=100; 
     }
 
     void GameStatistics::addProjectile() { 

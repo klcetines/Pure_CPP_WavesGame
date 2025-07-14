@@ -9,6 +9,7 @@ using namespace std;
 
 class Effect {
 public:
+    Effect();
     Effect(const string& type, float value);
     string getType() const;
     float getValue() const;

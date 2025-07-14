@@ -29,7 +29,6 @@ void GameSession::update(float dt, RenderWindow& window) {
     player->update(dt);
     player->handleCollisions(enemiesManager->getEnemies(), offsetX, offsetY);
 
-    // Actualiza textos
     int life = static_cast<int>(player->getLife());
     lifeText.setString("Life: " + to_string(life));
     lifeText.setPosition(10, 10);
@@ -41,8 +40,10 @@ void GameSession::update(float dt, RenderWindow& window) {
     auto closest = enemiesManager->getClosestEnemy(player->getPosition());
     if (closest) {
         auto proj = player->atack(closest->getPosition());
-        if (proj) {
-            projectilesManager->add(proj);
+        if (proj && !proj->empty()) {
+            for (const auto& p : *proj) {
+                projectilesManager->add(p);
+            }
             stats->addProjectile();
         }
     }
