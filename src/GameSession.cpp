@@ -1,11 +1,12 @@
 #include "GameSession.h"
 
-GameSession::GameSession(Font& font)
+GameSession::GameSession(Font& font, const Vector2u& winSize)
     : font(font),
-      background("assets/textures/cobblestone_1.png")
+      background("assets/textures/cobblestone_1.png"),
+      screenSize(winSize)
 {
     stats = make_shared<GameStatistics>();
-    player = make_shared<Character>("TouMate", 450, 350);
+    player = make_shared<Character>("TouMate", winSize.x / 2, winSize.y / 2);
     enemiesManager = make_shared<EnemiesManager>(stats);
     projectilesManager = make_shared<ProjectilesManager>();
     shop = make_shared<Shop>(stats, *this);
@@ -13,16 +14,14 @@ GameSession::GameSession(Font& font)
     positionText.setFillColor(Color::White);
     lifeText = Text("Life: 100", font, 20);
     lifeText.setFillColor(Color::Red);
-
 }
 
 void GameSession::update(float dt, RenderWindow& window) {
-    
     handleInputs(window);
 
     auto posPlayer = player->getPosition();
-    float offsetX = 900 / 2 - posPlayer.first;
-    float offsetY = 700 / 2 - posPlayer.second;
+    float offsetX = screenSize.x / 2 - posPlayer.first;
+    float offsetY = screenSize.y / 2 - posPlayer.second;
 
     enemiesManager->update(dt, posPlayer);
 
@@ -35,7 +34,7 @@ void GameSession::update(float dt, RenderWindow& window) {
 
     positionText.setString("Pos: (" + to_string((int)posPlayer.first) + ", " + to_string((int)posPlayer.second) + ")");
     FloatRect textRect = positionText.getLocalBounds();
-    positionText.setPosition(900 - textRect.width - 10, 700 - textRect.height - 10);
+    positionText.setPosition(screenSize.x - textRect.width - 10, screenSize.y - textRect.height - 10);
 
     auto closest = enemiesManager->getClosestEnemy(player->getPosition());
     if (closest) {
@@ -69,11 +68,11 @@ void GameSession::update(float dt, RenderWindow& window) {
 
 void GameSession::render(RenderWindow& window) {
     auto posPlayer = player->getPosition();
-    float offsetX = 900 / 2 - posPlayer.first;
-    float offsetY = 700 / 2 - posPlayer.second;
+    float offsetX = screenSize.x / 2 - posPlayer.first;
+    float offsetY = screenSize.y / 2 - posPlayer.second;
 
-    background.drawTiled(window, posPlayer.first, posPlayer.second, 900, 700);
-    player->draw(window);
+    background.drawTiled(window, posPlayer.first, posPlayer.second, screenSize.x, screenSize.y);
+    player->draw(window, offsetX, offsetY);
     enemiesManager->draw(window, offsetX, offsetY);
     projectilesManager->draw(window, offsetX, offsetY);
     window.draw(positionText);
@@ -86,6 +85,17 @@ void GameSession::render(RenderWindow& window) {
     statsText.setFillColor(Color::Cyan);
     statsText.setPosition(10, 40);
     window.draw(statsText);
+
+    if (debugHitboxes) {
+        debugHitboxesDisplay(
+            window, *player, 
+            screenSize.x / 2 - player->getPosition().first, 
+            screenSize.y / 2 - player->getPosition().second, 
+            enemiesManager.get(), 
+            projectilesManager.get(), 
+            player
+        );
+    }
 }
 
 bool GameSession::isPlayerDead() const {
@@ -102,6 +112,19 @@ void GameSession::handleInputs(RenderWindow& window) {
     if (Keyboard::isKeyPressed(Keyboard::Space)) {
         openShopMenu(window);
     }
+
+    static bool debugTogglePressed = false;
+    if (Keyboard::isKeyPressed(Keyboard::LControl) &&
+        Keyboard::isKeyPressed(Keyboard::LShift) &&
+        Keyboard::isKeyPressed(Keyboard::D)) {
+        if (!debugTogglePressed) {
+            debugHitboxes = !debugHitboxes;
+            debugTogglePressed = true;
+        }
+    } 
+    else {
+        debugTogglePressed = false;
+    }
 }
 
 void GameSession::openShopMenu(RenderWindow& window) {
@@ -113,5 +136,35 @@ void GameSession::openShopMenu(RenderWindow& window) {
 void GameSession::applyUpgrade(const Effect& effect) {
     if (player) {
         player->upgradeStats(effect);
+    }
+}
+
+void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX, float offsetY) {
+    CircleShape hitbox(radius);
+    hitbox.setFillColor(sf::Color::Transparent);
+    hitbox.setOutlineColor(sf::Color::Blue);
+    hitbox.setOutlineThickness(2.f);
+    hitbox.setOrigin(radius, radius);
+    hitbox.setPosition(x + offsetX, y + offsetY);
+    window.draw(hitbox);
+
+    CircleShape point(3);
+    point.setFillColor(sf::Color::Yellow);
+    point.setOrigin(3, 3);
+    point.setPosition(x + offsetX, y + offsetY);
+    window.draw(point);
+}
+
+void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX, float offsetY, EnemiesManager* enemiesManager, ProjectilesManager* projectilesManager, const shared_ptr<Character>& player) {
+    drawDebugHitbox(window, screenSize.x / 2, screenSize.y / 2, player->getSize());
+
+    for (const auto& enemy : enemiesManager->getEnemies()) {
+        auto epos = enemy->getPosition();
+        drawDebugHitbox(window, epos.first + offsetX, epos.second + offsetY, enemy->getSize());
+    }
+
+    for (const auto& proj : projectilesManager->getProjectiles()) {
+        auto ppos = proj->getPosition();
+        drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, proj->getSize());
     }
 }

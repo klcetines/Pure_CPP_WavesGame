@@ -3,17 +3,36 @@
 
 Character::Character(const string& name, float x, float y)
 {
-    _size = 20.0f;
+    _size = 40.0f;
     _name = name;
-    shape.setRadius(20);
-    shape.setPointCount(30);
-    shape.setFillColor(Color::Green);
-    shape.setPosition(x, y);
+    
+    if (!_texture.loadFromFile("assets/sprites/Characters/tomato_tv.png")) {
+        _useSprite = false;
+        shape.setRadius(_size);
+        shape.setPointCount(30);
+        shape.setFillColor(Color::Green);
+        shape.setOrigin(_size, _size);
+        shape.setPosition(x, y);
+        _useSprite = false;
+    } 
+    else {
+        _sprite.setTexture(_texture);
 
-    shape.setOrigin(_size, _size);
+        Vector2u texSize = _texture.getSize();
+        _sprite.setOrigin(texSize.x / 2.0f, texSize.y / 2.0f);
 
-    _position.x = 0;
-    _position.y = 0;
+        // Scale the sprite to match the desired size
+        float desiredDiameter = _size * 2.0f;
+        float scaleX = desiredDiameter / texSize.x;
+        float scaleY = desiredDiameter / texSize.y;
+        _sprite.setScale(scaleX, scaleY);
+
+        _sprite.setPosition(x, y);
+        _useSprite = true;
+    }
+
+    _position.x = x;
+    _position.y = y;
     _data.Life = new Life(100.0f);
     _data.Speed = 5.0f;
     _data.Damage = 25.0f;
@@ -34,13 +53,17 @@ void Character::move(float dx, float dy) {
     _position.y += dy;
 }
 
-void Character::draw(RenderWindow& window) {
+void Character::draw(RenderWindow& window, float offsetX, float offsetY) {
     if (_damageCooldown > 0) {
         int blink = static_cast<int>(_damageCooldown * 10) % 2;
-        if (blink == 0) {
-            window.draw(shape);
-        }
+        if (blink != 0) return;
+    }
+    if (_useSprite) {
+        _sprite.setPosition(_position.x + offsetX, _position.y + offsetY);
+        _sprite.setRotation(_facingAngle);    
+        window.draw(_sprite);
     } else {
+        shape.setPosition(_position.x + offsetX, _position.y + offsetY);
         window.draw(shape);
     }
 }
@@ -59,6 +82,8 @@ shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::atack(const pair<flo
     float length = sqrt(dir.x * dir.x + dir.y * dir.y);
     if (length == 0) length = 1;
     dir /= length;
+
+    _facingAngle = atan2(dir.y, dir.x) * 180.0f / 3.14159265f - 90.0f;
 
     float spacing = 15.0f; 
 

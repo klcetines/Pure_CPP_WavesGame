@@ -16,6 +16,7 @@ public:
     bool isAlive() const override;
     Vector2f getPosition() const override;
     float getDamage() const;
+    float getSize() const override;
     void destroy();
     
 private:

@@ -13,6 +13,7 @@ public:
     virtual bool isAlive() const = 0;
     virtual Vector2f getPosition() const = 0;
     virtual float getDamage() const = 0;
+    virtual float getSize() const = 0;
     virtual void destroy() = 0;
 };
 

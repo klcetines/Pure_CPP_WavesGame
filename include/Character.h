@@ -35,7 +35,7 @@ class Character {
         ~Character() = default;
         void update(float dt);
         void move(float dx, float dy);
-        void draw(RenderWindow& window);
+        void draw(RenderWindow& window, float offsetX = 0, float offsetY = 0);
         shared_ptr<vector<shared_ptr<PlayerProjectile>>> atack(const pair<float, float>& target);
         string getName() const;
         pair<float, float> getPosition() const;
@@ -54,9 +54,12 @@ class Character {
         CharacterData _data;
         float _damageCooldown;
         float _shootCooldown;
+        float _facingAngle;
 
+        Texture _texture;
+        Sprite _sprite;
+        bool _useSprite = false;
         void updateCooldown(float dt);
-
 };
 
 #endif

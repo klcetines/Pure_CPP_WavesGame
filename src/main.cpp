@@ -17,7 +17,6 @@ const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 700;
 
 void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0) {
-
     CircleShape hitbox(radius);
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Blue);
@@ -43,18 +42,10 @@ void debugHitboxesDisplay(RenderWindow& window, const Character& character, floa
 
     for (const auto& proj : projectilesManager->getProjectiles()) {
         auto ppos = proj->getPosition();
-        drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, 6); // 6 = radio del proyectil
+        drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, proj->getSize());
     }
 }
 
-void handleInput(Character& player) 
-{
-    float speed = 5.0f;
-    if (Keyboard::isKeyPressed(Keyboard::W)) player.move(0, -speed);
-    if (Keyboard::isKeyPressed(Keyboard::S)) player.move(0, speed);
-    if (Keyboard::isKeyPressed(Keyboard::A)) player.move(-speed, 0);
-    if (Keyboard::isKeyPressed(Keyboard::D)) player.move(speed, 0);
-}
 Font loadFont(const string& fontPath) {
     Font font;
     if (!font.loadFromFile(fontPath)) {
@@ -63,6 +54,7 @@ Font loadFont(const string& fontPath) {
     }
     return font;
 }
+
 Text instanciateText(const Font& font, const string& text, int size, Color color) 
 {
     Text t;
@@ -72,6 +64,7 @@ Text instanciateText(const Font& font, const string& text, int size, Color color
     t.setFillColor(color);
     return t;
 }
+
 void handleScreenText(Character& player, Text& positionText) 
 {
     auto pos = player.getPosition();
@@ -87,41 +80,6 @@ void processEvents(RenderWindow& window) {
     while (window.pollEvent(event))
         if (event.type == Event::Closed)
             window.close();
-}
-
-void handleProjectileEnemyCollisions(ProjectilesManager& projectilesManager, EnemiesManager& enemiesManager)
-{
-    auto& projectiles = projectilesManager.getProjectiles();
-    auto& enemies = enemiesManager.getEnemies();
-
-    for (auto& enemy : enemies) {
-        for (auto& proj : projectiles) {
-
-            auto epos = enemy->getPosition();
-            auto ppos = proj->getPosition();
-            float dist = sqrt(
-                (epos.first - ppos.x) * (epos.first - ppos.x) +
-                (epos.second - ppos.y) * (epos.second - ppos.y)
-            );
-            if (dist < enemy->getSize() + 6) {
-                enemy -> getData().Life->takeDamage(proj->getDamage());
-                proj->destroy();
-            }
-        }
-    }
-}
-
-void renderGame(RenderWindow& window, Background& background, shared_ptr<Character>& player, shared_ptr<EnemiesManager>& enemiesManager, shared_ptr<ProjectilesManager>& projectilesManager, Text& positionText, Text& lifeText, float offsetX, float offsetY) {
-    window.clear();
-    auto posPlayer = player->getPosition();
-    background.drawTiled(window, posPlayer.first, posPlayer.second, SCREEN_WIDTH, SCREEN_HEIGHT);
-    player->draw(window);
-    enemiesManager->draw(window, offsetX, offsetY);
-    projectilesManager->draw(window, offsetX, offsetY);
-    window.draw(positionText);
-    window.draw(lifeText);
-    
-    window.display();
 }
 
 void showMainMenu(RenderWindow& window, Font& font, GameState& gameState) {
@@ -190,7 +148,7 @@ int main() {
             showMainMenu(window, font, gameState);
         }
 
-        GameSession session(font);
+        GameSession session(font, window.getSize());
         Clock clock;
 
         while (window.isOpen() && gameState.isPlaying()) {

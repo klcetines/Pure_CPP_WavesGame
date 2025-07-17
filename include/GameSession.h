@@ -16,7 +16,7 @@ using namespace std;
 
 class GameSession {
 public:
-    GameSession(Font& font);
+    GameSession(Font& font, const Vector2u& winSize);
 
     void update(float dt, RenderWindow& window);
     void render(RenderWindow& window);
@@ -35,8 +35,14 @@ private:
     Text lifeText;
     Font& font;
 
+    Vector2u screenSize;
+
+    bool debugHitboxes = false;
+
     void handleInputs(RenderWindow& window);
     void openShopMenu(RenderWindow& window);
+    void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
+    void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr);
 
 };
 

@@ -39,6 +39,10 @@ float PlayerProjectile::getDamage() const {
     return _damage;
 }
 
+float PlayerProjectile::getSize() const {
+    return shape.getRadius();
+}
+
 void PlayerProjectile::destroy() {
     _alive = false;
 }
