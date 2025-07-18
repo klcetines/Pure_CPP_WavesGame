@@ -32,7 +32,10 @@ void Shop::open(RenderWindow& window, Font& font) {
                     running = false;
                 if (event.key.code == Keyboard::Enter) {
                     if (_stats->spendCurrency(_showcaseItems[selectedIndex].cost)) {
-                        _gameSession.applyUpgrade(_showcaseItems[selectedIndex].effect);
+                        cout << _showcaseItems[selectedIndex].effects.size()<< endl;
+                        for(const auto& effect : _showcaseItems[selectedIndex].effects) {
+                            _gameSession.applyUpgrade(effect);
+                        }
                         restockShowcaseSingleItem(selectedIndex);
                     }
                 }
@@ -78,15 +81,25 @@ void Shop::loadItemsFromFile(const string& filename) {
     string line;
     while (getline(file, line)) {
         stringstream ss(line);
-        string name, costStr, description, effectType, effectValueStr;
+        string name, costStr, description, effectType, effectStr;
         if (getline(ss, name, ',') &&
             getline(ss, costStr, ',') &&
             getline(ss, description, ',') &&
-            getline(ss, effectType, ',') &&
-            getline(ss, effectValueStr, ',')) {
+            getline(ss, effectStr, ',')
+        ){        
             int cost = stoi(costStr);
-            float effectValue = stof(effectValueStr);
-            items.push_back({name, cost, description, Effect(effectType, effectValue)});
+            list<Effect>* effects = new list<Effect>();
+            stringstream effectStream(effectStr);
+            string changeStr;
+            while (getline(effectStream, changeStr, ';')) {
+                size_t sep = changeStr.find(':');
+                if (sep != string::npos) {
+                    string type = changeStr.substr(0, sep);
+                    float value = stof(changeStr.substr(sep + 1));
+                    effects->push_back(Effect(type, value));
+                }
+            }
+            items.push_back({name, cost, description, *effects});
         }
     }
 }
@@ -100,7 +113,7 @@ void Shop::restockShowcaseItems(){
 void Shop::restockShowcaseSingleItem(int index) {
     if (index < 0 || index >= _maxShopItems) return;
     if (items.empty()){
-        _showcaseItems[index] = {"EMPTY", 0, "Sold Out!", Effect()};
+        _showcaseItems[index] = {"EMPTY", 0, "Sold Out!", list<Effect>()};
     } 
     else{
         int newIndex = rand() % items.size();

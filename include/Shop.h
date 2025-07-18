@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <list>
 #include "Effect.h"
 
 using namespace sf;
@@ -20,7 +21,7 @@ struct ShopItem {
     string name;
     int cost;
     string description;
-    Effect effect;
+    list<Effect> effects;
 };
 
 class Shop {

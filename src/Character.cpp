@@ -149,7 +149,7 @@ void Character::upgradeStats(const Effect& effect) {
         _data.Speed += effect.getValue();
     }
     else if (effect.getType() == "attack_speed") {
-        _data.AttackSpeed += effect.getValue();
+        _data.AttackSpeed -= effect.getValue();
     } 
     else if (effect.getType() == "bullets") {
         _data.BulletsNumber += static_cast<int>(effect.getValue());
