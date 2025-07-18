@@ -52,13 +52,8 @@ void GameSession::update(float dt, RenderWindow& window) {
     auto& enemies = enemiesManager->getEnemies();
     for (auto& enemy : enemies) {
         for (auto& proj : projectiles) {
-            auto epos = enemy->getPosition();
             auto ppos = proj->getPosition();
-            float dist = std::sqrt(
-                (epos.first - ppos.x) * (epos.first - ppos.x) +
-                (epos.second - ppos.y) * (epos.second - ppos.y)
-            );
-            if (dist < enemy->getSize() + 6) {
+            if (enemy->collidesWith(ppos.x, ppos.y)) {
                 enemy->getData().Life->takeDamage(proj->getDamage());
                 proj->destroy();
             }
@@ -155,12 +150,48 @@ void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float 
     window.draw(point);
 }
 
+void GameSession::drawDebugCapsule(RenderWindow& window, float x, float y, float width, float height, float offsetX, float offsetY, float rotationDeg) {
+    RectangleShape rect(sf::Vector2f(width, height));
+    rect.setOrigin(width / 2, height / 2);
+    rect.setPosition(x + offsetX, y + offsetY);
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineColor(sf::Color::Blue);
+    rect.setOutlineThickness(2.f);
+    rect.setRotation(rotationDeg);
+    window.draw(rect);
+
+    float radius = width / 2;
+    float angleRad = rotationDeg * 3.14159265f / 180.0f;
+
+    // Calcula el desplazamiento de los extremos rotados
+    float dx = sin(angleRad) * (height / 2);
+    float dy = -cos(angleRad) * (height / 2);
+
+    // Top circle (superior)
+    CircleShape top(radius);
+    top.setOrigin(radius, radius);
+    top.setPosition(x + offsetX + dx, y + offsetY + dy);
+    top.setFillColor(sf::Color::Transparent);
+    top.setOutlineColor(sf::Color::Blue);
+    top.setOutlineThickness(2.f);
+    window.draw(top);
+
+    // Bottom circle (inferior)
+    CircleShape bottom(radius);
+    bottom.setOrigin(radius, radius);
+    bottom.setPosition(x + offsetX - dx, y + offsetY - dy);
+    bottom.setFillColor(sf::Color::Transparent);
+    bottom.setOutlineColor(sf::Color::Blue);
+    bottom.setOutlineThickness(2.f);
+    window.draw(bottom);
+}
+
 void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX, float offsetY, EnemiesManager* enemiesManager, ProjectilesManager* projectilesManager, const shared_ptr<Character>& player) {
     drawDebugHitbox(window, screenSize.x / 2, screenSize.y / 2, player->getSize());
 
     for (const auto& enemy : enemiesManager->getEnemies()) {
         auto epos = enemy->getPosition();
-        drawDebugHitbox(window, epos.first + offsetX, epos.second + offsetY, enemy->getSize());
+        drawDebugCapsule(window, epos.first + offsetX, epos.second + offsetY, enemy->getWidth() * 0.65f, enemy->getHeight() * 0.45f, 0, 0, enemy->getRotation());    
     }
 
     for (const auto& proj : projectilesManager->getProjectiles()) {

@@ -16,36 +16,6 @@ using namespace sf;
 const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 700;
 
-void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0) {
-    CircleShape hitbox(radius);
-    hitbox.setFillColor(sf::Color::Transparent);
-    hitbox.setOutlineColor(sf::Color::Blue);
-    hitbox.setOutlineThickness(2.f);
-    hitbox.setOrigin(radius, radius);
-    hitbox.setPosition(x + offsetX, y + offsetY);
-    window.draw(hitbox);
-
-    CircleShape point(3);
-    point.setFillColor(sf::Color::Yellow);
-    point.setOrigin(3, 3);
-    point.setPosition(x + offsetX, y + offsetY);
-    window.draw(point);
-}
-
-void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr) {
-    drawDebugHitbox(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, player->getSize());
-
-    for (const auto& enemy : enemiesManager->getEnemies()) {
-        auto epos = enemy->getPosition();
-        drawDebugHitbox(window, epos.first + offsetX, epos.second + offsetY, enemy->getSize());
-    }
-
-    for (const auto& proj : projectilesManager->getProjectiles()) {
-        auto ppos = proj->getPosition();
-        drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, proj->getSize());
-    }
-}
-
 Font loadFont(const string& fontPath) {
     Font font;
     if (!font.loadFromFile(fontPath)) {

@@ -11,6 +11,7 @@
 #include "Life.h"
 #include "Enemy.h"
 #include "PlayerProjectile.h"
+#include "SpriteLoader.h"
 
 using namespace sf;
 using namespace std;
@@ -59,6 +60,7 @@ class Character {
         Texture _texture;
         Sprite _sprite;
         bool _useSprite = false;
+        
         void updateCooldown(float dt);
 };
 

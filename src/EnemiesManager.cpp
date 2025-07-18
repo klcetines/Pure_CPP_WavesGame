@@ -38,8 +38,9 @@ void EnemiesManager::update(float dt, const pair<float, float>& playerPos) {
 }
 
 void EnemiesManager::draw(RenderWindow& window, float offsetX, float offsetY) {
-    for (auto& enemy : enemies)
+    for (auto& enemy : enemies) {
         enemy->draw(window, offsetX, offsetY);
+    }
 }
 
 void EnemiesManager::spawnEnemyNear(const pair<float, float>& playerPos) {

@@ -42,6 +42,7 @@ private:
     void handleInputs(RenderWindow& window);
     void openShopMenu(RenderWindow& window);
     void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
+    void drawDebugCapsule(RenderWindow& window, float x, float y, float width, float height, float offsetX, float offsetY, float rotationDeg);
     void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr);
 
 };

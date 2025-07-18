@@ -3,8 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <cmath>
 #include "Position.h"
 #include "Life.h"
+#include "SpriteLoader.h"
 
 using namespace sf;
 using namespace std;
@@ -27,14 +29,23 @@ class Enemy {
         float getSpeed() const;
         float getDamage() const;
         pair<float, float> getPosition() const;
-        float getSize() const;
+        float getWidth() const;
+        float getHeight() const;
         EnemyData getData() const;
+        bool collidesWith(float px, float py) const;
+        float getRotation() const;
 
     private:
         string _name;
         CircleShape shape;
         Position _position;
         EnemyData _data;
-};
+        Sprite _sprite;
+
+        bool _useSprite = false;
+        Vector2f _lastMoveDir = {0.f, -1.f};
+        float _facingAngle = 0.0f;
+        Vector2u _size;
+};      
 
 #endif // ENEMY_H

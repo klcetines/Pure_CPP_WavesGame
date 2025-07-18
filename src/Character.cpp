@@ -6,29 +6,17 @@ Character::Character(const string& name, float x, float y)
     _size = 40.0f;
     _name = name;
     
-    if (!_texture.loadFromFile("assets/sprites/Characters/tomato_tv.png")) {
-        _useSprite = false;
+    if (SpriteLoader::assignSprite(_sprite, "assets/sprites/Characters/tomato_tv.png", _size * 2.0f, _size * 2.0f)) {
+        _sprite.setPosition(x, y);
+        _useSprite = true;
+    } 
+    else {
         shape.setRadius(_size);
         shape.setPointCount(30);
         shape.setFillColor(Color::Green);
         shape.setOrigin(_size, _size);
         shape.setPosition(x, y);
         _useSprite = false;
-    } 
-    else {
-        _sprite.setTexture(_texture);
-
-        Vector2u texSize = _texture.getSize();
-        _sprite.setOrigin(texSize.x / 2.0f, texSize.y / 2.0f);
-
-        // Scale the sprite to match the desired size
-        float desiredDiameter = _size * 2.0f;
-        float scaleX = desiredDiameter / texSize.x;
-        float scaleY = desiredDiameter / texSize.y;
-        _sprite.setScale(scaleX, scaleY);
-
-        _sprite.setPosition(x, y);
-        _useSprite = true;
     }
 
     _position.x = x;
@@ -109,7 +97,7 @@ void Character::handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float
         float dx = _position.x - enemyPosition.first;
         float dy = _position.y - enemyPosition.second;
         float distance = sqrt(dx * dx + dy * dy);
-        if (distance < _size + Enemy->getSize() && _damageCooldown <= 0) {
+        if (Enemy->collidesWith(_position.x, _position.y) && _damageCooldown <= 0) {
             _position.x += dx * 0.1f;
             _position.y += dy * 0.1f;
             _data.Life->takeDamage(Enemy->getDamage());
