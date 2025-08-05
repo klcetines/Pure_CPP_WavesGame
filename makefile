@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Iinclude -IC:/msys64/mingw64/include
 LDFLAGS = -LC:/msys64/mingw64/lib -lsfml-graphics -lsfml-window -lsfml-system
-SRC = $(wildcard src/*.cpp)
+SRC = $(wildcard src/**/*.cpp) $(wildcard src/*.cpp)
 OUT = bin/game.exe
 
 all:

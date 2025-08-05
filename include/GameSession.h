@@ -8,7 +8,7 @@
 #include "ProjectilesManager.h"
 #include "Background.h"
 #include "GameStatistics.h"
-#include "Shop.h"
+#include "Shop/Shop.h"
 #include "Effect.h"
 
 using namespace sf;
