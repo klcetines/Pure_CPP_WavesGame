@@ -33,7 +33,6 @@ Character::Character(const string& name, float x, float y)
 
 void Character::update(float dt) {
     updateCooldown(dt);
-   
 }
 
 void Character::move(float dx, float dy) {

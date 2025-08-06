@@ -17,25 +17,56 @@ GameSession::GameSession(Font& font, const Vector2u& winSize)
 }
 
 void GameSession::update(float dt, RenderWindow& window) {
-    handleInputs(window);
+    processPlayerInput(window);
+    processDebugInput(window);
+    processShopInput(window);
 
-    auto posPlayer = player->getPosition();
-    float offsetX = screenSize.x / 2 - posPlayer.first;
-    float offsetY = screenSize.y / 2 - posPlayer.second;
+    updatePlayer(dt);
+    updateEnemies(dt);
+    updateProjectiles(dt);
 
-    enemiesManager->update(dt, posPlayer);
+    handlePlayerEnemyCollisions();
+    handleProjectileEnemyCollisions();
 
+    updateUITexts();
+}
+
+void GameSession::processPlayerInput(RenderWindow& window) {
+    float speed = player->getData().Speed;
+    if (Keyboard::isKeyPressed(Keyboard::W)) player->move(0, -speed);
+    if (Keyboard::isKeyPressed(Keyboard::S)) player->move(0, speed);
+    if (Keyboard::isKeyPressed(Keyboard::A)) player->move(-speed, 0);
+    if (Keyboard::isKeyPressed(Keyboard::D)) player->move(speed, 0);
+}
+
+void GameSession::processDebugInput(RenderWindow& window) {
+    static bool debugTogglePressed = false;
+    if (Keyboard::isKeyPressed(Keyboard::LControl) &&
+        Keyboard::isKeyPressed(Keyboard::LShift) &&
+        Keyboard::isKeyPressed(Keyboard::D)) {
+        if (!debugTogglePressed) {
+            debugHitboxes = !debugHitboxes;
+            debugTogglePressed = true;
+        }
+    } else {
+        debugTogglePressed = false;
+    }
+}
+
+void GameSession::processShopInput(RenderWindow& window) {
+    if (Keyboard::isKeyPressed(Keyboard::Space)) {
+        openShopMenu(window);
+    }
+}
+
+
+
+void GameSession::updatePlayer(float dt) {
     player->update(dt);
-    player->handleCollisions(enemiesManager->getEnemies(), offsetX, offsetY);
+    atackNearestEnemy();
+}
 
-    int life = static_cast<int>(player->getLife());
-    lifeText.setString("Life: " + to_string(life));
-    lifeText.setPosition(10, 10);
-
-    positionText.setString("Pos: (" + to_string((int)posPlayer.first) + ", " + to_string((int)posPlayer.second) + ")");
-    FloatRect textRect = positionText.getLocalBounds();
-    positionText.setPosition(screenSize.x - textRect.width - 10, screenSize.y - textRect.height - 10);
-
+void GameSession::atackNearestEnemy() {
     auto closest = enemiesManager->getClosestEnemy(player->getPosition());
     if (closest) {
         auto proj = player->atack(closest->getPosition());
@@ -46,8 +77,25 @@ void GameSession::update(float dt, RenderWindow& window) {
             stats->addProjectile();
         }
     }
-    projectilesManager->update(dt);
+}
 
+void GameSession::updateEnemies(float dt) {
+    auto posPlayer = player->getPosition();
+    enemiesManager->update(dt, posPlayer);
+}
+
+void GameSession::updateProjectiles(float dt) {
+    projectilesManager->update(dt);
+}
+
+void GameSession::handlePlayerEnemyCollisions() {
+    auto posPlayer = player->getPosition();
+    float offsetX = screenSize.x / 2 - posPlayer.first;
+    float offsetY = screenSize.y / 2 - posPlayer.second;
+    player->handleCollisions(enemiesManager->getEnemies(), offsetX, offsetY);
+}
+
+void GameSession::handleProjectileEnemyCollisions() {
     auto& projectiles = projectilesManager->getProjectiles();
     auto& enemies = enemiesManager->getEnemies();
     for (auto& enemy : enemies) {
@@ -61,65 +109,71 @@ void GameSession::update(float dt, RenderWindow& window) {
     }
 }
 
+void GameSession::updateUITexts() {
+    updatePlayerLifeText();
+    updatePlayerPositionText();
+}
+
+void GameSession::updatePlayerLifeText() {
+    int life = static_cast<int>(player->getLife());
+    lifeText.setString("Life: " + to_string(life));
+    lifeText.setPosition(10, 10);
+}
+
+void GameSession::updatePlayerPositionText() {
+    auto posPlayer = player->getPosition();
+    positionText.setString("Pos: (" + to_string((int)posPlayer.first) + ", " + to_string((int)posPlayer.second) + ")");
+    FloatRect textRect = positionText.getLocalBounds();
+    positionText.setPosition(screenSize.x - textRect.width - 10, screenSize.y - textRect.height - 10);
+}
+
 void GameSession::render(RenderWindow& window) {
+    renderBackground(window);
+    renderEntities(window);
+    renderUI(window);
+    if (debugHitboxes) {
+        renderDebug(window);
+    }
+}
+
+void GameSession::renderBackground(RenderWindow& window) {
+    auto posPlayer = player->getPosition();
+    background.drawTiled(window, posPlayer.first, posPlayer.second, screenSize.x, screenSize.y);
+}
+
+void GameSession::renderEntities(RenderWindow& window) {
     auto posPlayer = player->getPosition();
     float offsetX = screenSize.x / 2 - posPlayer.first;
     float offsetY = screenSize.y / 2 - posPlayer.second;
-
-    background.drawTiled(window, posPlayer.first, posPlayer.second, screenSize.x, screenSize.y);
     player->draw(window, offsetX, offsetY);
     enemiesManager->draw(window, offsetX, offsetY);
     projectilesManager->draw(window, offsetX, offsetY);
+}
+
+void GameSession::renderUI(RenderWindow& window) {
     window.draw(positionText);
     window.draw(lifeText);
 
-    string statsStr = 
-    "Currency: " + to_string(stats->getCurrency());
-
+    string statsStr = "Currency: " + to_string(stats->getCurrency());
     Text statsText(statsStr, font, 18);
     statsText.setFillColor(Color::Cyan);
     statsText.setPosition(10, 40);
     window.draw(statsText);
+}
 
-    if (debugHitboxes) {
-        debugHitboxesDisplay(
-            window, *player, 
-            screenSize.x / 2 - player->getPosition().first, 
-            screenSize.y / 2 - player->getPosition().second, 
-            enemiesManager.get(), 
-            projectilesManager.get(), 
-            player
-        );
-    }
+void GameSession::renderDebug(RenderWindow& window) {
+    debugHitboxesDisplay(
+        window, *player, 
+        screenSize.x / 2 - player->getPosition().first, 
+        screenSize.y / 2 - player->getPosition().second, 
+        enemiesManager.get(), 
+        projectilesManager.get(), 
+        player
+    );
 }
 
 bool GameSession::isPlayerDead() const {
     return player->getLife() <= 0;
-}
-
-void GameSession::handleInputs(RenderWindow& window) {
-    float speed = player->getData().Speed;
-    if (Keyboard::isKeyPressed(Keyboard::W)) player->move(0, -speed);
-    if (Keyboard::isKeyPressed(Keyboard::S)) player->move(0, speed);
-    if (Keyboard::isKeyPressed(Keyboard::A)) player->move(-speed, 0);
-    if (Keyboard::isKeyPressed(Keyboard::D)) player->move(speed, 0);
-
-    if (Keyboard::isKeyPressed(Keyboard::Space)) {
-        openShopMenu(window);
-    }
-
-    static bool debugTogglePressed = false;
-    if (Keyboard::isKeyPressed(Keyboard::LControl) &&
-        Keyboard::isKeyPressed(Keyboard::LShift) &&
-        Keyboard::isKeyPressed(Keyboard::D)) {
-        if (!debugTogglePressed) {
-            debugHitboxes = !debugHitboxes;
-            debugTogglePressed = true;
-        }
-    } 
-    else {
-        debugTogglePressed = false;
-    }
 }
 
 void GameSession::openShopMenu(RenderWindow& window) {

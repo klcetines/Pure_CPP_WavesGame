@@ -2,13 +2,13 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include <Character.h>
-#include <Background.h>
-#include <EnemiesManager.h>
-#include <ProjectilesManager.h>
-#include <PlayerProjectile.h>
-#include <GameState.h>
-#include <GameSession.h>
+#include <Character/Character.h>
+#include <Utils/Background.h>
+#include <Enemies/EnemiesManager.h>
+#include <Projectiles/ProjectilesManager.h>
+#include <Projectiles/PlayerProjectile.h>
+#include <GameManagers/GameState.h>
+#include <GameManagers/GameSession.h>
 
 using namespace std;
 using namespace sf;
@@ -33,16 +33,6 @@ Text instanciateText(const Font& font, const string& text, int size, Color color
     t.setCharacterSize(size);
     t.setFillColor(color);
     return t;
-}
-
-void handleScreenText(Character& player, Text& positionText) 
-{
-    auto pos = player.getPosition();
-    float x = pos.first;
-    float y = pos.second;
-    positionText.setString("Pos: (" + to_string((int)x) + ", " + to_string((int)y) + ")");
-    FloatRect textRect = positionText.getLocalBounds();
-    positionText.setPosition(SCREEN_WIDTH - textRect.width - 10, SCREEN_HEIGHT - textRect.height - 10);
 }
 
 void processEvents(RenderWindow& window) {
