@@ -1,5 +1,5 @@
-#include "Character.h"
-#include "Effect.h"
+#include "Character/Character.h"
+#include "Utils/Effect.h"
 
 Character::Character(const string& name, float x, float y)
 {

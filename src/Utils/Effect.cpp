@@ -1,4 +1,4 @@
-#include "Effect.h"
+#include "Utils/Effect.h"
 
 Effect::Effect() : _type(""), _value(0.0f) {}
 

@@ -1,4 +1,4 @@
-#include "GameState.h"
+#include "GameManagers/GameState.h"
 
 GameState::GameState() : state(GameStateType::MainMenu) {}
 

@@ -1,4 +1,4 @@
-#include "GameSession.h"
+#include "GameManagers/GameSession.h"
 
 GameSession::GameSession(Font& font, const Vector2u& winSize)
     : font(font),

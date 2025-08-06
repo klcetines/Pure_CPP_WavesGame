@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include "Character.h"
+#include "Character/Character.h"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #ifndef PLAYER_PROJECTILE_H
 #define PLAYER_PROJECTILE_H
 
-#include "Projectile.h"
+#include "Projectiles/Projectile.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
 

@@ -1,5 +1,5 @@
-#include "ProjectilesManager.h"
-#include "Projectile.h"
+#include "Projectiles/ProjectilesManager.h"
+#include "Projectiles/Projectile.h"
 #include <vector>
 #include <memory>
 

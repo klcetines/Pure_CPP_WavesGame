@@ -1,4 +1,4 @@
-#include "Life.h"
+#include "Utils/Life.h"
 
 Life::Life(float maxLife)
     : life(maxLife), maxLife(maxLife) {}

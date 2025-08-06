@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include "Projectile.h"
+#include "Projectiles/Projectile.h"
 #include <SFML/Graphics.hpp>
 
 using namespace sf;

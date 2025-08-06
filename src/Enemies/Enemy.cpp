@@ -1,4 +1,4 @@
-#include "Enemy.h"
+#include "Enemies/Enemy.h"
 
 Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _position{x, y}
 {

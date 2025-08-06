@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "Utils/Background.h"
 
 Background::Background(const string& texturePath) {
     if (!texture.loadFromFile(texturePath)) {

@@ -7,11 +7,11 @@
 #include <vector>
 #include <memory>
 #include <cmath>
-#include "Position.h"
-#include "Life.h"
-#include "Enemy.h"
-#include "PlayerProjectile.h"
-#include "SpriteLoader.h"
+#include "Utils/Position.h"
+#include "Utils/Life.h"
+#include "Enemies/Enemy.h"
+#include "Projectiles/PlayerProjectile.h"
+#include "Utils/SpriteLoader.h"
 
 using namespace sf;
 using namespace std;

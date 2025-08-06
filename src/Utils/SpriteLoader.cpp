@@ -1,4 +1,4 @@
-#include "SpriteLoader.h"
+#include "Utils/SpriteLoader.h"
 
 shared_ptr<Texture> SpriteLoader::getTexture(const string& path){
     static map<string, shared_ptr<Texture>> textures;

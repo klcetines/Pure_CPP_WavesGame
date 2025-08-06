@@ -1,8 +1,8 @@
 #include "Shop/Shop.h"
 #include "Shop/ShopRender.h"
 #include "Shop/ShopEvents.h"
-#include "GameStatistics.h"
-#include "GameSession.h"
+#include "GameManagers/GameStatistics.h"
+#include "GameManagers/GameSession.h"
 #include <SFML/Window.hpp>
 
 Shop::Shop(shared_ptr<GameStatistics> stats, GameSession& gameSession) : _stats(stats), _gameSession(gameSession) {

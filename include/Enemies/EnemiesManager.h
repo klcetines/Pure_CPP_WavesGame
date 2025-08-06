@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
-#include "Enemy.h"
-#include "GameStatistics.h"
+#include "Enemies/Enemy.h"
+#include "GameManagers/GameStatistics.h"
 
 using namespace sf;
 using namespace std;

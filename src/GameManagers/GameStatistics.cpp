@@ -1,4 +1,4 @@
-#include "GameStatistics.h"
+#include "GameManagers/GameStatistics.h"
 
     GameStatistics::GameStatistics() : enemiesKilled(0), projectilesFired(0), currency(0) {}
 

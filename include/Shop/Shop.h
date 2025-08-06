@@ -6,8 +6,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include "GameStatistics.h"
-#include "Effect.h"
+#include "GameManagers/GameStatistics.h"
+#include "Utils/Effect.h"
 
 using namespace sf;
 using namespace std;

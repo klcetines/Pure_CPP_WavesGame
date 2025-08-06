@@ -4,9 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <cmath>
-#include "Position.h"
-#include "Life.h"
-#include "SpriteLoader.h"
+#include "Utils/Position.h"
+#include "Utils/Life.h"
+#include "Utils/SpriteLoader.h"
 
 using namespace sf;
 using namespace std;

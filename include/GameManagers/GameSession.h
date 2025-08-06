@@ -3,13 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include "Character.h"
-#include "EnemiesManager.h"
-#include "ProjectilesManager.h"
-#include "Background.h"
-#include "GameStatistics.h"
+#include "Character/Character.h"
+#include "Enemies/EnemiesManager.h"
+#include "Projectiles/ProjectilesManager.h"
+#include "Utils/Background.h"
+#include "GameManagers/GameStatistics.h"
 #include "Shop/Shop.h"
-#include "Effect.h"
+#include "Utils/Effect.h"
 
 using namespace sf;
 using namespace std;
