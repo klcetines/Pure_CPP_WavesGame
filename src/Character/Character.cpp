@@ -29,6 +29,7 @@ Character::Character(const string& name, float x, float y)
     _data.ProjectileSpeed = 200.0f;
     _damageCooldown = 0.0f;
     _shootCooldown = 0.0f;
+    _collisionBox = CollisionShape(Vector2f(_position.x, _position.y), _size);
 }
 
 void Character::update(float dt) {
@@ -92,13 +93,10 @@ pair<float,float> Character::getPosition() const {
 
 void Character::handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY) {
     for (const auto& Enemy : Enemies) {
-        auto enemyPosition = Enemy->getPosition();
-        float dx = _position.x - enemyPosition.first;
-        float dy = _position.y - enemyPosition.second;
-        float distance = sqrt(dx * dx + dy * dy);
-        if (Enemy->collidesWith(_position.x, _position.y) && _damageCooldown <= 0) {
-            _position.x += dx * 0.1f;
-            _position.y += dy * 0.1f;
+        if (_collisionBox.intersects(Enemy->getCollisionBox()) && _damageCooldown <= 0) {
+            
+            //TBD: Move Player in the opposite direction of the enemy
+            
             _data.Life->takeDamage(Enemy->getDamage());
             if (_data.Life->getLife() <= 0) {
                 handleDead();
@@ -153,4 +151,8 @@ void Character::upgradeStats(const Effect& effect) {
     else if (effect.getType() == "bullets") {
         _data.BulletsNumber += static_cast<int>(effect.getValue());
     }
+}
+
+CollisionShape Character::getCollisionBox() const {
+    return _collisionBox;
 }

@@ -59,8 +59,6 @@ void GameSession::processShopInput(RenderWindow& window) {
     }
 }
 
-
-
 void GameSession::updatePlayer(float dt) {
     player->update(dt);
     atackNearestEnemy();
@@ -100,8 +98,11 @@ void GameSession::handleProjectileEnemyCollisions() {
     auto& enemies = enemiesManager->getEnemies();
     for (auto& enemy : enemies) {
         for (auto& proj : projectiles) {
-            auto ppos = proj->getPosition();
-            if (enemy->collidesWith(ppos.x, ppos.y)) {
+
+            const CollisionShape& projBox = proj->getCollisionBox();
+            const CollisionShape& enemyBox = enemy->getCollisionBox();
+
+            if (projBox.intersects(enemyBox)) {
                 enemy->getData().Life->takeDamage(proj->getDamage());
                 proj->destroy();
             }

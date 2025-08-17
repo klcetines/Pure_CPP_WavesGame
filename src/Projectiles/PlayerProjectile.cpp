@@ -13,6 +13,8 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed,
         velocity = dir / len * speed;
     else
         velocity = {0, 0};
+
+    _collisionBox = CollisionShape(start, 6, 6, 0.0f);
 }
 
 void PlayerProjectile::update(float dt) {
@@ -45,4 +47,7 @@ float PlayerProjectile::getSize() const {
 
 void PlayerProjectile::destroy() {
     _alive = false;
+}
+CollisionShape PlayerProjectile::getCollisionBox() const {
+    return _collisionBox;
 }

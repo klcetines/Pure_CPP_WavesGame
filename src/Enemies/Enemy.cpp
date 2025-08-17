@@ -20,6 +20,7 @@ Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _po
         _useSprite = false;
     }
 
+    _collisionBox = CollisionShape(Vector2f(x, y), _size.x * 0.65f, _size.y * 0.45f, 0.0f);
     _data.Speed = 2.0f;
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
@@ -117,4 +118,8 @@ bool Enemy::collidesWith(float px, float py) const {
 
 float Enemy::getRotation() const {
     return _facingAngle;
+}
+
+CollisionShape Enemy::getCollisionBox() const {
+    return _collisionBox;
 }

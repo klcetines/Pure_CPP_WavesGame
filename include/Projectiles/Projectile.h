@@ -3,6 +3,8 @@
 #define PROJECTILE_H
 
 #include <SFML/Graphics.hpp>
+#include "Utils/CollisionShape.h"
+
 using namespace sf;
 
 class Projectile {
@@ -15,6 +17,7 @@ public:
     virtual float getDamage() const = 0;
     virtual float getSize() const = 0;
     virtual void destroy() = 0;
+    virtual CollisionShape getCollisionBox() const = 0;
 };
 
 #endif

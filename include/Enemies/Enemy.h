@@ -7,6 +7,7 @@
 #include "Utils/Position.h"
 #include "Utils/Life.h"
 #include "Utils/SpriteLoader.h"
+#include "Utils/CollisionShape.h"
 
 using namespace sf;
 using namespace std;
@@ -34,6 +35,7 @@ class Enemy {
         EnemyData getData() const;
         bool collidesWith(float px, float py) const;
         float getRotation() const;
+        CollisionShape getCollisionBox() const;
 
     private:
         string _name;
@@ -46,6 +48,7 @@ class Enemy {
         Vector2f _lastMoveDir = {0.f, -1.f};
         float _facingAngle = 0.0f;
         Vector2u _size;
+        CollisionShape _collisionBox;
 };      
 
 #endif // ENEMY_H

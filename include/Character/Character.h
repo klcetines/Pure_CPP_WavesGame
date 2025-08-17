@@ -12,6 +12,7 @@
 #include "Enemies/Enemy.h"
 #include "Projectiles/PlayerProjectile.h"
 #include "Utils/SpriteLoader.h"
+#include "Utils/CollisionShape.h"
 
 using namespace sf;
 using namespace std;
@@ -46,6 +47,7 @@ class Character {
         float getSize() const;
         CharacterData getData() const;
         void upgradeStats(const Effect& effect);
+        CollisionShape getCollisionBox() const;
 
     private:
         string _name;
@@ -56,6 +58,7 @@ class Character {
         float _damageCooldown;
         float _shootCooldown;
         float _facingAngle;
+        CollisionShape _collisionBox;
 
         Texture _texture;
         Sprite _sprite;

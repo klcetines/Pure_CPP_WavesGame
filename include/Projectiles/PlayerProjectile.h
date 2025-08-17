@@ -2,6 +2,7 @@
 #define PLAYER_PROJECTILE_H
 
 #include "Projectiles/Projectile.h"
+#include "Utils/CollisionShape.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
@@ -18,6 +19,7 @@ public:
     float getDamage() const;
     float getSize() const override;
     void destroy();
+    CollisionShape getCollisionBox() const;
     
 private:
     CircleShape shape;
@@ -26,6 +28,7 @@ private:
     bool _alive;
     float _lifetime = 0.f;
     float _damage;
+    CollisionShape _collisionBox;
 };
 
 #endif
