@@ -97,12 +97,12 @@ void GameSession::handleProjectileEnemyCollisions() {
     auto& projectiles = projectilesManager->getProjectiles();
     auto& enemies = enemiesManager->getEnemies();
     for (auto& enemy : enemies) {
+        const CollisionShape& enemyBox = enemy->getCollisionBox();
         for (auto& proj : projectiles) {
 
             const CollisionShape& projBox = proj->getCollisionBox();
-            const CollisionShape& enemyBox = enemy->getCollisionBox();
 
-            if (projBox.intersects(enemyBox)) {
+            if (enemyBox.intersects(projBox)) {
                 enemy->getData().Life->takeDamage(proj->getDamage());
                 proj->destroy();
             }
@@ -205,48 +205,59 @@ void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float 
     window.draw(point);
 }
 
-void GameSession::drawDebugCapsule(RenderWindow& window, float x, float y, float width, float height, float offsetX, float offsetY, float rotationDeg) {
-    RectangleShape rect(sf::Vector2f(width, height));
-    rect.setOrigin(width / 2, height / 2);
-    rect.setPosition(x + offsetX, y + offsetY);
-    rect.setFillColor(sf::Color::Transparent);
-    rect.setOutlineColor(sf::Color::Blue);
-    rect.setOutlineThickness(2.f);
-    rect.setRotation(rotationDeg);
-    window.draw(rect);
+void GameSession::drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector2f pointB, float radius, float offsetX, float offsetY){
 
-    float radius = width / 2;
-    float angleRad = rotationDeg * 3.14159265f / 180.0f;
+    CircleShape bottom(radius);
+    bottom.setOrigin(radius, radius);
+    bottom.setPosition(pointA.x + offsetX, pointA.y + offsetY);
+    bottom.setFillColor(Color::Transparent);
+    bottom.setOutlineColor(Color::Blue);
+    bottom.setOutlineThickness(2.f);
+    window.draw(bottom);
 
-    // Calcula el desplazamiento de los extremos rotados
-    float dx = sin(angleRad) * (height / 2);
-    float dy = -cos(angleRad) * (height / 2);
-
-    // Top circle (superior)
     CircleShape top(radius);
     top.setOrigin(radius, radius);
-    top.setPosition(x + offsetX + dx, y + offsetY + dy);
-    top.setFillColor(sf::Color::Transparent);
-    top.setOutlineColor(sf::Color::Blue);
+    top.setPosition(pointB.x + offsetX, pointB.y + offsetY);
+    top.setFillColor(Color::Transparent);
+    top.setOutlineColor(Color::Blue);
     top.setOutlineThickness(2.f);
     window.draw(top);
 
-    // Bottom circle (inferior)
-    CircleShape bottom(radius);
-    bottom.setOrigin(radius, radius);
-    bottom.setPosition(x + offsetX - dx, y + offsetY - dy);
-    bottom.setFillColor(sf::Color::Transparent);
-    bottom.setOutlineColor(sf::Color::Blue);
-    bottom.setOutlineThickness(2.f);
-    window.draw(bottom);
+    Vector2f dir = pointB - pointA;
+    float length = sqrt(dir.x * dir.x + dir.y * dir.y);
+    float angleDeg = atan2(dir.y, dir.x) * 180.0f / 3.14159265f;
+
+    RectangleShape rect(Vector2f(length, radius * 2));
+    rect.setOrigin(0, radius);
+    rect.setPosition(pointA.x + offsetX, pointA.y + offsetY);
+    rect.setRotation(angleDeg);
+    rect.setFillColor(Color::Transparent);
+    rect.setOutlineColor(Color::Green);
+    rect.setOutlineThickness(2.f);
+    window.draw(rect);
+
+    Vertex line[] = {
+        Vertex(Vector2f(pointA.x + offsetX, pointA.y + offsetY), Color::Yellow),
+        Vertex(Vector2f(pointB.x + offsetX, pointB.y + offsetY), Color::Yellow)
+    };
+    window.draw(line, 2, sf::Lines);
 }
 
 void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX, float offsetY, EnemiesManager* enemiesManager, ProjectilesManager* projectilesManager, const shared_ptr<Character>& player) {
     drawDebugHitbox(window, screenSize.x / 2, screenSize.y / 2, player->getSize());
 
     for (const auto& enemy : enemiesManager->getEnemies()) {
-        auto epos = enemy->getPosition();
-        drawDebugCapsule(window, epos.first + offsetX, epos.second + offsetY, enemy->getWidth() * 0.65f, enemy->getHeight() * 0.45f, 0, 0, enemy->getRotation());    
+        auto ebox = enemy->getCollisionBox();
+        if (ebox.type == ShapeType::Circle) {
+            drawDebugHitbox(window, ebox.center.x + offsetX, ebox.center.y + offsetY, ebox.radius);
+        }
+        else if (ebox.type == ShapeType::Capsule) {
+            Vector2f pointA = ebox.center;
+            float angleRad = ebox.rotationDeg * 3.14159265f / 180.0f;
+            Vector2f axisDir(cos(angleRad), sin(angleRad));
+            Vector2f pointB = pointA + axisDir * ebox.height;
+            drawDebugCapsule(window, pointA, pointB, ebox.radius, offsetX, offsetY);        
+        }
     }
 
     for (const auto& proj : projectilesManager->getProjectiles()) {

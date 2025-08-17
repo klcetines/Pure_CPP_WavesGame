@@ -4,7 +4,7 @@
 CollisionShape::CollisionShape() : type(ShapeType::Circle), center(0,0), radius(0), height(0), rotationDeg(0) {}
 CollisionShape::CollisionShape(const sf::Vector2f& c, float r) : type(ShapeType::Circle), center(c), radius(r), height(0), rotationDeg(0) {}
 CollisionShape::CollisionShape(const sf::FloatRect& r) : type(ShapeType::Rectangle), rect(r), center(0,0), radius(0), height(0), rotationDeg(0) {}
-CollisionShape::CollisionShape(const sf::Vector2f& c, float w, float h, float rot) : type(ShapeType::Capsule), center(c), height(h), rotationDeg(rot), radius(0) {}
+CollisionShape::CollisionShape(const sf::Vector2f& c, float rad, float h, float rot) : type(ShapeType::Capsule), center(c), height(h), rotationDeg(rot), radius(rad) {}
 
 bool CollisionShape::intersects(const CollisionShape& other) const {
     if (type == ShapeType::Circle) {
@@ -29,7 +29,7 @@ bool CollisionShape::circleCollides(const sf::Vector2f& centerA, float radiusA, 
     float dx = centerA.x - centerB.x;
     float dy = centerA.y - centerB.y;
 
-    float distSq = dx * dx + dy * dy;
+    float distSq = (dx * dx) + (dy * dy);
     float radSum = radiusA + radiusB;
 
     return distSq <= (radSum * radSum);
@@ -44,7 +44,6 @@ bool CollisionShape::capsuleIntersections(const CollisionShape& other) const {
     if (other.type != ShapeType::Circle) return capsuleCollides(center, radius, height, rotationDeg, other.center, other.radius);
     else if (other.type == ShapeType::Capsule) {
         return capsuleCollisionOnCapsule(other);
-
     }
     else if (other.type == ShapeType::Rectangle) {
         //TBD
@@ -58,9 +57,8 @@ bool CollisionShape::capsuleCollides(const sf::Vector2f& centerA, float radiusA,
     //Post: Returns true if the Capsule and Circle collide, false otherwise
 
     Vector2f closestAxisPoint = findClosestPointOnCapsuleAxis(centerA, radiusA, heightA, rotationDegA, centerB);
-    
-    if(circleCollides(closestAxisPoint, radiusA, centerB, radiusB)) return true;
-    else return false;
+
+    return circleCollides(closestAxisPoint, radiusA, centerB, radiusB);
 }
 
 Vector2f CollisionShape::findClosestPointOnCapsuleAxis(const Vector2f& centerA, float radius, float height, float rotationDeg, const Vector2f& point) const {
@@ -74,8 +72,8 @@ Vector2f CollisionShape::findClosestPointOnCapsuleAxis(const Vector2f& centerA, 
 
     axisDir /= axisLen;
 
-    Vector2f toB = point - centerA;
-    float t = toB.x * axisDir.x + toB.y * axisDir.y;
+    Vector2f toCircle = point - centerA;
+    float t = toCircle.x * axisDir.x + toCircle.y * axisDir.y;
 
     t = max(0.0f, min(height, t));
 
@@ -87,12 +85,10 @@ Vector2f CollisionShape::findClosestPointOnCapsuleAxis(const Vector2f& centerA, 
 Vector2f CollisionShape::rotatePoint(float x_A, float y_A, float height, float angleDeg) const {
     float angleRad = angleDeg * 3.14159265f / 180.0f;
 
-    float y_rel = y_A + height;
+    float dx = height * cos(angleRad);
+    float dy = height * sin(angleRad);
     
-    float x_out = x_A - (y_rel * sin(angleRad));
-    float y_out = y_A + (y_rel * cos(angleRad));
-
-    return Vector2f(x_out, y_out);
+    return Vector2f(x_A + dx, y_A + dy);
 }
 
 bool CollisionShape::capsuleCollisionOnCapsule(const CollisionShape& other) const {

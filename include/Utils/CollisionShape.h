@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
+#include <iostream>
 using namespace sf;
 using namespace std;
 
@@ -15,7 +15,7 @@ public:
     FloatRect rect;
     float height, rotationDeg;
 
-    CollisionShape(); // Default
+    CollisionShape();
     CollisionShape(const Vector2f& center, float radius); 
     CollisionShape(const FloatRect& rect);
     CollisionShape(const Vector2f& center, float radius, float height, float rotationDeg);
@@ -28,6 +28,11 @@ public:
     // Shape vs Shape
     bool intersects(const CollisionShape& other) const;
 
+    void drawDebug() const;
+
+    Vector2f rotatePoint(float x_A, float y_A, float height, float angleDeg) const;    
+
+
 private:
     bool circleCollides(const Vector2f& centerA, float radiusA, const Vector2f& centerB, float radiusB) const;
     bool circleIntersections(const CollisionShape& other) const;
@@ -38,5 +43,4 @@ private:
     bool capsuleCollisionOnCapsule(const CollisionShape& other) const;
     Vector2f findOtherClosestPoint(Vector2f firstA, Vector2f lastA, Vector2f firstB, Vector2f lastB) const;
     Vector2f closestPointOnLineSegment(Vector2f A, Vector2f B, Vector2f point) const;
-    Vector2f rotatePoint(float x_A, float y_A, float height, float angleDeg) const;    
 };

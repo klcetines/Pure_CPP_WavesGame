@@ -8,7 +8,7 @@ EnemiesManager::EnemiesManager(shared_ptr<GameStatistics> stats)
 void EnemiesManager::update(float dt, const pair<float, float>& playerPos) {
 
     spawnTimer += dt;
-    if (spawnTimer >= spawnInterval and enemies.size() < 25) {
+    if (spawnTimer >= spawnInterval and enemies.size() < 1) {
         spawnEnemyNear(playerPos);
         spawnTimer = 0;
     }

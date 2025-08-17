@@ -19,9 +19,9 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed,
 
 void PlayerProjectile::update(float dt) {
     position += velocity * dt;
-    // Simple lifetime check (could be improved)
     _lifetime += dt;
-    if (_lifetime > 2.0f) _alive = false;
+    if (_lifetime > 1.0f) _alive = false;
+    _collisionBox.center = position;
 }
 
 void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) {

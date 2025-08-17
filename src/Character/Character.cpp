@@ -39,6 +39,7 @@ void Character::update(float dt) {
 void Character::move(float dx, float dy) {
     _position.x += dx;
     _position.y += dy;
+    _collisionBox.center = Vector2f(_position.x, _position.y);
 }
 
 void Character::draw(RenderWindow& window, float offsetX, float offsetY) {
