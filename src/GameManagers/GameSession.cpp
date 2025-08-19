@@ -88,8 +88,8 @@ void GameSession::updateProjectiles(float dt) {
 
 void GameSession::handlePlayerEnemyCollisions() {
     auto posPlayer = player->getPosition();
-    float offsetX = screenSize.x / 2 - posPlayer.first;
-    float offsetY = screenSize.y / 2 - posPlayer.second;
+    float offsetX = screenSize.x / 2 - posPlayer.x;
+    float offsetY = screenSize.y / 2 - posPlayer.y;
     player->handleCollisions(enemiesManager->getEnemies(), offsetX, offsetY);
 }
 
@@ -123,7 +123,7 @@ void GameSession::updatePlayerLifeText() {
 
 void GameSession::updatePlayerPositionText() {
     auto posPlayer = player->getPosition();
-    positionText.setString("Pos: (" + to_string((int)posPlayer.first) + ", " + to_string((int)posPlayer.second) + ")");
+    positionText.setString("Pos: (" + to_string((int)posPlayer.x) + ", " + to_string((int)posPlayer.y) + ")");
     FloatRect textRect = positionText.getLocalBounds();
     positionText.setPosition(screenSize.x - textRect.width - 10, screenSize.y - textRect.height - 10);
 }
@@ -139,13 +139,13 @@ void GameSession::render(RenderWindow& window) {
 
 void GameSession::renderBackground(RenderWindow& window) {
     auto posPlayer = player->getPosition();
-    background.drawTiled(window, posPlayer.first, posPlayer.second, screenSize.x, screenSize.y);
+    background.drawTiled(window, posPlayer.x, posPlayer.y, screenSize.x, screenSize.y);
 }
 
 void GameSession::renderEntities(RenderWindow& window) {
     auto posPlayer = player->getPosition();
-    float offsetX = screenSize.x / 2 - posPlayer.first;
-    float offsetY = screenSize.y / 2 - posPlayer.second;
+    float offsetX = screenSize.x / 2 - posPlayer.x;
+    float offsetY = screenSize.y / 2 - posPlayer.y;
     player->draw(window, offsetX, offsetY);
     enemiesManager->draw(window, offsetX, offsetY);
     projectilesManager->draw(window, offsetX, offsetY);
@@ -165,8 +165,8 @@ void GameSession::renderUI(RenderWindow& window) {
 void GameSession::renderDebug(RenderWindow& window) {
     debugHitboxesDisplay(
         window, *player, 
-        screenSize.x / 2 - player->getPosition().first, 
-        screenSize.y / 2 - player->getPosition().second, 
+        screenSize.x / 2 - player->getPosition().x, 
+        screenSize.y / 2 - player->getPosition().y, 
         enemiesManager.get(), 
         projectilesManager.get(), 
         player

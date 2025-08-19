@@ -29,7 +29,7 @@ class Enemy {
         string getName() const;
         float getSpeed() const;
         float getDamage() const;
-        pair<float, float> getPosition() const;
+        Vector2f getPosition() const;
         float getWidth() const;
         float getHeight() const;
         EnemyData getData() const;

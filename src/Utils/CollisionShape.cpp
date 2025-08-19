@@ -21,8 +21,14 @@ bool CollisionShape::intersects(const CollisionShape& other) const {
 }
 
 bool CollisionShape::circleIntersections(const CollisionShape& other) const {
-    if (type != ShapeType::Circle || other.type != ShapeType::Circle) return false;
-    return circleCollides(center, radius, other.center, other.radius);
+    if (other.type != ShapeType::Circle) return circleCollides(center, radius, other.center, other.radius);
+    else if (other.type == ShapeType::Capsule) {
+        return capsuleCollides(other.center, other.radius, other.height, other.rotationDeg, center, radius);
+    }
+    else if (other.type == ShapeType::Rectangle) {
+        //TBD
+    }
+    return false;
 }
 
 bool CollisionShape::circleCollides(const sf::Vector2f& centerA, float radiusA, const sf::Vector2f& centerB, float radiusB) const{

@@ -13,11 +13,11 @@ using namespace std;
 class EnemiesManager {
     public:
         EnemiesManager(shared_ptr<GameStatistics> stats);
-        void update(float dt, const pair<float, float>& playerPos);
+        void update(float dt, const Vector2f& playerPos);
         void draw(RenderWindow& window, float offsetX, float offsetY);
-        void spawnEnemyNear(const pair<float, float>& playerPos);
+        void spawnEnemyNear(const Vector2f& playerPos);
         const vector<shared_ptr<Enemy>>& getEnemies() const;
-        shared_ptr<Enemy> getClosestEnemy(const pair<float, float>& playerPos) const;
+        shared_ptr<Enemy> getClosestEnemy(const Vector2f& playerPos) const;
 
     private:
         shared_ptr<GameStatistics> stats;
@@ -25,7 +25,7 @@ class EnemiesManager {
         float spawnTimer;
         float spawnInterval;
 
-        pair<float, float> getRandomSpawnPosition(const pair<float, float>& playerPos, float radius);
+        pair<float, float> getRandomSpawnPosition(const Vector2f& playerPos, float radius);
 };
 
 #endif 

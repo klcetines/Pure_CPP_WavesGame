@@ -38,9 +38,9 @@ class Character {
         void update(float dt);
         void move(float dx, float dy);
         void draw(RenderWindow& window, float offsetX = 0, float offsetY = 0);
-        shared_ptr<vector<shared_ptr<PlayerProjectile>>> atack(const pair<float, float>& target);
+        shared_ptr<vector<shared_ptr<PlayerProjectile>>> atack(const Vector2f& target);
         string getName() const;
-        pair<float, float> getPosition() const;
+        Vector2f getPosition() const;
         void handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY);
         void handleDead();
         float getLife() const;
@@ -65,6 +65,7 @@ class Character {
         bool _useSprite = false;
         
         void updateCooldown(float dt);
+        void damageFeedback(const shared_ptr<Enemy> enemy);
 };
 
 #endif

@@ -29,7 +29,7 @@ Character::Character(const string& name, float x, float y)
     _data.ProjectileSpeed = 200.0f;
     _damageCooldown = 0.0f;
     _shootCooldown = 0.0f;
-    _collisionBox = CollisionShape(Vector2f(_position.x, _position.y), _size);
+    _collisionBox = CollisionShape(Vector2f(_position.x, _position.y), _size*2);
 }
 
 void Character::update(float dt) {
@@ -57,7 +57,7 @@ void Character::draw(RenderWindow& window, float offsetX, float offsetY) {
     }
 }
 
-shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::atack(const pair<float, float>& target) {
+shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::atack(const Vector2f& target) {
     vector<shared_ptr<PlayerProjectile>> projectiles;
     if (_shootCooldown > 0) {
         return make_shared<vector<shared_ptr<PlayerProjectile>>>(projectiles);
@@ -65,7 +65,7 @@ shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::atack(const pair<flo
     _shootCooldown = _data.AttackSpeed;
 
     Vector2f origin(_position.x, _position.y);
-    Vector2f to(target.first, target.second);
+    Vector2f to(target.x, target.y);
 
     Vector2f dir = to - origin;
     float length = sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -88,17 +88,16 @@ string Character::getName() const {
     return _name;
 }
 
-pair<float,float> Character::getPosition() const {
+Vector2f Character::getPosition() const {
     return {_position.x, _position.y};
 }
 
 void Character::handleCollisions(const vector<shared_ptr<Enemy>>& Enemies, float offsetX, float offsetY) {
     for (const auto& Enemy : Enemies) {
         if (_collisionBox.intersects(Enemy->getCollisionBox()) && _damageCooldown <= 0) {
-            
-            //TBD: Move Player in the opposite direction of the enemy
-            
             _data.Life->takeDamage(Enemy->getDamage());
+            damageFeedback(Enemy);
+
             if (_data.Life->getLife() <= 0) {
                 handleDead();
             }
@@ -157,3 +156,14 @@ void Character::upgradeStats(const Effect& effect) {
 CollisionShape Character::getCollisionBox() const {
     return _collisionBox;
 }
+
+void Character::damageFeedback(const shared_ptr<Enemy> enemy) {
+    Vector2f ePos = enemy->getPosition();
+    Vector2f direction = Vector2f(ePos.x - _position.x, ePos.y - _position.y);
+    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length != 0) {
+        direction /= length;
+        move(-direction.x * _data.Speed, -direction.y * _data.Speed);
+    }
+}
+

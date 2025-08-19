@@ -65,7 +65,7 @@ float Enemy::getSpeed() const {
     return _data.Speed;
 }
 
-pair<float, float> Enemy::getPosition() const {
+Vector2f Enemy::getPosition() const {
     return {_position.x, _position.y};
 }
 

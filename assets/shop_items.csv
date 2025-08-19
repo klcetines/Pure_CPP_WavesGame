@@ -1,19 +1,19 @@
 Health Upgrade,10,Increases your health by 50.,health:50
 Damage Upgrade,15,Increases your damage by 10.,damage:10
-Speed Upgrade,10,Increases your speed by 2.,speed:2
-Bullet Upgrade,25,Increases the number of bullets fired per shot.,bullets:1
+Speed Upgrade,10,Increases your speed by 2.,speed:0.25
+Bullet Upgrade,25,Shoots more bullets per shot. Pew pew!,bullets:1
 Health Upgrade,50,Increases your health by 25.,health:25
-Damage Upgrade,30,Increases your damage by 20.,damage:20
-Speed Upgrade,20,Increases your speed by 5.,speed:5
-Bullet Upgrade,50,Increases the number of bullets fired per shot.,bullets:1
-Guantes Bocadilleros,100,Incerases your damage and shoot speed.,damage:10;attack_speed:0.10
-Cuchillo Salamero, 50, Increases your damage but you go slower.,damage:5;speed:-5
-Cuchillo de Mantequilla, 75, Decreases your damage but increases your atacking speed.,damage:-5;attack_speed:0.05
-Planxa, 150, Increases your life and damage.,health:20;damage:5
-Tomatino, 200, He's shoting by your side.,bullets:1
-Seeds Bread, 100, Incerases your life and damage but you shot slower.,health:10;damage:5;attack_speed:-0.05
-Wet Bread, 100, Decreases your life and speed.,health:-15;speed:-5
-Dry Bread, 100, Decreases your life but increases significantly your damage.,health:-10;damage:15;
-Sandwich Bread, 100, Increases your life and speed but decreases your damage.,health:10;speed:5;damage:-5
-Baguette Bread, 100, Increases your life.,health:10
-Cracker Bread, 100, Increases your speed and attack_speed but decreases your life.,speed:5;attack_speed:0.05;health:-10
+Damage Upgrade,30,Increases your damage by 20. Ouch!,damage:20
+Speed Upgrade,20,You run like the wind! +5 speed.,speed:0.75
+Bullet Upgrade,50,Even more bullets per shot. It's a bullet party!,bullets:1
+Bocadillo Gloves,100,Punch harder and shoot faster. Bread power!,damage:10;attack_speed:0.10
+Salami Knife,50,You hit harder but move slower. Heavy meat!,damage:5;speed:-0.75
+Butter Knife,75,Less damage but you attack faster. Slippery!,damage:-5;attack_speed:0.05
+Planxa,150,More life and more damage. Iron bread!,health:20;damage:5
+Tomatino,200,Tomato buddy shoots by your side. Splat!,bullets:1
+Seed Bread,100,More life and damage but you shoot slower. Crunchy but lazy!,health:10;damage:5;attack_speed:-0.05
+Wet Bread,100,Less life and speed. Soggy and sad!,health:-15;speed:-0.75
+Dry Bread,100,Less life but way more damage. Hardcore!,health:-10;damage:15
+Sandwich Bread,100,More life and speed but less damage. Balanced diet!,health:10;speed:0.75;damage:-5
+Baguette Bread,100,More life. Classic French style!,health:10
+Cracker Bread,100,More speed and attack speed but less life. Fast and fragile!,speed:0.75;attack_speed:0.05;health:-10
