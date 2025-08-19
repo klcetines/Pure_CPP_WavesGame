@@ -32,7 +32,7 @@ void GameSession::update(float dt, RenderWindow& window) {
 }
 
 void GameSession::processPlayerInput(RenderWindow& window) {
-    float speed = player->getData().Speed;
+    float speed = player->getStats().getSpeed();
     if (Keyboard::isKeyPressed(Keyboard::W)) player->move(0, -speed);
     if (Keyboard::isKeyPressed(Keyboard::S)) player->move(0, speed);
     if (Keyboard::isKeyPressed(Keyboard::A)) player->move(-speed, 0);
@@ -67,7 +67,7 @@ void GameSession::updatePlayer(float dt) {
 void GameSession::atackNearestEnemy() {
     auto closest = enemiesManager->getClosestEnemy(player->getPosition());
     if (closest) {
-        auto proj = player->atack(closest->getPosition());
+        auto proj = player->attack(closest->getPosition());
         if (proj && !proj->empty()) {
             for (const auto& p : *proj) {
                 projectilesManager->add(p);
@@ -185,7 +185,7 @@ void GameSession::openShopMenu(RenderWindow& window) {
 
 void GameSession::applyUpgrade(const Effect& effect) {
     if (player) {
-        player->upgradeStats(effect);
+        player->getStats().applyEffect(effect);
     }
 }
 
