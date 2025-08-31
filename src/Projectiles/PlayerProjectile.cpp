@@ -2,7 +2,7 @@
 #include <cmath>
 #include <cstdlib>
 
-PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage): position(start), _alive(true), _damage(damage) {
+PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage, float range): position(start), _alive(true), _damage(damage), _maxRange(range) {
     shape.setRadius(6);
     shape.setFillColor(Color::Black);
     shape.setOrigin(6, 6);
@@ -18,10 +18,17 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed,
 }
 
 void PlayerProjectile::update(float dt) {
-    position += velocity * dt;
+    Vector2f movement = velocity * dt;
+    
     _lifetime += dt;
-    if (_lifetime > 1.0f) _alive = false;
-    _collisionBox.center = position;
+
+    updatePosition(movement);
+    updateDistanceTraveled(movement);
+    updateCollisionBox();
+
+    if (_traveledDistance >= _maxRange || _lifetime > 5.0f) {
+        _alive = false;
+    }
 }
 
 void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) {
@@ -50,4 +57,16 @@ void PlayerProjectile::destroy() {
 }
 CollisionShape PlayerProjectile::getCollisionBox() const {
     return _collisionBox;
+}
+
+void PlayerProjectile::updateDistanceTraveled(const Vector2f& movement) {
+    _traveledDistance += sqrt(movement.x * movement.x + movement.y * movement.y);
+}
+
+void PlayerProjectile::updatePosition(const Vector2f& movement) {
+    position += movement;
+}
+
+void PlayerProjectile::updateCollisionBox() {
+    _collisionBox.center = position;
 }

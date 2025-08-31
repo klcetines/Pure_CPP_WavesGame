@@ -190,11 +190,11 @@ void GameSession::applyUpgrade(const Effect& effect) {
 }
 
 void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX, float offsetY) {
-    CircleShape hitbox(radius);
+    CircleShape hitbox(radius/2);
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Blue);
     hitbox.setOutlineThickness(2.f);
-    hitbox.setOrigin(radius, radius);
+    hitbox.setOrigin(radius/2, radius/2);
     hitbox.setPosition(x + offsetX, y + offsetY);
     window.draw(hitbox);
 
@@ -244,7 +244,7 @@ void GameSession::drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector
 }
 
 void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX, float offsetY, EnemiesManager* enemiesManager, ProjectilesManager* projectilesManager, const shared_ptr<Character>& player) {
-    drawDebugHitbox(window, screenSize.x / 2, screenSize.y / 2, player->getSize());
+    drawDebugHitbox(window, screenSize.x / 2, screenSize.y / 2, player->getCollisionBox().radius);
 
     for (const auto& enemy : enemiesManager->getEnemies()) {
         auto ebox = enemy->getCollisionBox();

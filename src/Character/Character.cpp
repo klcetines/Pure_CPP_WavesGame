@@ -8,7 +8,7 @@ Character::Character(const string& name, float x, float y)
     , stats()
     , graphics(size)
     , combat(stats)
-    , collisionBox(Vector2f(x, y), size * 2)
+    , collisionBox(Vector2f(x, y), size * 1.6f)
 {
     graphics.loadSprite("assets/sprites/Characters/tomato_tv.png", x, y);
 }

@@ -11,7 +11,7 @@ using namespace std;
 
 class PlayerProjectile : public Projectile {
 public:
-    PlayerProjectile(Vector2f start, Vector2f target, float speed = 200.0f, float damage = 10.0f);
+    PlayerProjectile(Vector2f start, Vector2f target, float speed = 200.0f, float damage = 10.0f, float range = 300.0f);
     void update(float dt) override;
     void draw(RenderWindow& window, float offsetX, float offsetY);
     bool isAlive() const override;
@@ -28,7 +28,14 @@ private:
     bool _alive;
     float _lifetime = 0.f;
     float _damage;
+    float _maxRange;
+    float _traveledDistance = 0.f;
     CollisionShape _collisionBox;
+
+    void updateDistanceTraveled(const Vector2f& movement);
+    void updatePosition(const Vector2f& movement);
+    void updateCollisionBox();
+
 };
 
 #endif

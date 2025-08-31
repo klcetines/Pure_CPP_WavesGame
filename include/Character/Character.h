@@ -34,7 +34,7 @@ public:
 
 private:
     static constexpr float DEFAULT_SIZE = 40.0f;
-    static constexpr float DAMAGE_COOLDOWN = 0.5f;
+    static constexpr float DAMAGE_COOLDOWN = 1.0f;
     static constexpr float KNOCKBACK_DISTANCE = 25.0f;
 
     string name;

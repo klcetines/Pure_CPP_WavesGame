@@ -20,12 +20,10 @@ public:
     CollisionShape(const FloatRect& rect);
     CollisionShape(const Vector2f& center, float radius, float height, float rotationDeg);
 
-    // Static collision checks
     static bool circleContains(const Vector2f& center, float radius, const Vector2f& point);
     static bool rectContains(const FloatRect& rect, const Vector2f& point);
     static bool capsuleContains(const Vector2f& center, float width, float height, float rotationDeg, const Vector2f& point);
 
-    // Shape vs Shape
     bool intersects(const CollisionShape& other) const;
 
     void drawDebug() const;

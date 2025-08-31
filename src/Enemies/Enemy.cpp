@@ -20,7 +20,7 @@ Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _po
         _useSprite = false;
     }
 
-    _collisionBox = CollisionShape(Vector2f(x, y), _size.x/2, _size.y/2, 0.0f);
+    _collisionBox = CollisionShape(Vector2f(x, y), _size.x/2.5, _size.y/2.5, 0.0f);
     _data.Speed = 2.0f;
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
@@ -44,7 +44,6 @@ void Enemy::move(float dx, float dy) {
 
 void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
     if (_useSprite) {
-        // Ángulo según la dirección de movimiento
         _facingAngle = atan2(_lastMoveDir.y, _lastMoveDir.x) * 180.0f / 3.14159265f - 90.0f;
 
         _sprite.setPosition(_position.x + offsetX, _position.y + offsetY);

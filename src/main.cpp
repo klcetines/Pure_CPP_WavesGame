@@ -97,7 +97,7 @@ void showGameOverMenu(RenderWindow& window, Font& font, GameState& gameState) {
 }
 
 int main() {
-    RenderWindow window(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "WaveControl 0.0.0");
+    RenderWindow window(VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Veggievengeance 0.0.0");
     window.setFramerateLimit(60);
 
     Font font = loadFont("assets/fonts/circle.otf");
