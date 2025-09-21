@@ -1,9 +1,18 @@
 CXX = g++
 CXXFLAGS = -Iinclude -IC:/msys64/mingw64/include
 LDFLAGS = -LC:/msys64/mingw64/lib -lsfml-graphics -lsfml-window -lsfml-system
-SRC = $(wildcard src/**/*.cpp) $(wildcard src/*.cpp)
-OUT = bin/game.exe
 
-all:
+SRCS = $(wildcard src/*.cpp) $(wildcard src/*/*.cpp) $(wildcard src/*/*/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
+
+bin/game.exe: $(OBJS)
 	mkdir -p bin
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) bin/game.exe
+
+.PHONY: clean

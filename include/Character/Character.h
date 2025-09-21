@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CHARACTER_H
+#define CHARACTER_H
+
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <memory>
@@ -50,3 +52,5 @@ private:
     void handleDamage(shared_ptr<Enemy> enemy);
     void applyKnockback(shared_ptr<Enemy> enemy);
 };
+
+#endif // CHARACTER_H

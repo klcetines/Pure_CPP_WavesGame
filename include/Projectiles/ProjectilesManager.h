@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Projectiles/Projectile.h"
+#include "Enemies/Enemy.h"
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
@@ -15,7 +16,7 @@ public:
     
     void add(shared_ptr<Projectile> proj);
 
-    void update(float dt);
+    void update(float dt, shared_ptr<Enemy> closestEnemy = nullptr);
 
     void draw(RenderWindow& window, float offsetX, float offsetY);
 

@@ -24,7 +24,8 @@ CharacterCombat::createAttack(const Vector2f& origin, const Vector2f& target) {
                 spawnPos, 
                 target, 
                 stats.getProjectileSpeed(),
-                stats.getDamage()
+                stats.getDamage(),
+                stats.getProjectileEffects()
             )
         );
     }

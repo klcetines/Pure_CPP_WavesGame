@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COLLISION_SHAPE_H
+#define COLLISION_SHAPE_H
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -42,3 +43,5 @@ private:
     Vector2f findOtherClosestPoint(Vector2f firstA, Vector2f lastA, Vector2f firstB, Vector2f lastB) const;
     Vector2f closestPointOnLineSegment(Vector2f A, Vector2f B, Vector2f point) const;
 };
+
+#endif // COLLISION_SHAPE_H

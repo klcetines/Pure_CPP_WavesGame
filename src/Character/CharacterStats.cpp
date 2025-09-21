@@ -7,7 +7,9 @@ CharacterStats::CharacterStats()
     , _bulletsNumber(1)
     , _attackSpeed(1.0f)
     , _projectileSpeed(200.0f)
-{}
+{
+    _projectileEffects = new ProjectileEffectsList();
+}
 
 CharacterStats::~CharacterStats() {
     delete _life;
@@ -32,6 +34,16 @@ void CharacterStats::applyEffect(const Effect& effect) {
     else if (type == "bullets") {
         _bulletsNumber = max(1, _bulletsNumber + static_cast<int>(value));
     }
+    else if (type == "projectile_speed") {
+        _projectileSpeed = max(50.0f, _projectileSpeed + value);
+    }
+    else if (type == "projectile") {
+        int effects[9] = {0,0,0,0,0,0,0,0,0};
+
+        effects[(int)value] = 1;
+        ProjectileEffect* newEffect = new ProjectileEffect(effects);
+        _projectileEffects->pushBack(newEffect);
+    }
 }
 Life& CharacterStats::getLife() {
     return *_life;
@@ -43,3 +55,4 @@ float CharacterStats::getDamage() const { return _damage; }
 int CharacterStats::getBulletsNumber() const { return _bulletsNumber; }
 float CharacterStats::getAttackSpeed() const { return _attackSpeed; }
 float CharacterStats::getProjectileSpeed() const { return _projectileSpeed; }
+ProjectileEffectsList* CharacterStats::getProjectileEffects() const { return _projectileEffects; }

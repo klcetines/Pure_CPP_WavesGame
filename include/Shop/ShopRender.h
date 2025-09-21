@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SHOP_RENDER_H
+#define SHOP_RENDER_H
+
 #include "Shop/Shop.h"
 
 namespace ShopRender {
@@ -20,6 +22,6 @@ namespace ShopRender {
 
 
     static float currentOffset = 0.f;
-
-
 }
+
+#endif // SHOP_RENDER_H

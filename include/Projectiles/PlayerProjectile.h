@@ -2,7 +2,9 @@
 #define PLAYER_PROJECTILE_H
 
 #include "Projectiles/Projectile.h"
+#include "Projectiles/ProjectileEffectsList.h"
 #include "Utils/CollisionShape.h"
+#include "Enemies/Enemy.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
@@ -11,8 +13,9 @@ using namespace std;
 
 class PlayerProjectile : public Projectile {
 public:
-    PlayerProjectile(Vector2f start, Vector2f target, float speed = 200.0f, float damage = 10.0f, float range = 300.0f);
-    void update(float dt) override;
+    PlayerProjectile(Vector2f start, Vector2f target, float speed = 200.0f, float damage = 10.0f, ProjectileEffectsList* effects = nullptr, float range = 300.0f);
+    void update (float dt) override;
+    void update(float dt, shared_ptr<Enemy> closest_enemy);
     void draw(RenderWindow& window, float offsetX, float offsetY);
     bool isAlive() const override;
     Vector2f getPosition() const override;
@@ -31,10 +34,13 @@ private:
     float _maxRange;
     float _traveledDistance = 0.f;
     CollisionShape _collisionBox;
+    ProjectileEffectsList* _effects;
 
     void updateDistanceTraveled(const Vector2f& movement);
     void updatePosition(const Vector2f& movement);
     void updateCollisionBox();
+    void updateProjectileEffects();
+    void updateVelocityTowardsTarget(const Vector2f& targetDirection);
 
 };
 

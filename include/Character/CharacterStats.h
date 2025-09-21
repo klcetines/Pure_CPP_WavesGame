@@ -1,6 +1,12 @@
-#pragma once
+#ifndef CHARACTER_STATS_H
+#define CHARACTER_STATS_H
+
 #include "Utils/Life.h"
 #include "Utils/Effect.h"
+#include "Projectiles/ProjectileEffectsList.h"
+#include <iostream>
+
+using namespace std;
 
 class CharacterStats {
 public:
@@ -15,6 +21,7 @@ public:
     int getBulletsNumber() const;
     float getAttackSpeed() const;
     float getProjectileSpeed() const;
+    ProjectileEffectsList* getProjectileEffects() const;
 
 private:
     Life* _life;
@@ -23,4 +30,7 @@ private:
     int _bulletsNumber;
     float _attackSpeed;
     float _projectileSpeed;
+    ProjectileEffectsList* _projectileEffects;
 };
+
+#endif // CHARACTER_STATS_H

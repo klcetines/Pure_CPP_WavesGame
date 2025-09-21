@@ -17,3 +17,4 @@ Dry Bread,100,Less life but way more damage. Hardcore!,health:-10;damage:15
 Sandwich Bread,100,More life and speed but less damage. Balanced diet!,health:10;speed:0.75;damage:-5
 Baguette Bread,100,More life. Classic French style!,health:10
 Cracker Bread,100,More speed and attack speed but less life. Fast and fragile!,speed:0.75;attack_speed:0.05;health:-10
+Albert Prince,500,Now your projectiles pierce among enemies.,projectile:0

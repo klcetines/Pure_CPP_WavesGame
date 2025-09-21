@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SHOP_H
+#define SHOP_H
+
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
@@ -57,3 +59,5 @@ private:
     void restockShowcaseSingleItem(int index);
     void applySelectedItemEffects();
 };
+
+#endif // SHOP_H

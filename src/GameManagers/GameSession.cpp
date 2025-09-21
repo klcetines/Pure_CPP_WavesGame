@@ -83,7 +83,7 @@ void GameSession::updateEnemies(float dt) {
 }
 
 void GameSession::updateProjectiles(float dt) {
-    projectilesManager->update(dt);
+    projectilesManager->update(dt, enemiesManager->getClosestEnemy(player->getPosition()));
 }
 
 void GameSession::handlePlayerEnemyCollisions() {
