@@ -26,8 +26,7 @@ sudo apt update
 sudo apt install g++ cmake libsfml-dev git
 ```
 🔹 Clone and Compile
-Bash
-
+```bash
 git clone [https://github.com/klcetines/Pure_CPP_WavesGame](https://github.com/klcetines/Pure_CPP_WavesGame)
 cd Pure_CPP_WavesGame
 
@@ -36,17 +35,17 @@ cmake .. -G "MinGW Makefiles"   # On Windows
 cmake ..                        # On Linux
 mingw32-make                    # Windows
 make                            # Linux
-
+```
 🔹 Run the Game
 ⚠️ Important: The game must be executed from the root directory of the project so that it can find the assets/ folder.
 
-Bash
-
+```bash
 cd ..
 ./build/Pure_CPP_WavesGame.exe    # Windows (MSYS2)
-# or
+```
+```bash
 ./build/Pure_CPP_WavesGame        # Linux
-
+```
 📂 Project Structure
 Pure_CPP_WavesGame/
 ├── assets/         # Images, fonts, sounds
