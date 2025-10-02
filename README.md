@@ -19,14 +19,12 @@ It includes a system for characters, enemies, projectiles, and an in-game shop.
 On **Windows (MSYS2)**:
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-sfml git
-
+```
 On Linux (Debian/Ubuntu):
-
-Bash
-
+```bash
 sudo apt update
 sudo apt install g++ cmake libsfml-dev git
-
+```
 🔹 Clone and Compile
 Bash
 
