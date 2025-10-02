@@ -18,7 +18,7 @@ const int SCREEN_HEIGHT = 700;
 
 Font loadFont(const string& fontPath) {
     Font font;
-    if (!font.loadFromFile(fontPath)) {
+    if (!font.openFromFile(fontPath)) {
         cerr << "No se pudo cargar la fuente desde: " << fontPath << endl;
         exit(1);
     }
@@ -27,8 +27,7 @@ Font loadFont(const string& fontPath) {
 
 Text instanciateText(const Font& font, const string& text, int size, Color color) 
 {
-    Text t;
-    t.setFont(font);
+    Text t(font);
     t.setString(text);
     t.setCharacterSize(size);
     t.setFillColor(color);
@@ -36,18 +35,26 @@ Text instanciateText(const Font& font, const string& text, int size, Color color
 }
 
 void processEvents(RenderWindow& window) {
-    Event event;
-    while (window.pollEvent(event))
-        if (event.type == Event::Closed)
-            window.close();
+    while (window.isOpen()){
+        while (const std::optional event = window.pollEvent()){
+            if (event->is<sf::Event::Closed>())
+            {
+                window.close();
+            }
+        }
+    }
 }
 
 void showMainMenu(RenderWindow& window, Font& font, GameState& gameState) {
-    Text title("TU JUEGO", font, 60);
+    Text title(font);
+    title.setString("VEGGIEVENGEANCE");
+    title.setCharacterSize(60);
     title.setFillColor(Color::White);
     title.setPosition(SCREEN_WIDTH/2 - title.getLocalBounds().width/2, 150);
 
-    Text start("Pulsa ENTER para jugar", font, 30);
+    Text start(font);
+    start.setString("Pulsa ENTER para empezar");
+    start.setCharacterSize(30);
     start.setFillColor(Color::Green);
     start.setPosition(SCREEN_WIDTH/2 - start.getLocalBounds().width/2, 300);
 
@@ -68,11 +75,15 @@ void showMainMenu(RenderWindow& window, Font& font, GameState& gameState) {
 }
 
 void showGameOverMenu(RenderWindow& window, Font& font, GameState& gameState) {
-    Text over("GAME OVER", font, 60);
+    Text over(font);
+    over.setString("GAME OVER");
+    over.setCharacterSize(60);
     over.setFillColor(Color::Red);
     over.setPosition(SCREEN_WIDTH/2 - over.getLocalBounds().width/2, 150);
 
-    Text retry("Pulsa R para reiniciar o ESC para salir", font, 30);
+    Text retry(font);
+    retry.setString("Pulsa R para reiniciar o ESC para salir");
+    retry.setCharacterSize(30);
     retry.setFillColor(Color::White);
     retry.setPosition(SCREEN_WIDTH/2 - retry.getLocalBounds().width/2, 300);
 

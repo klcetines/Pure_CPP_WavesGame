@@ -4,14 +4,17 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/msys64/mingw64/include"
+                "C:/msys64/mingw64/include",
+                "C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/14.2.0/include",
+                "${workspaceFolder}/SMFL/SFML-3.0.2/include",
+                "${workspaceFolder}/SMFL/SFML-3.0.2/lib"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
             "windowsSdkVersion": "10.0.19041.0",
             "cStandard": "c17",
             "cppStandard": "c++17",
