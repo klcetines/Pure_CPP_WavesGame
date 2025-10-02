@@ -26,8 +26,9 @@ sudo apt update
 sudo apt install g++ cmake libsfml-dev git
 ```
 🔹 Clone and Compile
-```bash
+
 git clone [https://github.com/klcetines/Pure_CPP_WavesGame](https://github.com/klcetines/Pure_CPP_WavesGame)
+```bash
 cd Pure_CPP_WavesGame
 
 mkdir build && cd build
