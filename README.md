@@ -47,14 +47,6 @@ cd ..
 ```bash
 ./build/Pure_CPP_WavesGame        # Linux
 ```
-📂 Project Structure
-Pure_CPP_WavesGame/
-├── assets/         # Images, fonts, sounds
-├── include/        # Headers
-├── src/            # Source code
-├── build/          # Compilation files
-├── CMakeLists.txt  # CMake configuration
-└── README.md
 
 ✨ Credits
 **Programming:** @klcetines
