@@ -50,7 +50,7 @@ cd ..
 
 ✨ Credits
 
-**Programming:** [@klcetines] (https://www.linkedin.com/in/bernatvafo/)
+**Programming:** [@klcetines](https://www.linkedin.com/in/bernatvafo/)
 
 **Art:** [Aymara Elorriaga](https://www.linkedin.com/in/aymara-elorriaga-criee-9b29022aa/)
 
