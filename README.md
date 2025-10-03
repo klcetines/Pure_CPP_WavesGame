@@ -37,8 +37,11 @@ cmake ..                        # On Linux
 mingw32-make                    # Windows
 make                            # Linux
 ```
+
 🔹 Run the Game
+
 ⚠️ Important: The game must be executed from the root directory of the project so that it can find the assets/ folder.
+
 
 ```bash
 cd ..
