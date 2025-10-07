@@ -29,7 +29,6 @@ void PlayerProjectile::update(float dt){
     updatePosition(movement);
     updateDistanceTraveled(movement);
     updateCollisionBox();
-    updateProjectileEffects();
 
     if (_traveledDistance >= _maxRange || _lifetime > 5.0f) {
         _alive = false;
@@ -49,7 +48,6 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closest_enemy) {
     updatePosition(movement);
     updateDistanceTraveled(movement);
     updateCollisionBox();
-    updateProjectileEffects();
 
     if (_traveledDistance >= _maxRange || _lifetime > 5.0f) {
         _alive = false;
@@ -86,6 +84,10 @@ CollisionShape PlayerProjectile::getCollisionBox() const {
 
 void PlayerProjectile::updateDistanceTraveled(const Vector2f& movement) {
     _traveledDistance += sqrt(movement.x * movement.x + movement.y * movement.y);
+    if(getCurrentEffectTrigger() == 'D' && (_traveledDistance > _maxRange/2)) {
+
+        _effects->_current = _effects->_current->next;
+    }
 }
 
 void PlayerProjectile::updatePosition(const Vector2f& movement) {
@@ -96,30 +98,24 @@ void PlayerProjectile::updateCollisionBox() {
     _collisionBox.center = position;
 }
 
-void PlayerProjectile::updateProjectileEffects() {
-    if (_effects == nullptr) return;
-
-    while (_effects->_current != nullptr) {
-        _effects->_current->effect->checkEffect("AUTOAIM");
-    }
-}
-
 void PlayerProjectile::updateVelocityTowardsTarget(const Vector2f& targetDirection) {
     float speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-    float rotationSpeed = 5.0f; // Adjust this value to control how fast the projectile turns
+    float rotationSpeed = 5.0f;
     
-    // Normalize current velocity
     Vector2f currentDir = velocity / speed;
     
-    // Lerp between current direction and target direction
     Vector2f newDir;
     newDir.x = currentDir.x + (targetDirection.x - currentDir.x) * rotationSpeed;
     newDir.y = currentDir.y + (targetDirection.y - currentDir.y) * rotationSpeed;
     
-    // Normalize new direction
     float len = sqrt(newDir.x * newDir.x + newDir.y * newDir.y);
     if (len != 0) {
         newDir /= len;
         velocity = newDir * speed;
     }
+}
+
+char PlayerProjectile::getCurrentEffectTrigger() const {
+    if (_effects == nullptr || _effects->_current == nullptr) return '\0';
+    return _effects->_current->effect->getTriggeredBy();
 }

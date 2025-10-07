@@ -103,8 +103,7 @@ void GameSession::handleProjectileEnemyCollisions() {
             const CollisionShape& projBox = proj->getCollisionBox();
 
             if (enemyBox.intersects(projBox)) {
-                enemy->getData().Life->takeDamage(proj->getDamage());
-                proj->destroy();
+                enemyCollidedByProjectile(enemy, proj);
             }
         }
     }
@@ -186,6 +185,17 @@ void GameSession::openShopMenu(RenderWindow& window) {
 void GameSession::applyUpgrade(const Effect& effect) {
     if (player) {
         player->getStats().applyEffect(effect);
+    }
+}
+
+void GameSession::enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile) {
+    if (enemy && projectile) {
+        if(projectile->getCurrentEffectTrigger() == ProjectileEffects::PIERCING){
+            enemy->getData().Life->takeDamage(projectile->getDamage());
+        } 
+        else {
+            projectile->destroy();
+        }
     }
 }
 

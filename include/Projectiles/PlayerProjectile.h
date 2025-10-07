@@ -41,6 +41,7 @@ private:
     void updateCollisionBox();
     void updateProjectileEffects();
     void updateVelocityTowardsTarget(const Vector2f& targetDirection);
+    char getCurrentEffectTrigger() const;
 
 };
 

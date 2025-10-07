@@ -38,10 +38,7 @@ void CharacterStats::applyEffect(const Effect& effect) {
         _projectileSpeed = max(50.0f, _projectileSpeed + value);
     }
     else if (type == "projectile") {
-        int effects[9] = {0,0,0,0,0,0,0,0,0};
-
-        effects[(int)value] = 1;
-        ProjectileEffect* newEffect = new ProjectileEffect(effects);
+        ProjectileEffect* newEffect = new ProjectileEffect((int)value);
         _projectileEffects->pushBack(newEffect);
     }
 }

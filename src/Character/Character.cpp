@@ -66,9 +66,26 @@ void Character::applyKnockback(shared_ptr<Enemy> enemy) {
     }
 }
 
-string Character::getName() const { return name; }
-Vector2f Character::getPosition() const { return position; }
-float Character::getLife() const { return stats.getLifeAmmount(); }
-CharacterStats& Character::getStats() { return stats; }
-CollisionShape Character::getCollisionBox() const { return collisionBox; }
-float Character::getSize() const { return size; }
+string Character::getName() const { 
+    return name; 
+}
+
+Vector2f Character::getPosition() const { 
+    return position; 
+}
+
+float Character::getLife() const { 
+    return stats.getLifeAmmount(); 
+}
+
+CharacterStats& Character::getStats() { 
+    return stats; 
+}
+
+CollisionShape Character::getCollisionBox() const { 
+    return collisionBox; 
+}
+
+float Character::getSize() const { 
+    return size; 
+}

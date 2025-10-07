@@ -6,16 +6,12 @@ ProjectileEffect::ProjectileEffect() {
     }
 }
 
-ProjectileEffect::ProjectileEffect(const int effects[9]){
+ProjectileEffect::ProjectileEffect(const int value){
     for(int i = 0; i < 9; i++) {
         this->effects[i] = false;
     }
     
-    for(int i = 0; i < 9; i++) {
-        if(effects[i] != 0) {
-            this->effects[i] = true;
-        }
-    }
+    effects[value] = true;
 }
 
 bool ProjectileEffect::checkEffect(string index){
@@ -48,3 +44,31 @@ bool ProjectileEffect::checkEffect(string index){
     }
     return false;
 }
+
+char ProjectileEffect::getTriggeredBy() const {
+    return triggeredBy;
+}
+
+void ProjectileEffect::setTriggeredByValue(const int value) {
+    switch (value) {
+        case ProjectileEffects::PIERCING:
+        case ProjectileEffects::BLEED:
+        case ProjectileEffects::POISON:
+        case ProjectileEffects::FIRE:
+        case ProjectileEffects::ICE:
+        case ProjectileEffects::EXPLOSIVE:
+            triggeredBy = 'I'; 
+            break;
+        case ProjectileEffects::AUTOAIM:
+        case ProjectileEffects::BARREL:
+            triggeredBy = 'A'; 
+            break;
+        case ProjectileEffects::DIVIDENT:
+            triggeredBy = 'D'; 
+            break;
+        default:
+            triggeredBy = 'A'; 
+            break;
+    }
+}
+

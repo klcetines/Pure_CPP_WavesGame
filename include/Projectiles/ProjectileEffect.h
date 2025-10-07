@@ -20,13 +20,15 @@ namespace ProjectileEffects {
 class ProjectileEffect{
     public:
         ProjectileEffect();
-        ProjectileEffect(const int effects[9]);
+        ProjectileEffect(const int effects);
         ~ProjectileEffect() = default;
         bool checkEffect(string index);
+        char getTriggeredBy() const;
 
     private:
         bool effects[9];
-        string triggeredBy;
+        char triggeredBy;
+        void setTriggeredByValue(const int value);
 };
 
 #endif // PROJECTILE_EFFECT_H

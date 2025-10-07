@@ -18,6 +18,7 @@ public:
     virtual float getSize() const = 0;
     virtual void destroy() = 0;
     virtual CollisionShape getCollisionBox() const = 0;
+    virtual char getCurrentEffectTrigger() const = 0;
 };
 
 #endif
