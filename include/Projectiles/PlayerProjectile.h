@@ -2,47 +2,52 @@
 #define PLAYER_PROJECTILE_H
 
 #include "Projectiles/Projectile.h"
-#include "Projectiles/ProjectileEffectsList.h"
 #include "Utils/CollisionShape.h"
 #include "Enemies/Enemy.h"
+#include "Effects/EffectsArrange.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-using namespace sf;
-using namespace std;
-
 class PlayerProjectile : public Projectile {
 public:
-    PlayerProjectile(Vector2f start, Vector2f target, float speed = 200.0f, float damage = 10.0f, ProjectileEffectsList* effects = nullptr, float range = 300.0f);
+    PlayerProjectile(sf::Vector2f start, sf::Vector2f target, float speed, float damage, const EffectsArrange& effects, float range = 300.0f);
+    
     void update (float dt) override;
     void update(float dt, shared_ptr<Enemy> closest_enemy);
-    void draw(RenderWindow& window, float offsetX, float offsetY);
+    
+    void addEffect(std::unique_ptr<IProjectileEffect> effect);
+
+    void draw(RenderWindow& window, float offsetX, float offsetY) override;
     bool isAlive() const override;
-    Vector2f getPosition() const override;
-    float getDamage() const;
+
+    void handleImpact(Enemy& enemy) override;
+
+    sf::Vector2f getPosition() const override;
+    float getDamage() const override;
     float getSize() const override;
-    void destroy();
-    CollisionShape getCollisionBox() const;
+    void destroy() override;
+    CollisionShape getCollisionBox() const override;
     
 private:
     CircleShape shape;
     Vector2f position;
+
     Vector2f velocity;
     bool _alive;
     float _lifetime = 0.f;
     float _damage;
     float _maxRange;
     float _traveledDistance = 0.f;
-    CollisionShape _collisionBox;
-    ProjectileEffectsList* _effects;
+    unique_ptr<EffectsArrange> _effects;
 
+    int currentEffectIndex = 0;
+
+    CollisionShape _collisionBox;
     void updateDistanceTraveled(const Vector2f& movement);
     void updatePosition(const Vector2f& movement);
     void updateCollisionBox();
     void updateProjectileEffects();
     void updateVelocityTowardsTarget(const Vector2f& targetDirection);
-    char getCurrentEffectTrigger() const;
-
 };
 
 #endif

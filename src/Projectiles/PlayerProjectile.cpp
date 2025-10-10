@@ -2,23 +2,27 @@
 #include <cmath>
 #include <cstdlib>
 
-PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage, ProjectileEffectsList* effects, float range)
+PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage, const EffectsArrange& effects, float range)
     : position(start), _alive(true), _damage(damage), _maxRange(range) {
 
     shape.setRadius(6);
     shape.setFillColor(Color::Black);
     shape.setOrigin(6, 6);
 
-    Vector2f dir = target - start;
-    float len = sqrt(dir.x * dir.x + dir.y * dir.y);
-    if (len != 0)
-        velocity = dir / len * speed;
+    Vector2f catets = target - start;
+    float hipotenusa = sqrt(catets.x * catets.x + catets.y * catets.y);
+    if (hipotenusa != 0)
+        velocity = catets / hipotenusa * speed;
     else
         velocity = {0, 0};
 
     _collisionBox = CollisionShape(start, 6, 6, 0.0f);
-    _effects = effects;
-    _effects->_current = _effects->getFirst();
+
+    _effects = effects.Clone(); 
+    
+    if (_effects && !_effects->itsEmpty()) {
+        _effects->OnFire(*this);
+    }
 }
 
 void PlayerProjectile::update(float dt){
@@ -36,10 +40,7 @@ void PlayerProjectile::update(float dt){
 }
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closest_enemy) {
-    if (_effects->_current && _effects->_current->effect->checkEffect("AUTOAIM") && closest_enemy) {
-        Vector2f targetDirection = closest_enemy ? closest_enemy->getPosition() - position : velocity;
-        updateVelocityTowardsTarget(targetDirection);
-    }
+    _effects->OnUpdate(*this, dt);
     
     Vector2f movement = velocity * dt;
     
@@ -58,6 +59,15 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
     shape.setPosition(position.x + offsetX, position.y + offsetY);
     window.draw(shape);
 }       
+
+void PlayerProjectile::handleImpact(Enemy& enemy) {
+    if (!_effects->itsEmpty()) {
+        _effects->OnImpact(*this, enemy);
+    } 
+    else {
+        destroy();
+    }
+}
 
 bool PlayerProjectile::isAlive() const {
     return _alive;
@@ -84,10 +94,7 @@ CollisionShape PlayerProjectile::getCollisionBox() const {
 
 void PlayerProjectile::updateDistanceTraveled(const Vector2f& movement) {
     _traveledDistance += sqrt(movement.x * movement.x + movement.y * movement.y);
-    if(getCurrentEffectTrigger() == 'D' && (_traveledDistance > _maxRange/2)) {
-
-        _effects->_current = _effects->_current->next;
-    }
+    _effects->OnDistanceTraveled(*this, _traveledDistance);
 }
 
 void PlayerProjectile::updatePosition(const Vector2f& movement) {
@@ -113,9 +120,4 @@ void PlayerProjectile::updateVelocityTowardsTarget(const Vector2f& targetDirecti
         newDir /= len;
         velocity = newDir * speed;
     }
-}
-
-char PlayerProjectile::getCurrentEffectTrigger() const {
-    if (_effects == nullptr || _effects->_current == nullptr) return '\0';
-    return _effects->_current->effect->getTriggeredBy();
 }

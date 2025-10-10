@@ -8,7 +8,8 @@ CharacterStats::CharacterStats()
     , _attackSpeed(1.0f)
     , _projectileSpeed(200.0f)
 {
-    _projectileEffects = new ProjectileEffectsList();
+    _projectileEffects = unique_ptr<EffectsArrange> (new EffectsArrange());
+    EffectFactory::Initialize();
 }
 
 CharacterStats::~CharacterStats() {
@@ -38,8 +39,13 @@ void CharacterStats::applyEffect(const Effect& effect) {
         _projectileSpeed = max(50.0f, _projectileSpeed + value);
     }
     else if (type == "projectile") {
-        ProjectileEffect* newEffect = new ProjectileEffect((int)value);
-        _projectileEffects->pushBack(newEffect);
+        unique_ptr<IProjectileEffect> newEffect = EffectFactory::Instance().Create(static_cast<int>(value));
+        if (newEffect) {
+            _projectileEffects->addEffect(std::move(newEffect));
+        } 
+        else {
+            std::cout << "FILE: CharacterStats.cpp \n METHOD: applyEffect \n Unknown projectile effect id '" << static_cast<int>(value) << "'" << std::endl << std::endl;
+        }
     }
 }
 Life& CharacterStats::getLife() {
@@ -52,4 +58,7 @@ float CharacterStats::getDamage() const { return _damage; }
 int CharacterStats::getBulletsNumber() const { return _bulletsNumber; }
 float CharacterStats::getAttackSpeed() const { return _attackSpeed; }
 float CharacterStats::getProjectileSpeed() const { return _projectileSpeed; }
-ProjectileEffectsList* CharacterStats::getProjectileEffects() const { return _projectileEffects; }
+
+const EffectsArrange& CharacterStats::getProjectileEffects() const {
+    return *_projectileEffects;
+}
