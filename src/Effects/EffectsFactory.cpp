@@ -7,6 +7,7 @@ EffectFactory& EffectFactory::Instance() {
 
 void EffectFactory::Initialize(){
     Instance().RegisterEffect(0, []() { return std::make_unique<PiercingEffect>(); });
+    Instance().RegisterEffect(1, []() { return std::make_unique<HomingEffect>(); });
 }
 
 void EffectFactory::RegisterEffect(const int id, CreatorFunc func) {

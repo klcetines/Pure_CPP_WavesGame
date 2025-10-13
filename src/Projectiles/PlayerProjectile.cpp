@@ -40,6 +40,15 @@ void PlayerProjectile::update(float dt){
 }
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closest_enemy) {
+    if (closest_enemy && _effects && (_effects->GetType() == EffectType::Homing)) {
+        Vector2f targetDirection = closest_enemy->getPosition() - position;
+        float length = sqrt(targetDirection.x * targetDirection.x + targetDirection.y * targetDirection.y);
+        
+        if (length != 0) {
+            targetDirection /= length;
+            updateVelocityTowardsTarget(targetDirection, dt);
+        }
+    }
     _effects->OnUpdate(*this, dt);
     
     Vector2f movement = velocity * dt;
@@ -62,7 +71,12 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
 
 void PlayerProjectile::handleImpact(Enemy& enemy) {
     if (!_effects->itsEmpty()) {
-        _effects->OnImpact(*this, enemy);
+        if(_effects->OnImpact(*this, enemy) == ProjectileAction::Continue) {
+            return;
+        }
+        else {
+            destroy();
+        }
     } 
     else {
         destroy();
@@ -105,16 +119,16 @@ void PlayerProjectile::updateCollisionBox() {
     _collisionBox.center = position;
 }
 
-void PlayerProjectile::updateVelocityTowardsTarget(const Vector2f& targetDirection) {
+void PlayerProjectile::updateVelocityTowardsTarget(const Vector2f& targetDirection, float deltaTime) {
     float speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-    float rotationSpeed = 5.0f;
-    
+    float homingFactor = 5.0f;
+
     Vector2f currentDir = velocity / speed;
-    
+
     Vector2f newDir;
-    newDir.x = currentDir.x + (targetDirection.x - currentDir.x) * rotationSpeed;
-    newDir.y = currentDir.y + (targetDirection.y - currentDir.y) * rotationSpeed;
-    
+    newDir.x = currentDir.x + (targetDirection.x - currentDir.x) * homingFactor * deltaTime;
+    newDir.y = currentDir.y + (targetDirection.y - currentDir.y) * homingFactor * deltaTime;
+
     float len = sqrt(newDir.x * newDir.x + newDir.y * newDir.y);
     if (len != 0) {
         newDir /= len;

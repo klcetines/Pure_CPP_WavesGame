@@ -7,6 +7,7 @@
 #include <memory>
 #include "Effects/IProjectileEffect.h"
 #include "Effects/PiercingEffect.h"
+#include "Effects/HomingEffect.h"
 
 class EffectFactory {
 public:

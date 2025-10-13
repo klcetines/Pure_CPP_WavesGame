@@ -19,10 +19,11 @@ class EffectsArrange {
         bool itsEmpty() const;
 
         std::unique_ptr<EffectsArrange> Clone() const;
+        EffectType GetType() const;
 
         void OnFire(Projectile& projectile);
         void OnUpdate(Projectile& projectile, float deltaTime);
-        void OnImpact(Projectile& projectile, Enemy& enemy);
+        ProjectileAction OnImpact(Projectile& projectile, Enemy& enemy);
         void OnDistanceTraveled(Projectile& projectile, float distance);
         void OnExpire(Projectile& projectile);
 

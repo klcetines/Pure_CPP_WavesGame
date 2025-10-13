@@ -30,6 +30,13 @@ std::unique_ptr<EffectsArrange> EffectsArrange::Clone() const {
     return clone;
 }
 
+EffectType EffectsArrange::GetType() const {
+    if (!_effects.empty()) {
+        return _effects[currentEffectIndex]->GetType();
+    }
+    else return EffectType::Generic; 
+}
+
 void EffectsArrange::OnFire(Projectile& projectile){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
         _effects[currentEffectIndex]->OnFire(projectile);
@@ -42,10 +49,11 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
     }
 }
 
-void EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
+ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        _effects[currentEffectIndex]->OnImpact(projectile, enemy);
+        return _effects[currentEffectIndex]->OnImpact(enemy);
     }
+    return ProjectileAction::Destroy;
 }
 
 void EffectsArrange::OnDistanceTraveled(Projectile& projectile, float distance){

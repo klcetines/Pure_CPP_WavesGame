@@ -7,8 +7,6 @@
 class HomingEffect : public IProjectileEffect {
     public:
         EffectType GetType() const override;
-        void OnUpdate(Projectile& projectile, float deltaTime) override;
-        void OnImpact(Projectile& projectile, Enemy& enemy) override;
         std::unique_ptr<IProjectileEffect> Clone() const override;
 };
 

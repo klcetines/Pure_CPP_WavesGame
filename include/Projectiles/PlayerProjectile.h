@@ -47,7 +47,7 @@ private:
     void updatePosition(const Vector2f& movement);
     void updateCollisionBox();
     void updateProjectileEffects();
-    void updateVelocityTowardsTarget(const Vector2f& targetDirection);
+    void updateVelocityTowardsTarget(const Vector2f& targetDirection, float deltaTime);
 };
 
 #endif

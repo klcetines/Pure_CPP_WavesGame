@@ -1,14 +1,20 @@
 #ifndef I_PROJECTILE_EFFECT_H
 #define I_PROJECTILE_EFFECT_H
 
-#include "Projectiles/Projectile.h"
 #include "Enemies/Enemy.h"
 #include <memory>
+
+class Projectile;
 
 enum class EffectType {
     Generic,
     Homing,
     Piercing
+};
+
+enum class ProjectileAction {
+    Continue,
+    Destroy
 };
 
 class IProjectileEffect {
@@ -21,8 +27,8 @@ public:
 
     virtual void OnUpdate(Projectile& projectile, float deltaTime) {}
 
-    virtual void OnImpact(Projectile& projectile, Enemy& enemy) {}
-
+    virtual ProjectileAction OnImpact(Enemy& enemy) { return ProjectileAction::Destroy; }
+    
     virtual void OnDistanceTraveled(Projectile& projectile, float distance) {}
 
     virtual void OnExpire(Projectile& projectile) {}

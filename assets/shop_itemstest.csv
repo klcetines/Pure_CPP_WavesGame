@@ -3,3 +3,4 @@ Sandwich Bread,1,More life and speed but less damage. Balanced diet!,health:10;s
 Baguette Bread,1,More life. Classic French style!,health:10
 Cracker Bread,1,More speed and attack speed but less life. Fast and fragile!,speed:0.75;attack_speed:0.05;health:-10
 Albert Prince,1,Now your projectiles pierce among enemies.,projectile:0
+Peter Picapiedra,1,Now your projectiles go to the enemies.,projectile:1
