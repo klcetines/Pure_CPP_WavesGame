@@ -14,6 +14,7 @@ enum class EffectType {
 
 enum class ProjectileAction {
     Continue,
+    Trigger,
     Destroy
 };
 
@@ -23,15 +24,15 @@ public:
 
     virtual ~IProjectileEffect() = default;
 
-    virtual void OnFire(Projectile& projectile) {}
+    virtual ProjectileAction OnFire(Projectile& projectile);
 
-    virtual void OnUpdate(Projectile& projectile, float deltaTime) {}
+    virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime);
 
     virtual ProjectileAction OnImpact(Enemy& enemy) { return ProjectileAction::Destroy; }
     
-    virtual void OnDistanceTraveled(Projectile& projectile, float distance) {}
+    virtual ProjectileAction OnDistanceTraveled(Projectile& projectile, float distance);
 
-    virtual void OnExpire(Projectile& projectile) {}
+    virtual ProjectileAction OnExpire(Projectile& projectile);
 
     virtual std::unique_ptr<IProjectileEffect> Clone() const = 0;
 };

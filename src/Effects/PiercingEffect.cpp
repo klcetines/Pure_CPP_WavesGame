@@ -1,8 +1,7 @@
 #include "Effects/PiercingEffect.h"
 
 ProjectileAction PiercingEffect::OnImpact(Enemy& enemy) {
-    std::cout << "PiercingEffect: Projectile pierced through enemy " << enemy.getName() << std::endl;
-    return ProjectileAction::Continue;
+    return ProjectileAction::Trigger;
 }
 
 std::unique_ptr<IProjectileEffect> PiercingEffect::Clone() const {

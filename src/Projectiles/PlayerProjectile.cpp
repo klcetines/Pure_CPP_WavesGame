@@ -71,10 +71,7 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
 
 void PlayerProjectile::handleImpact(Enemy& enemy) {
     if (!_effects->itsEmpty()) {
-        if(_effects->OnImpact(*this, enemy) == ProjectileAction::Continue) {
-            return;
-        }
-        else {
+        if(_effects->OnImpact(*this, enemy) == ProjectileAction::Destroy) {
             destroy();
         }
     } 

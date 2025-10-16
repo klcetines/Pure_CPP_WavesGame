@@ -45,26 +45,40 @@ void EffectsArrange::OnFire(Projectile& projectile){
 
 void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        _effects[currentEffectIndex]->OnUpdate(projectile, deltaTime);
+        if(_effects[currentEffectIndex]->OnUpdate(projectile, deltaTime) == ProjectileAction::Trigger){
+            nextEffect();
+        }
     }
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        return _effects[currentEffectIndex]->OnImpact(enemy);
+        if (_effects[currentEffectIndex]->OnImpact(enemy) == ProjectileAction::Trigger) {
+            nextEffect();
+            if(_effects[currentEffectIndex-1]->GetType() == EffectType::Homing){
+                return ProjectileAction::Continue;
+            }
+            else{
+                return ProjectileAction::Destroy;
+            }
+        }
     }
     return ProjectileAction::Destroy;
 }
 
 void EffectsArrange::OnDistanceTraveled(Projectile& projectile, float distance){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        _effects[currentEffectIndex]->OnDistanceTraveled(projectile, distance);
+       if (_effects[currentEffectIndex]->OnDistanceTraveled(projectile, distance ) == ProjectileAction::Trigger) {
+            nextEffect();
+        }
     }
 }
 
 void EffectsArrange::OnExpire(Projectile& projectile){
     if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        _effects[currentEffectIndex]->OnExpire(projectile);
+        if(_effects[currentEffectIndex]->OnExpire(projectile) == ProjectileAction::Trigger) {
+            nextEffect();
+        }
     }
 }
 
