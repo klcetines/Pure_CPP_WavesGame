@@ -41,7 +41,7 @@ void PlayerProjectile::update(float dt){
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closest_enemy) {
     if (closest_enemy && _effects && (_effects->GetType() == EffectType::Homing)) {
-        Vector2f targetDirection = closest_enemy->getPosition() - position;
+        Vector2f targetDirection = closest_enemy->getHeadPosition() - position;
         float length = sqrt(targetDirection.x * targetDirection.x + targetDirection.y * targetDirection.y);
         
         if (length != 0) {

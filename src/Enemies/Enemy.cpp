@@ -68,6 +68,19 @@ Vector2f Enemy::getPosition() const {
     return {_position.x, _position.y};
 }
 
+Vector2f Enemy::getHeadPosition() const {
+    Vector2f dir = _lastMoveDir;
+    float len = std::sqrt(dir.x*dir.x + dir.y*dir.y);
+    if (len < 1e-6f) {
+        dir = {0.0f, -1.0f};
+    } else {
+        dir.x /= len;
+        dir.y /= len;
+    }
+    float offset = _size.y;
+    return {_position.x + dir.x * offset, _position.y + dir.y * offset};
+}
+
 float Enemy::getWidth() const {
     return _size.x;
 }

@@ -52,7 +52,7 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) {
+    if (!_effects.empty() && currentEffectIndex < _effects.size()-1) {
         if (_effects[currentEffectIndex]->OnImpact(enemy) == ProjectileAction::Trigger) {
             nextEffect();
             if(_effects[currentEffectIndex-1]->GetType() == EffectType::Homing){

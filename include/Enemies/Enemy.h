@@ -30,6 +30,7 @@ class Enemy {
         float getSpeed() const;
         float getDamage() const;
         Vector2f getPosition() const;
+        Vector2f getHeadPosition() const;
         float getWidth() const;
         float getHeight() const;
         EnemyData getData() const;
