@@ -77,7 +77,7 @@ Vector2f Enemy::getHeadPosition() const {
         dir.x /= len;
         dir.y /= len;
     }
-    float offset = _size.y;
+    float offset = 3*(_size.y/4.0f);
     return {_position.x + dir.x * offset, _position.y + dir.y * offset};
 }
 
