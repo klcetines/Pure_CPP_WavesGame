@@ -1,7 +1,7 @@
-#include "Effects/PiercingEffect.h"
+#include "Effects/ProjectileEffects/PiercingEffect.h"
 
 ProjectileAction PiercingEffect::OnImpact(Enemy& enemy) {
-    return ProjectileAction::Trigger;
+    return ProjectileAction::Continue;
 }
 
 std::unique_ptr<IProjectileEffect> PiercingEffect::Clone() const {

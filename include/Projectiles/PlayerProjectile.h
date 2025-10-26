@@ -4,14 +4,17 @@
 #include "Projectiles/Projectile.h"
 #include "Utils/CollisionShape.h"
 #include "Enemies/Enemy.h"
-#include "Effects/EffectsArrange.h"
+#include "Effects/ProjectileEffects/EffectsArrange.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <memory>
+#include <unordered_set>
 
 class PlayerProjectile : public Projectile {
 public:
     PlayerProjectile(sf::Vector2f start, sf::Vector2f target, float speed, float damage, const EffectsArrange& effects, float range = 300.0f);
-    
+    ~PlayerProjectile();
+
     void update (float dt) override;
     void update(float dt, shared_ptr<Enemy> closest_enemy);
     
@@ -38,7 +41,9 @@ private:
     float _damage;
     float _maxRange;
     float _traveledDistance = 0.f;
+
     unique_ptr<EffectsArrange> _effects;
+    std::unordered_set<int> _hitEnemies;
 
     int currentEffectIndex = 0;
 

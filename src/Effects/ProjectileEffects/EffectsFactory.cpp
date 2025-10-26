@@ -1,4 +1,4 @@
-#include "Effects/EffectsFactory.h"
+#include "Effects/ProjectileEffects/EffectsFactory.h"
 
 EffectFactory& EffectFactory::Instance() {
     static EffectFactory instance;

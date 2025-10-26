@@ -1,4 +1,4 @@
-#include "Effects/HomingEffect.h"
+#include "Effects/ProjectileEffects/HomingEffect.h"
 
 EffectType HomingEffect::GetType() const {
     return EffectType::Homing; 

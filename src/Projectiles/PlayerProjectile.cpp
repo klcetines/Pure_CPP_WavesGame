@@ -3,8 +3,7 @@
 #include <cstdlib>
 
 PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage, const EffectsArrange& effects, float range)
-    : position(start), _alive(true), _damage(damage), _maxRange(range) {
-
+    : position(start), _alive(true), _damage(damage), _maxRange(range), _traveledDistance(0.f), _effects(effects.Clone()){
     shape.setRadius(6);
     shape.setFillColor(Color::Black);
     shape.setOrigin(6, 6);
@@ -17,12 +16,15 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed,
         velocity = {0, 0};
 
     _collisionBox = CollisionShape(start, 6, 6, 0.0f);
-
-    _effects = effects.Clone(); 
+    
+    _hitEnemies = unordered_set<int>();
     
     if (_effects && !_effects->itsEmpty()) {
         _effects->OnFire(*this);
     }
+}
+
+PlayerProjectile::~PlayerProjectile() {
 }
 
 void PlayerProjectile::update(float dt){
@@ -70,8 +72,21 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
 }       
 
 void PlayerProjectile::handleImpact(Enemy& enemy) {
-    if (!_effects->itsEmpty()) {
-        if(_effects->OnImpact(*this, enemy) == ProjectileAction::Destroy) {
+    if (!_alive) return;
+    
+    int enemyId = enemy.getId();
+
+    if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
+        return;
+    }
+
+    _hitEnemies.insert(enemyId);
+    enemy.takeDamage(_damage);
+
+    if (_effects && !_effects->itsEmpty()) {
+        ProjectileAction result = _effects->OnImpact(*this, enemy);
+
+        if (result == ProjectileAction::Destroy) {
             destroy();
         }
     } 

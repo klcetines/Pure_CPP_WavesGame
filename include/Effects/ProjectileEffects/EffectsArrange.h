@@ -1,7 +1,7 @@
 #ifndef EFFECTS_ARRANGE_H
 #define EFFECTS_ARRANGE_H
 
-#include "Effects/IProjectileEffect.h"
+#include "Effects/ProjectileEffects/IProjectileEffect.h"
 #include "iostream"
 #include <vector>
 #include <memory>

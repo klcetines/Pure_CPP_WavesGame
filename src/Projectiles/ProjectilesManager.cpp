@@ -23,11 +23,12 @@ void ProjectilesManager::update(float dt, shared_ptr<Enemy> closestEnemy) {
             p->update(dt);
         }
     }
-        _projectiles.erase( remove_if(_projectiles.begin(), _projectiles.end(),
-                [](const shared_ptr<Projectile>& p) { 
-                    return !p->isAlive(); 
-                }),
-            _projectiles.end());
+    
+    _projectiles.erase( remove_if(_projectiles.begin(), _projectiles.end(),
+            [](const shared_ptr<Projectile>& p) { 
+                return !p->isAlive(); 
+            }),
+        _projectiles.end());
 }
 
 void ProjectilesManager::draw(RenderWindow& window, float offsetX, float offsetY) {

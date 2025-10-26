@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "Enemies/Enemy.h"
 #include "Utils/CollisionShape.h"
-#include "Effects/IProjectileEffect.h"
+#include "Effects/ProjectileEffects/IProjectileEffect.h"
 
 class Projectile {
     public:

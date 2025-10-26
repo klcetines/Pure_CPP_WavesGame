@@ -26,6 +26,8 @@ class Enemy {
         ~Enemy() = default;
         void move(float dx, float dy);
         void draw(RenderWindow& window, float offsetX, float offsetY);
+
+        int getId() const;
         string getName() const;
         float getSpeed() const;
         float getDamage() const;
@@ -34,11 +36,19 @@ class Enemy {
         float getWidth() const;
         float getHeight() const;
         EnemyData getData() const;
+        
         bool collidesWith(float px, float py) const;
+        
         float getRotation() const;
         CollisionShape getCollisionBox() const;
+        void takeDamage(float damage);
+
+        float _damageFlashTimer = 0.0f;
 
     private:
+        int _id;
+        static int _nextId;
+
         string _name;
         CircleShape shape;
         Position _position;
@@ -50,6 +60,8 @@ class Enemy {
         float _facingAngle = 0.0f;
         Vector2u _size;
         CollisionShape _collisionBox;
+
+        void applyKnockback();
 };      
 
 #endif // ENEMY_H

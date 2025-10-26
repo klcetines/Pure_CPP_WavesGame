@@ -24,15 +24,15 @@ public:
 
     virtual ~IProjectileEffect() = default;
 
-    virtual ProjectileAction OnFire(Projectile& projectile);
+    virtual ProjectileAction OnFire(Projectile& projectile) { return ProjectileAction::Continue; }
 
-    virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime);
+    virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime) { return ProjectileAction::Continue; };
 
     virtual ProjectileAction OnImpact(Enemy& enemy) { return ProjectileAction::Destroy; }
     
-    virtual ProjectileAction OnDistanceTraveled(Projectile& projectile, float distance);
+    virtual ProjectileAction OnDistanceTraveled(Projectile& projectile, float distance) { return ProjectileAction::Destroy; }
 
-    virtual ProjectileAction OnExpire(Projectile& projectile);
+    virtual ProjectileAction OnExpire(Projectile& projectile) { return ProjectileAction::Destroy; };
 
     virtual std::unique_ptr<IProjectileEffect> Clone() const = 0;
 };

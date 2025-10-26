@@ -1,6 +1,8 @@
 #include "Enemies/Enemy.h"
 
-Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _position{x, y}
+int Enemy::_nextId = 1;
+
+Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _position{x, y}, _id(_nextId++)
 {
     _size.x = 56.0f;
     _size.y = 108.0f;
@@ -45,7 +47,12 @@ void Enemy::move(float dx, float dy) {
 void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
     if (_useSprite) {
         _facingAngle = atan2(_lastMoveDir.y, _lastMoveDir.x) * 180.0f / 3.14159265f - 90.0f;
-
+        if(_damageFlashTimer > 0.0f){
+            _sprite.setColor(Color(255, 0, 0, 128));
+        }
+        else{
+            _sprite.setColor(Color::White);
+        }
         _sprite.setPosition(_position.x + offsetX, _position.y + offsetY);
         _sprite.setRotation(_facingAngle);
         window.draw(_sprite);
@@ -54,6 +61,10 @@ void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
         shape.setPosition(_position.x + offsetX, _position.y + offsetY);
         window.draw(shape);
     }
+}
+
+int Enemy::getId() const {
+    return _id;
 }
 
 string Enemy::getName() const {
@@ -103,4 +114,18 @@ float Enemy::getRotation() const {
 
 CollisionShape Enemy::getCollisionBox() const {
     return _collisionBox;
+}
+
+void Enemy::takeDamage(float damage) {
+    _data.Life->takeDamage(damage);
+    _damageFlashTimer = 0.1f;
+    applyKnockback();
+}
+
+void Enemy::applyKnockback() {
+    float knockbackDistance = 10.0f;
+    _position.x -= _lastMoveDir.x * knockbackDistance;
+    _position.y -= _lastMoveDir.y * knockbackDistance;
+    shape.setPosition(_position.x, _position.y);
+    _collisionBox.center = Vector2f(_position.x, _position.y);
 }

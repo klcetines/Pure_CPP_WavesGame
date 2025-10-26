@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <functional>
 #include <memory>
-#include "Effects/IProjectileEffect.h"
-#include "Effects/PiercingEffect.h"
-#include "Effects/HomingEffect.h"
+#include "Effects/ProjectileEffects/IProjectileEffect.h"
+#include "Effects/ProjectileEffects/PiercingEffect.h"
+#include "Effects/ProjectileEffects/HomingEffect.h"
 
 class EffectFactory {
 public:

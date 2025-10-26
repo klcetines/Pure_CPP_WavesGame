@@ -1,7 +1,9 @@
-#include "Effects/EffectsArrange.h"
+#include "Effects/ProjectileEffects/EffectsArrange.h"
 
 void EffectsArrange::addEffect(std::unique_ptr<IProjectileEffect> effect){
-    _effects.push_back(std::move(effect));
+    if (effect) {
+        _effects.push_back(std::move(effect));
+    }
 }
 
 const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getEffects() const{
@@ -52,15 +54,14 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()-1) {
-        if (_effects[currentEffectIndex]->OnImpact(enemy) == ProjectileAction::Trigger) {
-            nextEffect();
-            if(_effects[currentEffectIndex-1]->GetType() == EffectType::Homing){
+    if (!_effects.empty() && currentEffectIndex < _effects.size()) { 
+        if (_effects[currentEffectIndex]) {
+            ProjectileAction action = _effects[currentEffectIndex]->OnImpact(enemy);
+            if (action == ProjectileAction::Trigger) {
+                nextEffect(); 
                 return ProjectileAction::Continue;
             }
-            else{
-                return ProjectileAction::Destroy;
-            }
+            return action;
         }
     }
     return ProjectileAction::Destroy;

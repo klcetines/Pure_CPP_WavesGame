@@ -190,7 +190,6 @@ void GameSession::applyUpgrade(const Effect& effect) {
 
 void GameSession::enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile) {
     if (enemy && projectile) {    
-        enemy->getData().Life->takeDamage(projectile->getDamage());
         projectile->handleImpact(*enemy);
     }
 }

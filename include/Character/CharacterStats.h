@@ -3,8 +3,8 @@
 
 #include "Utils/Life.h"
 #include "Utils/Effect.h"
-#include "Effects/EffectsArrange.h"
-#include "Effects/EffectsFactory.h"
+#include "Effects/ProjectileEffects/EffectsArrange.h"
+#include "Effects/ProjectileEffects/EffectsFactory.h"
 #include <iostream>
 
 

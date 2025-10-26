@@ -1,7 +1,7 @@
 #ifndef HOMING_EFFECT_H
 #define HOMING_EFFECT_H
 
-#include "Effects/IProjectileEffect.h"
+#include "Effects/ProjectileEffects/IProjectileEffect.h"
 #include <memory>
 
 class HomingEffect : public IProjectileEffect {

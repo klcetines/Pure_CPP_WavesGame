@@ -1,7 +1,7 @@
 #ifndef PIERCING_EFFECT_H
 #define PIERCING_EFFECT_H
 
-#include "Effects/IProjectileEffect.h"
+#include "Effects/ProjectileEffects/IProjectileEffect.h"
 #include <memory>
 
 class PiercingEffect : public IProjectileEffect {
