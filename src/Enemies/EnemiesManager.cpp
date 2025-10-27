@@ -14,7 +14,6 @@ void EnemiesManager::update(float dt, const Vector2f& playerPos) {
     }
 
     for (auto& enemy : enemies) {
-        enemy->_damageFlashTimer = max(0.0f, enemy->_damageFlashTimer - dt);
         auto epos = enemy->getPosition();
         float dx = playerPos.x - epos.x;
         float dy = playerPos.y - epos.y;

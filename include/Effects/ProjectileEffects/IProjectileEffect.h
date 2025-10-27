@@ -1,7 +1,7 @@
 #ifndef I_PROJECTILE_EFFECT_H
 #define I_PROJECTILE_EFFECT_H
 
-#include "Enemies/Enemy.h"
+#include "Utils/IAnimatedObject.h"
 #include <memory>
 
 class Projectile;
@@ -28,7 +28,7 @@ public:
 
     virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime) { return ProjectileAction::Continue; };
 
-    virtual ProjectileAction OnImpact(Enemy& enemy) { return ProjectileAction::Destroy; }
+    virtual ProjectileAction OnImpact(IAnimatedObject& enemy) { return ProjectileAction::Destroy; }
     
     virtual ProjectileAction OnDistanceTraveled(Projectile& projectile, float distance) { return ProjectileAction::Destroy; }
 

@@ -23,7 +23,7 @@ public:
     void draw(RenderWindow& window, float offsetX, float offsetY) override;
     bool isAlive() const override;
 
-    void handleImpact(Enemy& enemy) override;
+    void handleImpact(IAnimatedObject& enemy) override;
 
     sf::Vector2f getPosition() const override;
     float getDamage() const override;

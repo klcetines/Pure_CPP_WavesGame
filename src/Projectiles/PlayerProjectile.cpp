@@ -71,27 +71,29 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
     window.draw(shape);
 }       
 
-void PlayerProjectile::handleImpact(Enemy& enemy) {
-    if (!_alive) return;
-    
-    int enemyId = enemy.getId();
+void PlayerProjectile::handleImpact(IAnimatedObject& animatedObject) {
+    Enemy* enemyPtr = dynamic_cast<Enemy*>(&animatedObject);
 
-    if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
-        return;
-    }
+    if (enemyPtr) {
+        Enemy& enemy = *enemyPtr; 
+        int enemyId = enemy.getId();
+        if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
+            return;
+        }
 
-    _hitEnemies.insert(enemyId);
-    enemy.takeDamage(_damage);
+        _hitEnemies.insert(enemyId);
+        enemy.takeDamage(_damage);
 
-    if (_effects && !_effects->itsEmpty()) {
-        ProjectileAction result = _effects->OnImpact(*this, enemy);
+        if (_effects && !_effects->itsEmpty()) {
+            ProjectileAction result = _effects->OnImpact(*this, enemy);
 
-        if (result == ProjectileAction::Destroy) {
+            if (result == ProjectileAction::Destroy) {
+                destroy();
+            }
+        } 
+        else {
             destroy();
         }
-    } 
-    else {
-        destroy();
     }
 }
 

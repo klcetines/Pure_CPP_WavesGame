@@ -2,7 +2,10 @@
 
 int Enemy::_nextId = 1;
 
-Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _position{x, y}, _id(_nextId++)
+Enemy::Enemy(const string& name, float x, float y, float life):
+    _name(name),
+    _position{x, y}, 
+    _id(_nextId++)
 {
     _size.x = 56.0f;
     _size.y = 108.0f;
@@ -27,6 +30,10 @@ Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _po
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
     _data.Life = new Life(life);
+}
+
+void Enemy::update(float dt) {
+    _damageFlashTimer = max(0.0f, _damageFlashTimer - dt);
 }
 
 void Enemy::move(float dx, float dy) {
@@ -116,6 +123,14 @@ CollisionShape Enemy::getCollisionBox() const {
     return _collisionBox;
 }
 
+float Enemy::getLife() const {
+    return _data.Life->getLife();
+}
+
+float Enemy::getSize() const {
+    return _size.x;
+}
+
 void Enemy::takeDamage(float damage) {
     _data.Life->takeDamage(damage);
     _damageFlashTimer = 0.1f;
@@ -123,7 +138,7 @@ void Enemy::takeDamage(float damage) {
 }
 
 void Enemy::applyKnockback() {
-    float knockbackDistance = 10.0f;
+    float knockbackDistance = 25.0f;
     _position.x -= _lastMoveDir.x * knockbackDistance;
     _position.y -= _lastMoveDir.y * knockbackDistance;
     shape.setPosition(_position.x, _position.y);

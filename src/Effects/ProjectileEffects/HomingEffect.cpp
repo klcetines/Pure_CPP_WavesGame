@@ -4,7 +4,7 @@ EffectType HomingEffect::GetType() const {
     return EffectType::Homing; 
 }
 
-ProjectileAction HomingEffect::OnImpact(Enemy& enemy) {
+ProjectileAction HomingEffect::OnImpact(IAnimatedObject& enemy) {
     return ProjectileAction::Trigger;
 }
 

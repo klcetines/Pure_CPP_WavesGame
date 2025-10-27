@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 
+#include "Utils/IAnimatedObject.h"
 #include "Character/CharacterStats.h"
 #include "Character/CharacterGraphics.h"
 #include "Character/CharacterCombat.h"
@@ -15,7 +16,7 @@
 using namespace sf;
 using namespace std;
 
-class Character {
+class Character : public IAnimatedObject {
 public:
     Character(const string& name, float x, float y);
     

@@ -6,7 +6,7 @@
 
 class PiercingEffect : public IProjectileEffect {
     public:
-        ProjectileAction OnImpact(Enemy& enemy) override;
+        ProjectileAction OnImpact(IAnimatedObject& enemy) override;
         std::unique_ptr<IProjectileEffect> Clone() const override;
 };
 

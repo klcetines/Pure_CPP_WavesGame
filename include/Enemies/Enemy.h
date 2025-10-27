@@ -4,10 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <cmath>
+#include "Utils/IAnimatedObject.h"
 #include "Utils/Position.h"
 #include "Utils/Life.h"
 #include "Utils/SpriteLoader.h"
 #include "Utils/CollisionShape.h"
+
 
 using namespace sf;
 using namespace std;
@@ -20,10 +22,12 @@ struct EnemyData
     float AttackSpeed;
 };
 
-class Enemy {
+class Enemy : public IAnimatedObject {
     public:
         Enemy(const string& name, float x, float y, float life = 100.0f);
         ~Enemy() = default;
+
+        void update(float dt);
         void move(float dx, float dy);
         void draw(RenderWindow& window, float offsetX, float offsetY);
 
@@ -36,15 +40,15 @@ class Enemy {
         float getWidth() const;
         float getHeight() const;
         EnemyData getData() const;
+        float getLife() const override;
+        float getSize() const override;
         
         bool collidesWith(float px, float py) const;
         
         float getRotation() const;
         CollisionShape getCollisionBox() const;
         void takeDamage(float damage);
-
-        float _damageFlashTimer = 0.0f;
-
+    
     private:
         int _id;
         static int _nextId;
@@ -60,6 +64,7 @@ class Enemy {
         float _facingAngle = 0.0f;
         Vector2u _size;
         CollisionShape _collisionBox;
+        float _damageFlashTimer = 0.0f;
 
         void applyKnockback();
 };      

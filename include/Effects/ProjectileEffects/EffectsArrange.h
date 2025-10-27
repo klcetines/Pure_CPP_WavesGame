@@ -2,6 +2,8 @@
 #define EFFECTS_ARRANGE_H
 
 #include "Effects/ProjectileEffects/IProjectileEffect.h"
+#include "Projectiles/Projectile.h"
+#include "Enemies/Enemy.h"
 #include "iostream"
 #include <vector>
 #include <memory>
