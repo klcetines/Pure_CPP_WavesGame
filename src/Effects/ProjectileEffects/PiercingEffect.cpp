@@ -1,6 +1,6 @@
 #include "Effects/ProjectileEffects/PiercingEffect.h"
 
-ProjectileAction PiercingEffect::OnImpact(IAnimatedObject& enemy) {
+ProjectileAction PiercingEffect::OnImpact(IActor& enemy) {
     return ProjectileAction::Continue;
 }
 

@@ -46,13 +46,25 @@ void Character::handleCollisions(const vector<shared_ptr<Enemy>>& enemies,
 }
 
 void Character::handleDamage(shared_ptr<Enemy> enemy) {
-    stats.getLife().takeDamage(enemy->getDamage());
+    takeDamage(enemy->getDamage());
     damageCooldown = DAMAGE_COOLDOWN;
     applyKnockback(enemy);
     
     if (stats.getLifeAmmount() <= 0) {
         graphics.setDeadAppearance();
     }
+}
+
+ActorEffectComponent* Character::getEffectComponent() {
+        return &_effectComponent;
+}
+    
+const ActorEffectComponent* Character::getEffectComponent() const {
+    return &_effectComponent;
+}
+
+void Character::takeDamage(float damage) {
+    stats.getLife().takeDamage(damage);
 }
 
 void Character::applyKnockback(shared_ptr<Enemy> enemy) {

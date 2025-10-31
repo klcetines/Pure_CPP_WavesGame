@@ -10,6 +10,7 @@ CharacterStats::CharacterStats()
 {
     _projectileEffects = unique_ptr<EffectsArrange> (new EffectsArrange());
     EffectFactory::Initialize();
+    ActorEffectsFactory::Initialize();
 }
 
 CharacterStats::~CharacterStats() {

@@ -1,9 +1,9 @@
-#include "Effects/CharacterEffects/AnimatedObjectEffectComponent.h"
+#include "Effects/CharacterEffects/ActorEffectComponent.h"
 
-AnimatedObjectEffectComponent::AnimatedObjectEffectComponent(IAnimatedObject* owner) 
+ActorEffectComponent::ActorEffectComponent(IActor* owner) 
     : _owner(owner) {}
 
-void AnimatedObjectEffectComponent::Update(float dt) {
+void ActorEffectComponent::Update(float dt) {
         auto it = _activeEffects.begin();
         while (it != _activeEffects.end()) {
             
@@ -19,21 +19,21 @@ void AnimatedObjectEffectComponent::Update(float dt) {
         }
     }
 
-    void AnimatedObjectEffectComponent::AddEffect(std::unique_ptr<IAnimatedObjectEffect> newEffect) {
-        AOEffectType type = newEffect->GetType();
+    void ActorEffectComponent::AddEffect(std::unique_ptr<IActorEffect> newEffect) {
+        ActorEffectType type = newEffect->GetType();
 
         auto it = _activeEffects.find(type);
 
         if (it != _activeEffects.end()) {
-            it->second->refreshDuration(); 
-            // it->second->AddStacks(1);
+            it->second->refreshDuration();
+            it->second->addCharges(1);
         } else {
             newEffect->onApply(*_owner);
             _activeEffects[type] = std::move(newEffect);
         }
     }
     
-    void AnimatedObjectEffectComponent::RemoveEffect(AOEffectType type) {
+    void ActorEffectComponent::RemoveEffect(ActorEffectType type) {
         auto it = _activeEffects.find(type);
         if (it != _activeEffects.end()) {
             it->second->onRemove(*_owner);

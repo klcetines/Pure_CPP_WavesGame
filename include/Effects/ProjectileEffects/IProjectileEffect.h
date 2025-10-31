@@ -1,7 +1,7 @@
 #ifndef I_PROJECTILE_EFFECT_H
 #define I_PROJECTILE_EFFECT_H
 
-#include "Utils/IAnimatedObject.h"
+#include "Utils/IActor.h"
 #include <memory>
 
 class Projectile;
@@ -9,7 +9,8 @@ class Projectile;
 enum class EffectType {
     Generic,
     Homing,
-    Piercing
+    Piercing,
+    Passive
 };
 
 enum class ProjectileAction {
@@ -28,7 +29,7 @@ public:
 
     virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime) { return ProjectileAction::Continue; };
 
-    virtual ProjectileAction OnImpact(IAnimatedObject& enemy) { return ProjectileAction::Destroy; }
+    virtual ProjectileAction OnImpact(IActor& enemy) { return ProjectileAction::Destroy; }
     
     virtual ProjectileAction OnDistanceTraveled(Projectile& projectile, float distance) { return ProjectileAction::Destroy; }
 

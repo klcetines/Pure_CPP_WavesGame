@@ -5,7 +5,8 @@ int Enemy::_nextId = 1;
 Enemy::Enemy(const string& name, float x, float y, float life):
     _name(name),
     _position{x, y}, 
-    _id(_nextId++)
+    _id(_nextId++),
+    _effectComponent(this)
 {
     _size.x = 56.0f;
     _size.y = 108.0f;
@@ -34,6 +35,7 @@ Enemy::Enemy(const string& name, float x, float y, float life):
 
 void Enemy::update(float dt) {
     _damageFlashTimer = max(0.0f, _damageFlashTimer - dt);
+    _effectComponent.Update(dt);
 }
 
 void Enemy::move(float dx, float dy) {
@@ -129,6 +131,14 @@ float Enemy::getLife() const {
 
 float Enemy::getSize() const {
     return _size.x;
+}
+
+ActorEffectComponent* Enemy::getEffectComponent() {
+        return &_effectComponent;
+}
+    
+const ActorEffectComponent* Enemy::getEffectComponent() const {
+    return &_effectComponent;
 }
 
 void Enemy::takeDamage(float damage) {

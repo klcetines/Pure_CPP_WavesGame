@@ -59,6 +59,7 @@ ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
             ProjectileAction action = _effects[currentEffectIndex]->OnImpact(enemy);
             if (action == ProjectileAction::Trigger) {
                 nextEffect(); 
+                if(currentEffectIndex < _effects.size()) return ProjectileAction::Destroy;
                 return ProjectileAction::Continue;
             }
             return action;

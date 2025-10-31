@@ -4,11 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <cmath>
-#include "Utils/IAnimatedObject.h"
+#include "Utils/IActor.h"
 #include "Utils/Position.h"
 #include "Utils/Life.h"
 #include "Utils/SpriteLoader.h"
 #include "Utils/CollisionShape.h"
+#include "Effects/CharacterEffects/ActorEffectComponent.h"
 
 
 using namespace sf;
@@ -22,7 +23,7 @@ struct EnemyData
     float AttackSpeed;
 };
 
-class Enemy : public IAnimatedObject {
+class Enemy : public IActor {
     public:
         Enemy(const string& name, float x, float y, float life = 100.0f);
         ~Enemy() = default;
@@ -43,11 +44,14 @@ class Enemy : public IAnimatedObject {
         float getLife() const override;
         float getSize() const override;
         
+        ActorEffectComponent* getEffectComponent() override;
+        const ActorEffectComponent* getEffectComponent() const override;
+
         bool collidesWith(float px, float py) const;
         
         float getRotation() const;
         CollisionShape getCollisionBox() const;
-        void takeDamage(float damage);
+        void takeDamage(float damage) override;
     
     private:
         int _id;
@@ -58,6 +62,8 @@ class Enemy : public IAnimatedObject {
         Position _position;
         EnemyData _data;
         Sprite _sprite;
+
+        ActorEffectComponent _effectComponent;
 
         bool _useSprite = false;
         Vector2f _lastMoveDir = {0.f, -1.f};

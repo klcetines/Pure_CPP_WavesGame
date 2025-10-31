@@ -71,7 +71,7 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
     window.draw(shape);
 }       
 
-void PlayerProjectile::handleImpact(IAnimatedObject& animatedObject) {
+void PlayerProjectile::handleImpact(IActor& animatedObject) {
     Enemy* enemyPtr = dynamic_cast<Enemy*>(&animatedObject);
 
     if (enemyPtr) {

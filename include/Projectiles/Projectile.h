@@ -16,7 +16,7 @@ class Projectile {
         virtual bool isAlive() const = 0;
         virtual void destroy() = 0;
 
-        virtual void handleImpact(IAnimatedObject& enemy) = 0;
+        virtual void handleImpact(IActor& enemy) = 0;
 
         virtual float getDamage() const = 0;
         virtual float getSize() const = 0;

@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 
-#include "Utils/IAnimatedObject.h"
+#include "Utils/IActor.h"
 #include "Character/CharacterStats.h"
 #include "Character/CharacterGraphics.h"
 #include "Character/CharacterCombat.h"
@@ -16,7 +16,7 @@
 using namespace sf;
 using namespace std;
 
-class Character : public IAnimatedObject {
+class Character : public IActor {
 public:
     Character(const string& name, float x, float y);
     
@@ -27,13 +27,19 @@ public:
     
     void handleCollisions(const vector<shared_ptr<Enemy>>& enemies, 
                          float offsetX, float offsetY);
-    
+
+    ActorEffectComponent* getEffectComponent() override;
+    const ActorEffectComponent* getEffectComponent() const override;
+                         
+    void takeDamage(float damage) override;
     string getName() const;
     Vector2f getPosition() const;
     float getLife() const;
     CharacterStats& getStats();
     CollisionShape getCollisionBox() const;
     float getSize() const;
+    
+
 
 private:
     static constexpr float DEFAULT_SIZE = 40.0f;
@@ -44,6 +50,8 @@ private:
     Vector2f position;
     float size;
     float damageCooldown;
+
+    ActorEffectComponent _effectComponent;
 
     CharacterStats stats;
     CharacterGraphics graphics;
