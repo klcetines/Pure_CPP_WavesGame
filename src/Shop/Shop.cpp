@@ -6,7 +6,7 @@
 #include <SFML/Window.hpp>
 
 Shop::Shop(shared_ptr<GameStatistics> stats, GameSession& gameSession) : _stats(stats), _gameSession(gameSession) {
-    loadItemsFromFile("assets/shop_items.csv");
+    loadItemsFromFile("assets/shop_itemstest.csv");
     _maxShopItems = min(static_cast<int>(items.size()), 4);
     _showcaseItems.resize(_maxShopItems);
     restockShowcaseItems();
@@ -113,7 +113,7 @@ bool Shop::parseEffect(const string& changeStr, Effect& effect) {
     size_t sep = changeStr.find(':');
     if (sep != string::npos) {
         string type = changeStr.substr(0, sep);
-        float value = stof(changeStr.substr(sep + 1));
+        float value = stof(changeStr.substr(sep + 1));            
         effect = Effect(type, value);
         return true;
     }

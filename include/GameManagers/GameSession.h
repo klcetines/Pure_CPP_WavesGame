@@ -63,6 +63,7 @@ private:
 
     void openShopMenu(RenderWindow& window);
 
+    void enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile);
 
     void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
     void drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector2f pointB, float radius, float offsetX, float offsetY);

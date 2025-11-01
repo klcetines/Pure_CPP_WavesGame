@@ -83,7 +83,7 @@ void GameSession::updateEnemies(float dt) {
 }
 
 void GameSession::updateProjectiles(float dt) {
-    projectilesManager->update(dt);
+    projectilesManager->update(dt, enemiesManager->getClosestEnemy(player->getPosition()));
 }
 
 void GameSession::handlePlayerEnemyCollisions() {
@@ -103,8 +103,7 @@ void GameSession::handleProjectileEnemyCollisions() {
             const CollisionShape& projBox = proj->getCollisionBox();
 
             if (enemyBox.intersects(projBox)) {
-                enemy->getData().Life->takeDamage(proj->getDamage());
-                proj->destroy();
+                enemyCollidedByProjectile(enemy, proj);
             }
         }
     }
@@ -186,6 +185,12 @@ void GameSession::openShopMenu(RenderWindow& window) {
 void GameSession::applyUpgrade(const Effect& effect) {
     if (player) {
         player->getStats().applyEffect(effect);
+    }
+}
+
+void GameSession::enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile) {
+    if (enemy && projectile) {    
+        projectile->handleImpact(*enemy);
     }
 }
 

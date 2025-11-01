@@ -8,12 +8,13 @@ EnemiesManager::EnemiesManager(shared_ptr<GameStatistics> stats)
 void EnemiesManager::update(float dt, const Vector2f& playerPos) {
 
     spawnTimer += dt;
-    if (spawnTimer >= spawnInterval and enemies.size() < 1) {
+    if (spawnTimer >= spawnInterval) {
         spawnEnemyNear(playerPos);
         spawnTimer = 0;
     }
 
     for (auto& enemy : enemies) {
+        enemy->update(dt);
         auto epos = enemy->getPosition();
         float dx = playerPos.x - epos.x;
         float dy = playerPos.y - epos.y;

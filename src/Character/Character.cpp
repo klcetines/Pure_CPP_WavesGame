@@ -46,13 +46,25 @@ void Character::handleCollisions(const vector<shared_ptr<Enemy>>& enemies,
 }
 
 void Character::handleDamage(shared_ptr<Enemy> enemy) {
-    stats.getLife().takeDamage(enemy->getDamage());
+    takeDamage(enemy->getDamage());
     damageCooldown = DAMAGE_COOLDOWN;
     applyKnockback(enemy);
     
     if (stats.getLifeAmmount() <= 0) {
         graphics.setDeadAppearance();
     }
+}
+
+ActorEffectComponent* Character::getEffectComponent() {
+        return &_effectComponent;
+}
+    
+const ActorEffectComponent* Character::getEffectComponent() const {
+    return &_effectComponent;
+}
+
+void Character::takeDamage(float damage) {
+    stats.getLife().takeDamage(damage);
 }
 
 void Character::applyKnockback(shared_ptr<Enemy> enemy) {
@@ -66,9 +78,26 @@ void Character::applyKnockback(shared_ptr<Enemy> enemy) {
     }
 }
 
-string Character::getName() const { return name; }
-Vector2f Character::getPosition() const { return position; }
-float Character::getLife() const { return stats.getLifeAmmount(); }
-CharacterStats& Character::getStats() { return stats; }
-CollisionShape Character::getCollisionBox() const { return collisionBox; }
-float Character::getSize() const { return size; }
+string Character::getName() const { 
+    return name; 
+}
+
+Vector2f Character::getPosition() const { 
+    return position; 
+}
+
+float Character::getLife() const { 
+    return stats.getLifeAmmount(); 
+}
+
+CharacterStats& Character::getStats() { 
+    return stats; 
+}
+
+CollisionShape Character::getCollisionBox() const { 
+    return collisionBox; 
+}
+
+float Character::getSize() const { 
+    return size; 
+}

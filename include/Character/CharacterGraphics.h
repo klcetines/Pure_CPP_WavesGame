@@ -1,3 +1,6 @@
+#ifndef CHARACTER_GRAPHICS_H
+#define CHARACTER_GRAPHICS_H
+
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Utils/SpriteLoader.h"
@@ -19,3 +22,5 @@ private:
     float size;
     bool useSprite;
 };
+
+#endif // CHARACTER_GRAPHICS_H

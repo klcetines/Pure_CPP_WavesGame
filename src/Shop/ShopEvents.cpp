@@ -20,10 +20,10 @@ void ShopEvents::handleWindowClosed(Shop& shop, RenderWindow& window, bool& runn
 }
 
 void ShopEvents::handleKeyPressed(Shop& shop, const Event& event, bool& running) {
-    if (event.key.code == Keyboard::Up) {
+    if (event.key.code == Keyboard::Left) {
         shop.selectPreviousItem();
     }
-    if (event.key.code == Keyboard::Down) {
+    if (event.key.code == Keyboard::Right) {
         shop.selectNextItem();
     }
     if (event.key.code == Keyboard::Escape || event.key.code == Keyboard::Space) {

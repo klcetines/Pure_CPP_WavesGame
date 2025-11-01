@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CHARACTER_COMBAT_H
+#define CHARACTER_COMBAT_H
+
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
@@ -30,3 +32,5 @@ private:
                                             const Vector2f& direction, 
                                             int bulletIndex) const;
 };
+
+#endif // CHARACTER_COMBAT_H

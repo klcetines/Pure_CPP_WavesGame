@@ -1,6 +1,12 @@
 #include "Enemies/Enemy.h"
 
-Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _position{x, y}
+int Enemy::_nextId = 1;
+
+Enemy::Enemy(const string& name, float x, float y, float life):
+    _name(name),
+    _position{x, y}, 
+    _id(_nextId++),
+    _effectComponent(this)
 {
     _size.x = 56.0f;
     _size.y = 108.0f;
@@ -27,6 +33,11 @@ Enemy::Enemy(const string& name, float x, float y, float life): _name(name), _po
     _data.Life = new Life(life);
 }
 
+void Enemy::update(float dt) {
+    _damageFlashTimer = max(0.0f, _damageFlashTimer - dt);
+    _effectComponent.Update(dt);
+}
+
 void Enemy::move(float dx, float dy) {
     _position.x += dx;
     _position.y += dy;
@@ -45,7 +56,12 @@ void Enemy::move(float dx, float dy) {
 void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
     if (_useSprite) {
         _facingAngle = atan2(_lastMoveDir.y, _lastMoveDir.x) * 180.0f / 3.14159265f - 90.0f;
-
+        if(_damageFlashTimer > 0.0f){
+            _sprite.setColor(Color(255, 0, 0, 128));
+        }
+        else{
+            _sprite.setColor(Color::White);
+        }
         _sprite.setPosition(_position.x + offsetX, _position.y + offsetY);
         _sprite.setRotation(_facingAngle);
         window.draw(_sprite);
@@ -54,6 +70,10 @@ void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
         shape.setPosition(_position.x + offsetX, _position.y + offsetY);
         window.draw(shape);
     }
+}
+
+int Enemy::getId() const {
+    return _id;
 }
 
 string Enemy::getName() const {
@@ -66,6 +86,19 @@ float Enemy::getSpeed() const {
 
 Vector2f Enemy::getPosition() const {
     return {_position.x, _position.y};
+}
+
+Vector2f Enemy::getHeadPosition() const {
+    Vector2f dir = _lastMoveDir;
+    float len = std::sqrt(dir.x*dir.x + dir.y*dir.y);
+    if (len < 1e-6f) {
+        dir = {0.0f, -1.0f};
+    } else {
+        dir.x /= len;
+        dir.y /= len;
+    }
+    float offset = 3*(_size.y/4.0f);
+    return {_position.x + dir.x * offset, _position.y + dir.y * offset};
 }
 
 float Enemy::getWidth() const {
@@ -90,4 +123,34 @@ float Enemy::getRotation() const {
 
 CollisionShape Enemy::getCollisionBox() const {
     return _collisionBox;
+}
+
+float Enemy::getLife() const {
+    return _data.Life->getLife();
+}
+
+float Enemy::getSize() const {
+    return _size.x;
+}
+
+ActorEffectComponent* Enemy::getEffectComponent() {
+        return &_effectComponent;
+}
+    
+const ActorEffectComponent* Enemy::getEffectComponent() const {
+    return &_effectComponent;
+}
+
+void Enemy::takeDamage(float damage) {
+    _data.Life->takeDamage(damage);
+    _damageFlashTimer = 0.1f;
+    applyKnockback();
+}
+
+void Enemy::applyKnockback() {
+    float knockbackDistance = 25.0f;
+    _position.x -= _lastMoveDir.x * knockbackDistance;
+    _position.y -= _lastMoveDir.y * knockbackDistance;
+    shape.setPosition(_position.x, _position.y);
+    _collisionBox.center = Vector2f(_position.x, _position.y);
 }

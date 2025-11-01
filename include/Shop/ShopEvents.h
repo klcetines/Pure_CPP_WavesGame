@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SHOP_EVENTS_H
+#define SHOP_EVENTS_H
+
 #include "Shop/Shop.h"
 
 namespace ShopEvents {
@@ -6,3 +8,5 @@ namespace ShopEvents {
     void handleWindowClosed(Shop& shop, sf::RenderWindow& window, bool& running);
     void handleKeyPressed(Shop& shop, const sf::Event& event, bool& running);
 }
+
+#endif // SHOP_EVENTS_H
