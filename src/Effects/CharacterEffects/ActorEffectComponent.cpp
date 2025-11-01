@@ -40,3 +40,7 @@ void ActorEffectComponent::Update(float dt) {
             _activeEffects.erase(it);
         }
     }
+
+    bool ActorEffectComponent::ItsEmpty() const {
+        return _activeEffects.empty();
+    }

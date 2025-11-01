@@ -18,6 +18,7 @@ public:
     void Update(float dt);
     void AddEffect(std::unique_ptr<IActorEffect> newEffect);
     void RemoveEffect(ActorEffectType type);
+    bool ItsEmpty() const;
 
 private:
     IActor* _owner; 
