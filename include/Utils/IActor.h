@@ -23,6 +23,7 @@ public:
     virtual Vector2f getPosition() const = 0;
     virtual float getLife() const = 0;
     virtual CollisionShape getCollisionBox() const = 0;
+    virtual float getSpeed() const = 0;
     virtual float getSize() const = 0;
     virtual void takeDamage(float damage) = 0;
 

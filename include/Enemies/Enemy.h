@@ -34,7 +34,7 @@ class Enemy : public IActor {
 
         int getId() const;
         string getName() const;
-        float getSpeed() const;
+        float getSpeed() const override;
         float getDamage() const;
         Vector2f getPosition() const;
         Vector2f getHeadPosition() const;

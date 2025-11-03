@@ -7,6 +7,7 @@ ActorEffectsFactory& ActorEffectsFactory::Instance() {
 
 void ActorEffectsFactory::Initialize(){
     Instance().RegisterEffect(2, []() { return std::make_unique<FireActorEffect>(); });
+    Instance().RegisterEffect(3, []() { return std::make_unique<BleedActorEffect>(); });
 }
 
 void ActorEffectsFactory::RegisterEffect(const int id, CreatorFunc func) {
@@ -19,7 +20,7 @@ std::unique_ptr<IActorEffect> ActorEffectsFactory::Create(const int id) {
         return it->second();
     }
     else{
-        std::cout << "AcotrEffectFactory: Unknown effect id '" << id << "'" << std::endl;
+        std::cout << "ActorEffectFactory: Unknown effect id '" << id << "'" << std::endl;
     }
     return nullptr;
 }

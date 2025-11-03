@@ -38,7 +38,7 @@ public:
     CharacterStats& getStats();
     CollisionShape getCollisionBox() const;
     float getSize() const;
-    
+    float getSpeed() const override;
 
 
 private:

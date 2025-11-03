@@ -9,6 +9,7 @@
 #include "Effects/ProjectileEffects/PiercingEffect.h"
 #include "Effects/ProjectileEffects/HomingEffect.h"
 #include "Effects/ProjectileEffects/FireProjectileEffect.h"
+#include "Effects/ProjectileEffects/BleedProjectileEffect.h"
 
 class EffectFactory {
 public:

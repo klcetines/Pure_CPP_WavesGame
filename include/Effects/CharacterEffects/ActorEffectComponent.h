@@ -1,6 +1,7 @@
 #ifndef ACTOR_EFFECT_COMPONENT_H
 #define ACTOR_EFFECT_COMPONENT_H
 
+#include <iostream>
 #include <map>
 #include <memory>
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
@@ -16,6 +17,7 @@ public:
     ~ActorEffectComponent() = default;
 
     void Update(float dt);
+    void UpdateDistance(float distance);
     void AddEffect(std::unique_ptr<IActorEffect> newEffect);
     void RemoveEffect(ActorEffectType type);
     bool ItsEmpty() const;

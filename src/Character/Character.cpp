@@ -78,6 +78,10 @@ void Character::applyKnockback(shared_ptr<Enemy> enemy) {
     }
 }
 
+float Character::getSpeed() const {
+    return stats.getSpeed();
+}
+
 string Character::getName() const { 
     return name; 
 }

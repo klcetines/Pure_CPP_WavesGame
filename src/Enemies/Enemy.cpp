@@ -49,6 +49,12 @@ void Enemy::move(float dx, float dy) {
             _lastMoveDir = {dx / len, dy / len};
         }
     }
+
+    if (!_effectComponent.ItsEmpty()) {
+        float movement = sqrt(dx*dx + dy*dy);
+        _effectComponent.UpdateDistance(movement);
+    }
+
     _collisionBox.center = Vector2f(_position.x, _position.y);
     _collisionBox.rotationDeg = atan2(_lastMoveDir.y, _lastMoveDir.x) * 180.0f / 3.14159265f;
 }

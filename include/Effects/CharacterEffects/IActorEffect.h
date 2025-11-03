@@ -5,6 +5,7 @@ class IActor;
 
 enum class ActorEffectType {
     Fire,
+    Bleed,
     Poison,
     Blessing,
     StatBuff
@@ -20,6 +21,7 @@ class IActorEffect {
         virtual bool isFinished() = 0;
         virtual void onRemove(IActor& character) = 0;
         virtual void update(IActor& character, float deltaTime) = 0;
+        virtual void updateOnDistance(IActor& character, float distance) {}
         virtual void refreshDuration() = 0;
         virtual ActorEffectType GetType() const = 0;
 

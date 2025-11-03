@@ -7,6 +7,7 @@
 #include <memory>
 #include "Effects/CharacterEffects/IActorEffect.h"
 #include "Effects/CharacterEffects/FireActorEffect.h"
+#include "Effects/CharacterEffects/BleedActorEffect.h"
 
 class ActorEffectsFactory {
 public:
