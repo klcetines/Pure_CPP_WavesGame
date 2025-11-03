@@ -20,7 +20,6 @@ CharacterStats::~CharacterStats() {
 void CharacterStats::applyEffect(const Effect& effect) {
     const string& type = effect.getType();
     float value = effect.getValue();
-    cout << "CharacterStats::applyEffect called with type: " << type << " and value: " << value << endl;
     if (type == "health") {
         _life->heal(value);
     } 

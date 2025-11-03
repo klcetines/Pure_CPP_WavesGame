@@ -30,14 +30,8 @@ void ActorEffectComponent::AddEffect(std::unique_ptr<IActorEffect> newEffect) {
     ActorEffectType type = newEffect->GetType();
 
     auto it = _activeEffects.find(type);
-
-    if (it != _activeEffects.end()) {
-        it->second->refreshDuration();
-        it->second->addCharges(1);
-    } else {
-        newEffect->onApply(*_owner);
-        _activeEffects[type] = std::move(newEffect);
-    }
+    newEffect->onApply(*_owner);
+    _activeEffects[type] = std::move(newEffect);
 }
 
 void ActorEffectComponent::RemoveEffect(ActorEffectType type) {
@@ -50,4 +44,16 @@ void ActorEffectComponent::RemoveEffect(ActorEffectType type) {
 
 bool ActorEffectComponent::ItsEmpty() const {
     return _activeEffects.empty();
+}
+
+bool ActorEffectComponent::find(ActorEffectType type) const {
+    return _activeEffects.find(type) != _activeEffects.end();
+}
+
+IActorEffect* ActorEffectComponent::get(ActorEffectType type) {
+    auto it = _activeEffects.find(type);
+    if (it != _activeEffects.end()) {
+        return it->second.get();
+    }
+    return nullptr;
 }

@@ -21,6 +21,8 @@ public:
     void AddEffect(std::unique_ptr<IActorEffect> newEffect);
     void RemoveEffect(ActorEffectType type);
     bool ItsEmpty() const;
+    bool find(ActorEffectType type) const;
+    IActorEffect* get(ActorEffectType type); 
 
 private:
     IActor* _owner; 

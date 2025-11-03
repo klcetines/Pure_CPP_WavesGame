@@ -3,10 +3,17 @@
 
 ProjectileAction BleedProjectileEffect::OnImpact(IActor& enemy) {
     ActorEffectComponent* effectComp = enemy.getEffectComponent();
-        if (effectComp) {
-            auto bleedEffect = ActorEffectsFactory::Instance().Create(3);
-            effectComp->AddEffect(std::move(bleedEffect));
-        }
+    if (!effectComp) return ProjectileAction::Destroy;
+
+    if (auto existingEffect = effectComp->get(ActorEffectType::Bleed)) {
+        existingEffect->refreshDuration();
+        existingEffect->addCharges(1);
+    } 
+    else {
+        auto bleedEffect = ActorEffectsFactory::Instance().Create(3);
+        effectComp->AddEffect(std::move(bleedEffect));
+    }
+
     return ProjectileAction::Trigger;
 }
 
