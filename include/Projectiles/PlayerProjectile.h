@@ -46,13 +46,15 @@ private:
     std::unordered_set<int> _hitEnemies;
 
     int currentEffectIndex = 0;
-
+    
     CollisionShape _collisionBox;
     void updateDistanceTraveled(const Vector2f& movement);
     void updatePosition(const Vector2f& movement);
     void updateCollisionBox();
     void updateProjectileEffects();
     void updateVelocityTowardsTarget(const Vector2f& targetDirection, float deltaTime);
+
+    Enemy* _hitedEnemy = nullptr;
 };
 
 #endif

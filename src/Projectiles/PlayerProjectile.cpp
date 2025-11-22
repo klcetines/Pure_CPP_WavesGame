@@ -73,19 +73,19 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
 
 void PlayerProjectile::handleImpact(IActor& animatedObject) {
     Enemy* enemyPtr = dynamic_cast<Enemy*>(&animatedObject);
-
+    
     if (enemyPtr) {
-        Enemy& enemy = *enemyPtr; 
-        int enemyId = enemy.getId();
+        _hitedEnemy = enemyPtr;
+        int enemyId = _hitedEnemy->getId();
         if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
             return;
         }
 
         _hitEnemies.insert(enemyId);
-        enemy.takeDamage(_damage);
+        _hitedEnemy->takeDamage(_damage);
 
         if (_effects && !_effects->itsEmpty()) {
-            ProjectileAction result = _effects->OnImpact(*this, enemy);
+            ProjectileAction result = _effects->OnImpact(*this, *_hitedEnemy);
 
             if (result == ProjectileAction::Destroy) {
                 destroy();
@@ -127,6 +127,12 @@ void PlayerProjectile::updateDistanceTraveled(const Vector2f& movement) {
 
 void PlayerProjectile::updatePosition(const Vector2f& movement) {
     position += movement;
+    if (_hitedEnemy != nullptr) {
+        if(!_collisionBox.intersects(_hitedEnemy->getCollisionBox())){
+            if(_effects->GetType() == EffectType::Piercing) _effects->nextEffect();
+            _hitedEnemy = nullptr;
+        }
+    }
 }
 
 void PlayerProjectile::updateCollisionBox() {
