@@ -10,7 +10,7 @@ enum class EffectType {
     Generic,
     Homing,
     Piercing,
-    Passive
+    Impact
 };
 
 enum class ProjectileAction {
@@ -36,6 +36,8 @@ public:
     virtual ProjectileAction OnExpire(Projectile& projectile) { return ProjectileAction::Destroy; };
 
     virtual std::unique_ptr<IProjectileEffect> Clone() const = 0;
+
+    virtual bool extraImpact() const { return false; }
 };
 
 #endif // I_PROJECTILE_EFFECT_H

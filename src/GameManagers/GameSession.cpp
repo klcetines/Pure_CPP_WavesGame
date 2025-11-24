@@ -159,6 +159,9 @@ void GameSession::renderUI(RenderWindow& window) {
     statsText.setFillColor(Color::Cyan);
     statsText.setPosition(10, 40);
     window.draw(statsText);
+
+    RenderEffectsArrange(window);
+
 }
 
 void GameSession::renderDebug(RenderWindow& window) {
@@ -268,5 +271,69 @@ void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& ch
     for (const auto& proj : projectilesManager->getProjectiles()) {
         auto ppos = proj->getPosition();
         drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, proj->getSize());
+    }
+}
+
+void GameSession::RenderEffectsArrange(RenderWindow& window) {
+    float startX = 10.f;
+    float startY = 80.f;
+    float startY_Impact = 125.f;
+    float boxSize = 40.f;
+    float padding = 10.f;
+    
+    auto& modifiers = player->getStats().getProjectileEffects().getModifiers();
+    auto& impacts = player->getStats().getProjectileEffects().getImpacts();
+
+    int maxSlots = player->getStats().getMaxEffectsCount();
+
+    for (int i = 0; i < maxSlots; ++i) {
+        float xPos = startX + (boxSize + padding) * i;
+        if (i < modifiers.size()) {
+            string label = "M";
+            Color col = Color::Cyan;
+            
+            if (modifiers[i]->GetType() == EffectType::Piercing) { label = "P"; col = Color::Yellow; }
+            if (modifiers[i]->GetType() == EffectType::Homing)   { label = "H"; col = Color::Magenta; }
+
+            drawEffectSlot(window, xPos, startY, boxSize, label, col);
+        } else {
+            drawEffectSlot(window, xPos, startY, boxSize, "", Color(50, 50, 50, 50));
+        }
+        if (i < impacts.size()) {
+            string label = "I"; 
+            Color col = Color::Red;
+
+            drawEffectSlot(window, xPos, startY_Impact, boxSize, label, col);
+        } else {
+            drawEffectSlot(window, xPos, startY_Impact, boxSize, "", Color(50, 50, 50, 50));
+        }
+        
+        if (i < modifiers.size() || i < impacts.size()) {
+            RectangleShape line(Vector2f(2.f, startY_Impact - (startY + boxSize)));
+            line.setPosition(xPos + boxSize/2, startY + boxSize);
+            line.setFillColor(Color(100, 100, 100));
+            window.draw(line);
+        }
+    }
+}
+
+void GameSession::drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color) {
+    RectangleShape box(Vector2f(size, size));
+    box.setPosition(x, y);
+    box.setFillColor(Color(color.r, color.g, color.b, 100));
+    box.setOutlineColor(color);
+    box.setOutlineThickness(2.f);
+    
+    window.draw(box);
+
+    if (!label.empty()) {
+        Text t(label, font, 18);
+        FloatRect bounds = t.getLocalBounds();
+        t.setPosition(
+            x + (size / 2.f) - (bounds.width / 2.f),
+            y + (size / 2.f) - (bounds.height / 1.5f)
+        );
+        t.setFillColor(Color::White);
+        window.draw(t);
     }
 }

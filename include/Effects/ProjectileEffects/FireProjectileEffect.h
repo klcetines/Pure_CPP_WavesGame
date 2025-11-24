@@ -7,7 +7,7 @@
 
 class FireProjectileEffect : public IProjectileEffect {
     public:
-        EffectType GetType() const override { return EffectType::Passive; }
+        EffectType GetType() const override;
         ProjectileAction OnImpact(IActor& enemy) override;
         std::unique_ptr<IProjectileEffect> Clone() const override;
 };

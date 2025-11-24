@@ -13,8 +13,11 @@ class EffectsArrange {
         EffectsArrange() = default;
         ~EffectsArrange() = default;
 
-        void addEffect(std::unique_ptr<IProjectileEffect> effect);
-        const std::vector<std::unique_ptr<IProjectileEffect>>& getEffects() const;
+        void addModifier(std::unique_ptr<IProjectileEffect> effect);
+        void addImpact(std::unique_ptr<IProjectileEffect> effect);
+
+        const std::vector<std::unique_ptr<IProjectileEffect>>& getModifiers() const;
+        const std::vector<std::unique_ptr<IProjectileEffect>>& getImpacts() const;
 
         void clearEffects();
         void nextEffect();
@@ -31,9 +34,12 @@ class EffectsArrange {
 
 
     private:
-        std::vector<std::unique_ptr<IProjectileEffect>> _effects;
-        int currentEffectIndex = 0;
+        std::vector<std::unique_ptr<IProjectileEffect>> _modifiers; 
 
+        std::vector<std::unique_ptr<IProjectileEffect>> _impacts;
+
+        int currentEffectIndex = 0;
+        int currentImpactIndex = 0;
 };
 
 

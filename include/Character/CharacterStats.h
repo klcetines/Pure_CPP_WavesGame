@@ -22,6 +22,7 @@ public:
     float getAttackSpeed() const;
     float getProjectileSpeed() const;
     const EffectsArrange& getProjectileEffects() const;
+    int getMaxEffectsCount() const;
 
 private:
     Life* _life;
@@ -31,6 +32,7 @@ private:
     float _attackSpeed;
     float _projectileSpeed;
     std::unique_ptr<EffectsArrange> _projectileEffects;
+    int maxEffectsCount = 2;
 };
 
 #endif // CHARACTER_STATS_H

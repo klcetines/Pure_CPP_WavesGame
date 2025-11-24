@@ -129,7 +129,9 @@ void PlayerProjectile::updatePosition(const Vector2f& movement) {
     position += movement;
     if (_hitedEnemy != nullptr) {
         if(!_collisionBox.intersects(_hitedEnemy->getCollisionBox())){
-            if(_effects->GetType() == EffectType::Piercing) _effects->nextEffect();
+            if(_effects->GetType() == EffectType::Piercing) {
+                _effects->nextEffect();
+            }
             _hitedEnemy = nullptr;
         }
     }

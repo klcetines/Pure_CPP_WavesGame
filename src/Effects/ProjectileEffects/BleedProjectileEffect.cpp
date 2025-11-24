@@ -1,6 +1,10 @@
 #include "Effects/ProjectileEffects/BleedProjectileEffect.h"
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
 
+EffectType BleedProjectileEffect::GetType() const {
+    return EffectType::Impact; 
+}
+
 ProjectileAction BleedProjectileEffect::OnImpact(IActor& enemy) {
     ActorEffectComponent* effectComp = enemy.getEffectComponent();
     if (!effectComp) return ProjectileAction::Destroy;

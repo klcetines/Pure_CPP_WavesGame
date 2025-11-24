@@ -1,84 +1,108 @@
 #include "Effects/ProjectileEffects/EffectsArrange.h"
 
-void EffectsArrange::addEffect(std::unique_ptr<IProjectileEffect> effect){
+void EffectsArrange::addModifier(std::unique_ptr<IProjectileEffect> effect){
     if (effect) {
-        _effects.push_back(std::move(effect));
+        _modifiers.push_back(std::move(effect));
     }
 }
 
-const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getEffects() const{
-    return _effects;
+const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getModifiers() const{
+    return _modifiers;
+}
+
+void EffectsArrange::addImpact(std::unique_ptr<IProjectileEffect> effect){
+    if (effect) {
+        _impacts.push_back(std::move(effect));
+    }
+}
+
+const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getImpacts() const{
+    return _impacts;
 }
 
 void EffectsArrange::clearEffects(){
-    _effects.clear();
+    _modifiers.clear();
     currentEffectIndex = 0;
+
+    _impacts.clear();
+    currentImpactIndex = 0;
 }
+
 void EffectsArrange::nextEffect(){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()-1) {
-        currentEffectIndex = currentEffectIndex+1;
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+        currentEffectIndex++;
     }
     
 }
 bool EffectsArrange::itsEmpty() const{
-    return _effects.empty();
+    return _modifiers.empty() || _impacts.empty();
 }
 
 std::unique_ptr<EffectsArrange> EffectsArrange::Clone() const {
     auto clone = std::make_unique<EffectsArrange>();
-    for (const auto& effect : _effects) {
-        clone->addEffect(effect->Clone());
+    for (const auto& effect : _modifiers) {
+        clone->addModifier(effect->Clone());
     }
     return clone;
 }
 
 EffectType EffectsArrange::GetType() const {
-    if (!_effects.empty()) {
-        return _effects[currentEffectIndex]->GetType();
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+        return _modifiers[currentEffectIndex]->GetType();
     }
     else return EffectType::Generic; 
 }
 
 void EffectsArrange::OnFire(Projectile& projectile){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        _effects[currentEffectIndex]->OnFire(projectile);
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+        _modifiers[currentEffectIndex]->OnFire(projectile);
     }
 }
 
 void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        if(_effects[currentEffectIndex]->OnUpdate(projectile, deltaTime) == ProjectileAction::Trigger){
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+        if(_modifiers[currentEffectIndex]->OnUpdate(projectile, deltaTime) == ProjectileAction::Trigger){
             nextEffect();
         }
     }
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) { 
-        if (_effects[currentEffectIndex]) {
-            ProjectileAction action = _effects[currentEffectIndex]->OnImpact(enemy);
-            if (action == ProjectileAction::Trigger) {
-                nextEffect(); 
-                if(currentEffectIndex < _effects.size()) return ProjectileAction::Destroy;
-                return ProjectileAction::Continue;
-            }
-            return action;
-        }
+    if (currentImpactIndex < _impacts.size()) {
+        _impacts[currentImpactIndex]->OnImpact(enemy);
+        currentImpactIndex++; 
     }
-    return ProjectileAction::Destroy;
+
+    if (_modifiers.empty() || currentEffectIndex >= _modifiers.size()) {
+        return ProjectileAction::Destroy;
+    }
+
+    auto& currentMod = _modifiers[currentEffectIndex];
+    ProjectileAction action = currentMod->OnImpact(enemy);
+
+    if (action == ProjectileAction::Trigger) {
+        nextEffect(); 
+        
+        if (currentEffectIndex >= _modifiers.size()) {
+            return ProjectileAction::Destroy;
+        }
+        return ProjectileAction::Continue;
+    }
+        
+    return action;
 }
 
 void EffectsArrange::OnDistanceTraveled(Projectile& projectile, float distance){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-       if (_effects[currentEffectIndex]->OnDistanceTraveled(projectile, distance ) == ProjectileAction::Trigger) {
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+       if (_modifiers[currentEffectIndex]->OnDistanceTraveled(projectile, distance ) == ProjectileAction::Trigger) {
             nextEffect();
         }
     }
 }
 
 void EffectsArrange::OnExpire(Projectile& projectile){
-    if (!_effects.empty() && currentEffectIndex < _effects.size()) {
-        if(_effects[currentEffectIndex]->OnExpire(projectile) == ProjectileAction::Trigger) {
+    if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
+        if(_modifiers[currentEffectIndex]->OnExpire(projectile) == ProjectileAction::Trigger) {
             nextEffect();
         }
     }

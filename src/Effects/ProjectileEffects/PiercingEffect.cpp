@@ -11,3 +11,7 @@ ProjectileAction PiercingEffect::OnImpact(IActor& enemy) {
 std::unique_ptr<IProjectileEffect> PiercingEffect::Clone() const {
     return std::make_unique<PiercingEffect>(*this);
 }
+
+bool PiercingEffect::extraImpact() const {
+    return true;
+}

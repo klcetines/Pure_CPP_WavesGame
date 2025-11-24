@@ -69,6 +69,9 @@ private:
     void drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector2f pointB, float radius, float offsetX, float offsetY);
     void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr);
 
+    void RenderEffectsArrange(RenderWindow& window);
+    void drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color);
+
 };
 
 #endif

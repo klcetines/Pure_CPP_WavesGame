@@ -41,7 +41,10 @@ void CharacterStats::applyEffect(const Effect& effect) {
     else if (type == "projectile") {
         unique_ptr<IProjectileEffect> newEffect = EffectFactory::Instance().Create(static_cast<int>(value));
         if (newEffect) {
-            _projectileEffects->addEffect(std::move(newEffect));
+            if(newEffect->GetType() == EffectType::Impact) {
+                _projectileEffects->addImpact(std::move(newEffect));
+            }
+            else _projectileEffects->addModifier(std::move(newEffect));
         } 
         else {
             std::cout << "FILE: CharacterStats.cpp \n METHOD: applyEffect \n Unknown projectile effect id '" << static_cast<int>(value) << "'" << std::endl << std::endl;
@@ -61,4 +64,8 @@ float CharacterStats::getProjectileSpeed() const { return _projectileSpeed; }
 
 const EffectsArrange& CharacterStats::getProjectileEffects() const {
     return *_projectileEffects;
+}
+
+int CharacterStats::getMaxEffectsCount() const {
+    return maxEffectsCount;
 }
