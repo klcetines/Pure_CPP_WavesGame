@@ -12,49 +12,44 @@
 
 class PlayerProjectile : public Projectile {
 public:
-    PlayerProjectile(sf::Vector2f start, sf::Vector2f target, float speed, float damage, const EffectsArrange& effects, float range = 300.0f);
+    PlayerProjectile(Vector2f start, Vector2f direction, float speed, float damage, const EffectsArrange& effects, float range = 300.0f);
     ~PlayerProjectile();
 
-    void update (float dt) override;
-    void update(float dt, shared_ptr<Enemy> closest_enemy);
-    
-    void addEffect(std::unique_ptr<IProjectileEffect> effect);
+    void update(float dt, shared_ptr<Enemy> closestEnemy = nullptr);
 
     void draw(RenderWindow& window, float offsetX, float offsetY) override;
     bool isAlive() const override;
+    void handleImpact(IActor& actor) override;
+    void destroy() override;
 
-    void handleImpact(IActor& enemy) override;
-
-    sf::Vector2f getPosition() const override;
+    Vector2f getPosition() const override;
     float getDamage() const override;
     float getSize() const override;
-    void destroy() override;
     CollisionShape getCollisionBox() const override;
     
 private:
-    CircleShape shape;
-    Vector2f position;
-
-    Vector2f velocity;
     bool _alive;
-    float _lifetime = 0.f;
-    float _damage;
+    float _lifetime;
+    float _maxLifetime = 5.0f;
+    float _traveledDistance = 3.0f;
     float _maxRange;
-    float _traveledDistance = 0.f;
+    float _damage;
+    
+    Vector2f _position;
+    Vector2f _velocity;
+    CircleShape _shape;
+    CollisionShape _collisionBox;
 
     unique_ptr<EffectsArrange> _effects;
-    std::unordered_set<int> _hitEnemies;
+    unordered_set<int> _hitEnemies;
+    Enemy* _lastHitEnemy = nullptr;
 
-    int currentEffectIndex = 0;
+    void moveProjectile(float dt);
+    void handleHomingBehavior(float dt, shared_ptr<Enemy> target);
+    void updatePiercingLogic();
     
-    CollisionShape _collisionBox;
-    void updateDistanceTraveled(const Vector2f& movement);
-    void updatePosition(const Vector2f& movement);
-    void updateCollisionBox();
-    void updateProjectileEffects();
-    void updateVelocityTowardsTarget(const Vector2f& targetDirection, float deltaTime);
-
-    Enemy* _hitedEnemy = nullptr;
+    float getVectorLength(const Vector2f& v);
+    Vector2f normalizeVector(const Vector2f& v);
 };
 
 #endif

@@ -2,24 +2,19 @@
 #include <cmath>
 #include <cstdlib>
 
-PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed, float damage, const EffectsArrange& effects, float range)
-    : position(start), _alive(true), _damage(damage), _maxRange(range), _traveledDistance(0.f), _effects(effects.Clone()){
-    shape.setRadius(6);
-    shape.setFillColor(Color::Black);
-    shape.setOrigin(6, 6);
+PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f direction, float speed, float damage, const EffectsArrange& effects, float range)
+    : _position(start), _alive(true), _lifetime(0.f), _damage(damage), _maxRange(range), _traveledDistance(0.f), _effects(effects.Clone()){
+    _shape.setRadius(6);
+    _shape.setFillColor(Color::Black);
+    _shape.setOrigin(6, 6);
 
-    Vector2f catets = target - start;
-    float hipotenusa = sqrt(catets.x * catets.x + catets.y * catets.y);
-    if (hipotenusa != 0)
-        velocity = catets / hipotenusa * speed;
-    else
-        velocity = {0, 0};
-
+    _velocity = normalizeVector(direction) * speed;
+    
     _collisionBox = CollisionShape(start, 6, 6, 0.0f);
     
     _hitEnemies = unordered_set<int>();
     
-    if (_effects && !_effects->itsEmpty()) {
+    if (_effects && !_effects->modifiersItsEmpty()) {
         _effects->OnFire(*this);
     }
 }
@@ -27,133 +22,133 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f target, float speed,
 PlayerProjectile::~PlayerProjectile() {
 }
 
-void PlayerProjectile::update(float dt){
-    Vector2f movement = velocity * dt;
+
+void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
+    if (closestEnemy && _effects && _effects->GetType() == EffectType::Homing) {
+        handleHomingBehavior(dt, closestEnemy);
+    }
+
+    if (_effects) {
+        _effects->OnUpdate(*this, dt);
+    }
+
+    updatePiercingLogic();
+
+    moveProjectile(dt);
     
     _lifetime += dt;
-
-    updatePosition(movement);
-    updateDistanceTraveled(movement);
-    updateCollisionBox();
-
-    if (_traveledDistance >= _maxRange || _lifetime > 5.0f) {
+    if (_traveledDistance >= _maxRange || _lifetime > _maxLifetime) {
         _alive = false;
     }
 }
 
-void PlayerProjectile::update(float dt, shared_ptr<Enemy> closest_enemy) {
-    if (closest_enemy && _effects && (_effects->GetType() == EffectType::Homing)) {
-        Vector2f targetDirection = closest_enemy->getHeadPosition() - position;
-        float length = sqrt(targetDirection.x * targetDirection.x + targetDirection.y * targetDirection.y);
-        
-        if (length != 0) {
-            targetDirection /= length;
-            updateVelocityTowardsTarget(targetDirection, dt);
+void PlayerProjectile::handleHomingBehavior(float dt, shared_ptr<Enemy> target) {
+    Vector2f targetPos = target->getHeadPosition();
+    Vector2f directionToTarget = targetPos - _position;
+    
+    float dist = getVectorLength(directionToTarget);
+    if (dist == 0) return;
+    Vector2f desiredDir = directionToTarget / dist;
+
+    float currentSpeed = getVectorLength(_velocity);
+    Vector2f currentDir = (currentSpeed != 0) ? _velocity / currentSpeed : Vector2f(0,0);
+
+    float homingFactor = 5.0f; // Speed of homing adjustment
+    Vector2f newDir = currentDir + (desiredDir - currentDir) * homingFactor * dt;
+    
+    _velocity = normalizeVector(newDir) * currentSpeed;
+}
+
+void PlayerProjectile::moveProjectile(float dt) {
+    Vector2f movement = _velocity * dt;
+    
+    _position += movement;
+    _shape.setPosition(_position);
+    
+    _traveledDistance += getVectorLength(movement);
+    
+    if(_effects) {
+        _effects->OnDistanceTraveled(*this, _traveledDistance);
+    }
+    _collisionBox.center = _position;
+}
+
+void PlayerProjectile::updatePiercingLogic() {
+    if (_lastHitEnemy != nullptr) {
+        if (!_collisionBox.intersects(_lastHitEnemy->getCollisionBox())) {
+            
+            if (_effects && _effects->GetType() == EffectType::Piercing) {
+                _effects->nextEffect();
+            }
+            _lastHitEnemy = nullptr; 
         }
     }
-    _effects->OnUpdate(*this, dt);
-    
-    Vector2f movement = velocity * dt;
-    
-    _lifetime += dt;
+}     
 
-    updatePosition(movement);
-    updateDistanceTraveled(movement);
-    updateCollisionBox();
+void PlayerProjectile::handleImpact(IActor& animatedObject) {
+    Enemy* enemy = dynamic_cast<Enemy*>(&animatedObject);
+    
+    if (!enemy) return;
 
-    if (_traveledDistance >= _maxRange || _lifetime > 5.0f) {
-        _alive = false;
+    int enemyId = enemy->getId();
+
+    if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
+        return;
     }
+
+    _hitEnemies.insert(enemyId);
+    _lastHitEnemy = enemy;
+    
+    enemy->takeDamage(_damage);
+    if(enemy->getLife() <= 0){
+        _lastHitEnemy = nullptr;
+    }
+
+    if (_effects && (!_effects->modifiersItsEmpty() || !_effects->impactsItsEmpty())) {
+        ProjectileAction result = _effects->OnImpact(*this, *enemy);
+        if (result == ProjectileAction::Destroy) {
+            destroy();
+        }
+    } 
+    else {
+        destroy();
+    }
+}
+float PlayerProjectile::getVectorLength(const Vector2f& v) {
+    return std::sqrt(v.x * v.x + v.y * v.y);
+}
+
+Vector2f PlayerProjectile::normalizeVector(const Vector2f& v) {
+    float len = getVectorLength(v);
+    if (len != 0) return v / len;
+    return Vector2f(0, 0);
 }
 
 void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) {
-    shape.setPosition(position.x + offsetX, position.y + offsetY);
-    window.draw(shape);
+    _shape.setPosition(_position.x + offsetX, _position.y + offsetY);
+    window.draw(_shape);
 }       
 
-void PlayerProjectile::handleImpact(IActor& animatedObject) {
-    Enemy* enemyPtr = dynamic_cast<Enemy*>(&animatedObject);
-    
-    if (enemyPtr) {
-        _hitedEnemy = enemyPtr;
-        int enemyId = _hitedEnemy->getId();
-        if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
-            return;
-        }
-
-        _hitEnemies.insert(enemyId);
-        _hitedEnemy->takeDamage(_damage);
-
-        if (_effects && !_effects->itsEmpty()) {
-            ProjectileAction result = _effects->OnImpact(*this, *_hitedEnemy);
-
-            if (result == ProjectileAction::Destroy) {
-                destroy();
-            }
-        } 
-        else {
-            destroy();
-        }
-    }
+bool PlayerProjectile::isAlive() const { 
+    return _alive; 
 }
 
-bool PlayerProjectile::isAlive() const {
-    return _alive;
+Vector2f PlayerProjectile::getPosition() const { 
+    return _position; 
 }
 
-Vector2f PlayerProjectile::getPosition() const {
-    return position;
+float PlayerProjectile::getDamage() const { 
+    return _damage; 
 }
 
-float PlayerProjectile::getDamage() const {
-    return _damage;
+float PlayerProjectile::getSize() const { 
+    return _shape.getRadius(); 
 }
 
-float PlayerProjectile::getSize() const {
-    return shape.getRadius();
+CollisionShape PlayerProjectile::getCollisionBox() const { 
+    return _collisionBox; 
 }
 
 void PlayerProjectile::destroy() {
     _alive = false;
-}
-CollisionShape PlayerProjectile::getCollisionBox() const {
-    return _collisionBox;
-}
-
-void PlayerProjectile::updateDistanceTraveled(const Vector2f& movement) {
-    _traveledDistance += sqrt(movement.x * movement.x + movement.y * movement.y);
-    _effects->OnDistanceTraveled(*this, _traveledDistance);
-}
-
-void PlayerProjectile::updatePosition(const Vector2f& movement) {
-    position += movement;
-    if (_hitedEnemy != nullptr) {
-        if(!_collisionBox.intersects(_hitedEnemy->getCollisionBox())){
-            if(_effects->GetType() == EffectType::Piercing) {
-                _effects->nextEffect();
-            }
-            _hitedEnemy = nullptr;
-        }
-    }
-}
-
-void PlayerProjectile::updateCollisionBox() {
-    _collisionBox.center = position;
-}
-
-void PlayerProjectile::updateVelocityTowardsTarget(const Vector2f& targetDirection, float deltaTime) {
-    float speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-    float homingFactor = 5.0f;
-
-    Vector2f currentDir = velocity / speed;
-
-    Vector2f newDir;
-    newDir.x = currentDir.x + (targetDirection.x - currentDir.x) * homingFactor * deltaTime;
-    newDir.y = currentDir.y + (targetDirection.y - currentDir.y) * homingFactor * deltaTime;
-
-    float len = sqrt(newDir.x * newDir.x + newDir.y * newDir.y);
-    if (len != 0) {
-        newDir /= len;
-        velocity = newDir * speed;
-    }
 }

@@ -34,8 +34,13 @@ void EffectsArrange::nextEffect(){
     }
     
 }
-bool EffectsArrange::itsEmpty() const{
-    return _modifiers.empty() || _impacts.empty();
+
+bool EffectsArrange::modifiersItsEmpty() const{
+    return _modifiers.empty();
+}
+
+bool EffectsArrange::impactsItsEmpty() const{
+    return _impacts.empty();
 }
 
 std::unique_ptr<EffectsArrange> EffectsArrange::Clone() const {
@@ -68,6 +73,7 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
+    cout << "EffectsArrange::OnImpact called" << endl;
     if (currentImpactIndex < _impacts.size()) {
         _impacts[currentImpactIndex]->OnImpact(enemy);
         currentImpactIndex++; 
@@ -82,7 +88,6 @@ ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
 
     if (action == ProjectileAction::Trigger) {
         nextEffect(); 
-        
         if (currentEffectIndex >= _modifiers.size()) {
             return ProjectileAction::Destroy;
         }

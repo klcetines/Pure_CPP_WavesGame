@@ -21,7 +21,8 @@ class EffectsArrange {
 
         void clearEffects();
         void nextEffect();
-        bool itsEmpty() const;
+        bool modifiersItsEmpty() const;
+        bool impactsItsEmpty() const;
 
         std::unique_ptr<EffectsArrange> Clone() const;
         EffectType GetType() const;

@@ -22,7 +22,7 @@ CharacterCombat::createAttack(const Vector2f& origin, const Vector2f& target) {
         projectiles->push_back(
             make_shared<PlayerProjectile>(
                 spawnPos, 
-                target, 
+                direction, 
                 stats.getProjectileSpeed(),
                 stats.getDamage(),
                 stats.getProjectileEffects()

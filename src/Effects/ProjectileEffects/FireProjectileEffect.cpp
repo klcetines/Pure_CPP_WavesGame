@@ -6,6 +6,7 @@ EffectType FireProjectileEffect::GetType() const {
 }
 
 ProjectileAction FireProjectileEffect::OnImpact(IActor& enemy) {
+    cout << "FireProjectileEffect::OnImpact triggered." << endl;
     ActorEffectComponent* effectComp = enemy.getEffectComponent();
     if (!effectComp) return ProjectileAction::Destroy;
 

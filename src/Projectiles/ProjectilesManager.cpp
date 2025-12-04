@@ -32,7 +32,9 @@ void ProjectilesManager::update(float dt, shared_ptr<Enemy> closestEnemy) {
 }
 
 void ProjectilesManager::draw(RenderWindow& window, float offsetX, float offsetY) {
-    for (auto& p : _projectiles) p->draw(window, offsetX, offsetY);
+    for (auto& p : _projectiles) {
+        p->draw(window, offsetX, offsetY);
+    }
 }
 
 const vector<shared_ptr<Projectile>>& ProjectilesManager::getProjectiles() const {
