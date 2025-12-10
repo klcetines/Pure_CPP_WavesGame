@@ -48,6 +48,9 @@ std::unique_ptr<EffectsArrange> EffectsArrange::Clone() const {
     for (const auto& effect : _modifiers) {
         clone->addModifier(effect->Clone());
     }
+    for (const auto& effect : _impacts) {
+        clone->addImpact(effect->Clone());
+    }
     return clone;
 }
 
@@ -73,7 +76,6 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime){
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy){
-    cout << "EffectsArrange::OnImpact called" << endl;
     if (currentImpactIndex < _impacts.size()) {
         _impacts[currentImpactIndex]->OnImpact(enemy);
         currentImpactIndex++; 
