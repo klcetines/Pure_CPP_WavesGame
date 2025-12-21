@@ -308,10 +308,6 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
 
                     drawEffectSlot(window, xPos, startY_Impact, boxSize, label, col);
 
-                    RectangleShape line(Vector2f(2.f, startY_Impact - (startY + boxSize)));
-                    line.setPosition(xPos + boxSize/2, startY + boxSize);
-                    line.setFillColor(Color(100, 100, 100));
-                    window.draw(line);
                     impact++;
                 }
                 else{
@@ -323,7 +319,13 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
             drawEffectSlot(window, xPos, startY, boxSize, "", Color(50, 50, 50, 50));
         }
     }
-    drawEffectSlot(window, startX + (boxSize + padding) * (maxSlots+impacts.size()+spot), startY_Impact, boxSize, "", Color(50, 50, 50, 50));
+    Color lastImpactCol = Color::Red;
+    if(impact < impacts.size()){
+        lastImpactCol = Color::Red;
+    }
+    else lastImpactCol = Color(50, 50, 50, 50);
+
+    drawEffectSlot(window, startX + (boxSize + padding) * (maxSlots+spot), startY_Impact, boxSize, "I", lastImpactCol);
 }
 
 void GameSession::drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color) {
