@@ -9,6 +9,7 @@ CharacterStats::CharacterStats()
     , _projectileSpeed(200.0f)
 {
     _projectileEffects = unique_ptr<EffectsArrange> (new EffectsArrange());
+    _effectsInventory = unique_ptr<EffectsInventory> (new EffectsInventory());
     EffectFactory::Initialize();
     ActorEffectsFactory::Initialize();
 }
@@ -42,9 +43,15 @@ void CharacterStats::applyEffect(const Effect& effect) {
         unique_ptr<IProjectileEffect> newEffect = EffectFactory::Instance().Create(static_cast<int>(value));
         if (newEffect) {
             if(newEffect->GetType() == EffectType::Impact) {
-                _projectileEffects->addImpact(std::move(newEffect));
+                if(!handleAddImpact(std::move(newEffect))){
+                    std::cout << "FILE: CharacterStats.cpp \n METHOD: applyEffect \n Effects inventory is full. Cannot add new impact effect." << std::endl << std::endl;
+                }
             }
-            else _projectileEffects->addModifier(std::move(newEffect));
+            else {
+                if(!handleAddModifier(std::move(newEffect))){
+                    std::cout << "FILE: CharacterStats.cpp \n METHOD: applyEffect \n Effects inventory is full. Cannot add new modifier effect." << std::endl << std::endl;
+                }
+            }
         } 
         else {
             std::cout << "FILE: CharacterStats.cpp \n METHOD: applyEffect \n Unknown projectile effect id '" << static_cast<int>(value) << "'" << std::endl << std::endl;
@@ -62,10 +69,36 @@ int CharacterStats::getBulletsNumber() const { return _bulletsNumber; }
 float CharacterStats::getAttackSpeed() const { return _attackSpeed; }
 float CharacterStats::getProjectileSpeed() const { return _projectileSpeed; }
 
-const EffectsArrange& CharacterStats::getProjectileEffects() const {
+EffectsArrange& CharacterStats::getProjectileEffects() {
     return *_projectileEffects;
 }
 
 int CharacterStats::getMaxEffectsCount() const {
     return maxEffectsCount;
+}
+
+bool CharacterStats::handleAddImpact(std::unique_ptr<IProjectileEffect> newEffect){
+    if(newEffect->GetType() == EffectType::Impact) {
+        if(!_projectileEffects->impactsIsFull()) {
+            _projectileEffects->addImpact(std::move(newEffect));
+        }
+        else if(!_effectsInventory->isFull()){ 
+            _effectsInventory->addEffect(*newEffect);
+        }
+        else return false;
+    }
+    return true;
+}
+
+bool CharacterStats::handleAddModifier(std::unique_ptr<IProjectileEffect> newEffect){
+    if(newEffect->GetType() != EffectType::Impact) {
+        if(!_projectileEffects->modifiersIsFull()) {
+            _projectileEffects->addModifier(std::move(newEffect));
+        }
+        else if(!_effectsInventory->isFull()) {
+            _effectsInventory->addEffect(*newEffect);
+        }
+        else return false;
+    }
+    return true;
 }

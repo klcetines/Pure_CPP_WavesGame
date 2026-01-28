@@ -1,7 +1,26 @@
 #include "Effects/ProjectileEffects/EffectsArrange.h"
 
+EffectsArrange::EffectsArrange(){
+    maxModifiers = 2;
+    maxImpacts = 1;
+    
+    currentEffectIndex = 0;
+    currentImpactIndex = 0;
+
+    _modifiers.reserve(maxModifiers);
+    _impacts.reserve(maxImpacts);
+}
+
+EffectsArrange::~EffectsArrange(){
+    _modifiers.clear();
+    _impacts.clear();
+}
+
 void EffectsArrange::addModifier(std::unique_ptr<IProjectileEffect> effect){
     if (effect) {
+        if(effect->extraImpact()){
+            maxImpacts++;
+        }
         _modifiers.push_back(std::move(effect));
     }
 }
@@ -41,6 +60,22 @@ bool EffectsArrange::modifiersItsEmpty() const{
 
 bool EffectsArrange::impactsItsEmpty() const{
     return _impacts.empty();
+}
+
+bool EffectsArrange::modifiersIsFull() const{
+    return _modifiers.size() >= maxModifiers;
+}
+
+bool EffectsArrange::impactsIsFull() const{
+    return _impacts.size() >= maxImpacts;
+}
+
+int EffectsArrange::getMaxModifiers() const{
+    return maxModifiers;
+}
+
+int EffectsArrange::getMaxImpacts() const{
+    return maxImpacts;
 }
 
 std::unique_ptr<EffectsArrange> EffectsArrange::Clone() const {
@@ -113,5 +148,32 @@ void EffectsArrange::OnExpire(Projectile& projectile){
             nextEffect();
         }
     }
+}
+
+void EffectsArrange::swapEffects(int index1, int index2) {
+    int totalEffects = _modifiers.size() + _impacts.size();
+
+    if (index1 < 0 || index1 >= totalEffects || index2 < 0 || index2 >= totalEffects) {
+        return; 
+    }
+
+    std::unique_ptr<IProjectileEffect>* effect1;
+    std::unique_ptr<IProjectileEffect>* effect2;
+
+    if (index1 < _modifiers.size()) {
+        effect1 = &_modifiers[index1];
+    } 
+    else {
+        effect1 = &_impacts[index1 - _modifiers.size()];
+    }
+
+    if (index2 < _modifiers.size()) {
+        effect2 = &_modifiers[index2];
+    } 
+    else {
+        effect2 = &_impacts[index2 - _modifiers.size()];
+    }
+
+    std::swap(*effect1, *effect2);
 }
 

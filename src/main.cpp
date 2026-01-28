@@ -102,32 +102,46 @@ int main() {
 
     Font font = loadFont("assets/fonts/Circle.otf");
     GameState gameState;
+    GameSession session(font, window.getSize());
+    
+    sf::Clock gameClock;
+    const double MS_PER_UPDATE = 0.01666; //60 FPS
+    double lag = 0.0;
 
     while (window.isOpen()) {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) window.close();
+        }
+
+        double elapsed = gameClock.restart().asSeconds();
+        if (elapsed > 0.25) elapsed = 0.25; 
+        
+        window.clear();
+
         if (gameState.isMainMenu()) {
             showMainMenu(window, font, gameState);
-        }
-
-        GameSession session(font, window.getSize());
-        Clock clock;
-
-        while (window.isOpen() && gameState.isPlaying()) {
-            processEvents(window);
-
-            float dt = clock.restart().asSeconds();
-            session.update(dt, window);
-            window.clear();
-            session.render(window);
-            window.display();
-
-            if (session.isPlayerDead()) {
-                gameState.setState(GameStateType::GameOver);
+            lag = 0;
+        } 
+        else if (gameState.isPlaying()) {
+            lag += elapsed;
+            while (lag >= MS_PER_UPDATE) {
+                session.update(MS_PER_UPDATE, window);
+                lag -= MS_PER_UPDATE;
+                
+                if (session.isPlayerDead()) {
+                    gameState.setState(GameStateType::GameOver);
+                }
             }
+            session.render(window);
+        } 
+        else if (gameState.isGameOver()) {
+            showGameOverMenu(window, font, gameState);
+            lag = 0;
         }
 
-        if (gameState.isGameOver()) {
-            showGameOverMenu(window, font, gameState);
-        }
+        window.display();
     }
+
     return 0;
 }

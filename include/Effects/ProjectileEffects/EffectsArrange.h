@@ -10,8 +10,8 @@
 
 class EffectsArrange {
     public:
-        EffectsArrange() = default;
-        ~EffectsArrange() = default;
+        EffectsArrange();
+        ~EffectsArrange();
 
         void addModifier(std::unique_ptr<IProjectileEffect> effect);
         void addImpact(std::unique_ptr<IProjectileEffect> effect);
@@ -23,6 +23,10 @@ class EffectsArrange {
         void nextEffect();
         bool modifiersItsEmpty() const;
         bool impactsItsEmpty() const;
+        bool modifiersIsFull() const;
+        bool impactsIsFull() const;
+        int getMaxModifiers() const;
+        int getMaxImpacts() const;
 
         std::unique_ptr<EffectsArrange> Clone() const;
         EffectType GetType() const;
@@ -32,6 +36,7 @@ class EffectsArrange {
         ProjectileAction OnImpact(Projectile& projectile, Enemy& enemy);
         void OnDistanceTraveled(Projectile& projectile, float distance);
         void OnExpire(Projectile& projectile);
+        void swapEffects(int index1, int index2);
 
 
     private:
@@ -39,8 +44,11 @@ class EffectsArrange {
 
         std::vector<std::unique_ptr<IProjectileEffect>> _impacts;
 
-        int currentEffectIndex = 0;
-        int currentImpactIndex = 0;
+        int currentEffectIndex;
+        int currentImpactIndex;
+
+        int maxModifiers;
+        int maxImpacts;
 };
 
 

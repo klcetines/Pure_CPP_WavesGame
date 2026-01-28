@@ -10,6 +10,7 @@
 #include "GameManagers/GameStatistics.h"
 #include "Shop/Shop.h"
 #include "Utils/Effect.h"
+#include "Rearrangement/Rearrange.h"
 
 using namespace sf;
 using namespace std;
@@ -42,6 +43,7 @@ private:
     void processPlayerInput(RenderWindow& window);
     void processDebugInput(RenderWindow& window);
     void processShopInput(RenderWindow& window);
+    void processRearrangementInput(RenderWindow& window);
 
     void updatePlayer(float dt);
 

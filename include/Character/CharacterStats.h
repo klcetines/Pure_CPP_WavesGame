@@ -5,6 +5,7 @@
 #include "Utils/Effect.h"
 #include "Effects/ProjectileEffects/EffectsArrange.h"
 #include "Effects/ProjectileEffects/EffectsFactory.h"
+#include "Effects/ProjectileEffects/EffectsInventory.h"
 #include <iostream>
 
 
@@ -21,7 +22,7 @@ public:
     int getBulletsNumber() const;
     float getAttackSpeed() const;
     float getProjectileSpeed() const;
-    const EffectsArrange& getProjectileEffects() const;
+    EffectsArrange& getProjectileEffects();
     int getMaxEffectsCount() const;
 
 private:
@@ -32,7 +33,11 @@ private:
     float _attackSpeed;
     float _projectileSpeed;
     std::unique_ptr<EffectsArrange> _projectileEffects;
+    std::unique_ptr<EffectsInventory> _effectsInventory;
     int maxEffectsCount = 2;
+
+    bool handleAddImpact(std::unique_ptr<IProjectileEffect> newEffect);
+    bool handleAddModifier(std::unique_ptr<IProjectileEffect> newEffect);
 };
 
 #endif // CHARACTER_STATS_H

@@ -20,6 +20,7 @@ void GameSession::update(float dt, RenderWindow& window) {
     processPlayerInput(window);
     processDebugInput(window);
     processShopInput(window);
+    processRearrangementInput(window);
 
     updatePlayer(dt);
     updateEnemies(dt);
@@ -57,6 +58,14 @@ void GameSession::processShopInput(RenderWindow& window) {
     if (Keyboard::isKeyPressed(Keyboard::Space)) {
         openShopMenu(window);
     }
+}
+
+void GameSession::processRearrangementInput(RenderWindow& window) {
+    if(Keyboard::isKeyPressed(Keyboard::O)) {
+        auto& effects = player->getStats().getProjectileEffects(); 
+        Rearrange::getInstance(&effects)->openRearrangeMenu(window);    
+    }
+
 }
 
 void GameSession::updatePlayer(float dt) {
@@ -287,9 +296,8 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
     int maxSlots = player->getStats().getMaxEffectsCount();
     float xPos = 0;
     int impact = 0;
-    int spot = 0;
     for (int i = 0; i < maxSlots; i++) {
-        xPos = startX + (boxSize + padding) * (i+spot);
+        xPos = startX + (boxSize + padding) * i;
         if (i < modifiers.size()) {
             string label = "M";
             Color col = Color::Cyan;
@@ -300,14 +308,11 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
             drawEffectSlot(window, xPos, startY, boxSize, label, col);
             if (modifiers[i]->extraImpact())
             {
-                spot++;
-                xPos = startX + (boxSize + padding) * (i + spot);
+                xPos = startX + (boxSize + padding) * i;
                 if(impact < impacts.size()){
                     string label = "I"; 
                     Color col = Color::Red;
-
                     drawEffectSlot(window, xPos, startY_Impact, boxSize, label, col);
-
                     impact++;
                 }
                 else{
@@ -325,7 +330,7 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
     }
     else lastImpactCol = Color(50, 50, 50, 50);
 
-    drawEffectSlot(window, startX + (boxSize + padding) * (maxSlots+spot), startY_Impact, boxSize, "I", lastImpactCol);
+    drawEffectSlot(window, startX + (boxSize + padding) * maxSlots, startY_Impact, boxSize, "I", lastImpactCol);
 }
 
 void GameSession::drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color) {
