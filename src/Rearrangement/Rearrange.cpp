@@ -19,7 +19,7 @@ void Rearrange::openRearrangeMenu(sf::RenderWindow& window){
     while (isOpen && window.isOpen()){
         sf::Event event;
             RearrangeEvents::handleRearrangeInput(*this, window, isOpen);
-            RearrangeRender::renderRearrangeMenu(*this, window);
+            RearrangeRender::renderRearrangeMenu(*this, window, selectedEffectIndex, selectedTargetIndex, isMovingEffect);
             window.display();
             sf::sleep(sf::milliseconds(10));
         
