@@ -19,6 +19,9 @@ public:
     void closeRearrangeMenu();
     EffectsArrange* getEffectsArrange() const;
 
+    std::string getLabelCode(EffectType type);
+    sf::Color getColorCode(EffectType type);
+
 private:
     Rearrange();
     
@@ -30,5 +33,7 @@ private:
     
     static EffectsArrange* _effectsArrange;
     static Rearrange* _instance;
+    
+    int getTotalSlots() const;
 };
 #endif // REARRANGE_H

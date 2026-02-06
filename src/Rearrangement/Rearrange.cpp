@@ -35,31 +35,63 @@ Rearrange::Rearrange() {
 }
 
 void Rearrange::moveSelectionToNextEffect() {
+    int totalSlots = getTotalSlots();
+    if (totalSlots <= 0) return;
+
     if (isMovingEffect) {
-        selectedTargetIndex = (selectedTargetIndex + 1) % (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size());
+        selectedTargetIndex = (selectedTargetIndex + 1) % totalSlots;
     } 
     else {
-        selectedEffectIndex = (selectedEffectIndex + 1) % (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size());
+        selectedEffectIndex = (selectedEffectIndex + 1) % totalSlots;
     }
+    cout << "Selected Effect Index: " << selectedEffectIndex << ", Target Index: " << selectedTargetIndex << std::endl;
+
 }
 
 void Rearrange::moveSelectionToPreviousEffect() {
+    int totalSlots = getTotalSlots();
+    if (totalSlots <= 0) return;
+
     if (isMovingEffect) {
-        selectedTargetIndex = (selectedTargetIndex - 1 + (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size())) % (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size());
+        selectedTargetIndex = (selectedTargetIndex - 1 + totalSlots) % totalSlots;
     } 
     else {
-        selectedEffectIndex = (selectedEffectIndex - 1 + (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size())) % (_effectsArrange->getModifiers().size() + _effectsArrange->getImpacts().size());
+        selectedEffectIndex = (selectedEffectIndex - 1 + totalSlots) % totalSlots;
     }
 }
 
 void Rearrange::selectEffect() {
+    if (!_effectsArrange) return;
+
+    int maxModifiers = _effectsArrange->getMaxModifiers();
+
     if (!isMovingEffect) {
+        bool modifierEmpty = selectedEffectIndex < maxModifiers;
+        
+        if (modifierEmpty) {
+            if (selectedEffectIndex >= _effectsArrange->getModifiers().size()) return;
+        } 
+        else {
+            int impactRelativeIdx = selectedEffectIndex - maxModifiers;
+            if (impactRelativeIdx >= _effectsArrange->getImpacts().size()) return;
+        }
+        
+
         isMovingEffect = true;
         selectedTargetIndex = selectedEffectIndex;
     } 
     else {
         if (selectedEffectIndex != selectedTargetIndex) {
-            _effectsArrange->swapEffects(selectedEffectIndex, selectedTargetIndex);
+            bool startIsMod = selectedEffectIndex < maxModifiers;
+            bool targetIsMod = selectedTargetIndex < maxModifiers;
+            cout << "Start is Modifier: " << startIsMod << ", Target is Modifier: " << targetIsMod << std::endl;
+
+            if (startIsMod == targetIsMod) {
+                _effectsArrange->swapEffects(selectedEffectIndex, selectedTargetIndex);
+            } 
+            else {
+                std::cout << "No puedes mezclar Modificadores con Impactos" << std::endl;
+            }
         }
         isMovingEffect = false;
     }
@@ -71,4 +103,14 @@ void Rearrange::closeRearrangeMenu() {
 
 EffectsArrange* Rearrange::getEffectsArrange() const {
     return _effectsArrange;
+}
+
+int Rearrange::getTotalSlots() const {
+    if (!_effectsArrange) return 1;
+    
+    int modSlots = _effectsArrange->getMaxModifiers();
+    
+    int impactSlots = _effectsArrange->getMaxImpacts(); 
+    
+    return modSlots + impactSlots;
 }

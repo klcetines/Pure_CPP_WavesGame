@@ -17,12 +17,12 @@ EffectsArrange::~EffectsArrange(){
 }
 
 void EffectsArrange::addModifier(std::unique_ptr<IProjectileEffect> effect){
-    if (effect) {
-        if(effect->extraImpact()){
-            maxImpacts++;
-        }
-        _modifiers.push_back(std::move(effect));
+    if (!effect) return;
+    if(effect->extraImpact()){
+        maxImpacts++;
+        _impacts.reserve(maxImpacts);
     }
+    _modifiers.push_back(std::move(effect));
 }
 
 const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getModifiers() const{
@@ -30,9 +30,9 @@ const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getModif
 }
 
 void EffectsArrange::addImpact(std::unique_ptr<IProjectileEffect> effect){
-    if (effect) {
-        _impacts.push_back(std::move(effect));
-    }
+    if (!effect) return;
+    _impacts.push_back(std::move(effect));
+    cout << "Impact added. Total impacts: " << _impacts.size() << endl;
 }
 
 const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getImpacts() const{
@@ -51,7 +51,6 @@ void EffectsArrange::nextEffect(){
     if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
         currentEffectIndex++;
     }
-    
 }
 
 bool EffectsArrange::modifiersItsEmpty() const{
@@ -151,7 +150,7 @@ void EffectsArrange::OnExpire(Projectile& projectile){
 }
 
 void EffectsArrange::swapEffects(int index1, int index2) {
-    int totalEffects = _modifiers.size() + _impacts.size();
+    int totalEffects = maxModifiers + _impacts.size();
 
     if (index1 < 0 || index1 >= totalEffects || index2 < 0 || index2 >= totalEffects) {
         return; 
@@ -164,16 +163,16 @@ void EffectsArrange::swapEffects(int index1, int index2) {
         effect1 = &_modifiers[index1];
     } 
     else {
-        effect1 = &_impacts[index1 - _modifiers.size()];
+        effect1 = &_impacts[index1 - maxModifiers];
     }
 
     if (index2 < _modifiers.size()) {
         effect2 = &_modifiers[index2];
     } 
     else {
-        effect2 = &_impacts[index2 - _modifiers.size()];
+        effect2 = &_impacts[index2 - maxModifiers];
     }
-
+    cout << "Swapping effects at indices: " << index1 << " and " << index2 << endl;
     std::swap(*effect1, *effect2);
 }
 

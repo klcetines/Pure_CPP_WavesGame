@@ -12,130 +12,111 @@ void RearrangeRender::renderEffectsArrange(Rearrange& rearrange, sf::RenderWindo
 
     const auto& modifiers = effects->getModifiers();
     const auto& impacts = effects->getImpacts();
-
-    std::string movingLabel = "";
-    sf::Color movingColor = sf::Color::White;
-    if (isMovingEffect && selectedIndex >= 0) {
-        if (selectedIndex < modifiers.size()) {
-             if(modifiers[selectedIndex]) {
-                movingLabel = getLabelCode(modifiers[selectedIndex]->GetType());
-                movingColor = getColorCode(modifiers[selectedIndex]->GetType());
-             }
-        } 
-    }
-
-    float startX = 100.0f;
-    float startY = 125.0f;
-    float boxSize = 60.0f;
-    float padding = 15.0f;
-    float spacing = boxSize + padding;
-    
-    int currentGlobalIndex = 0;
-    int impactIdx = 0;
     int maxModifiers = effects->getMaxModifiers();
 
+    int totalImpactSlots = impacts.size();
+
+    LayoutConfig layout;
+    float totalWidth = layout.spacing * (maxModifiers + 1);
+    layout.startX = (window.getSize().x - totalWidth) / 2.0f;
+    layout.startY = (window.getSize().y - layout.spacing * 2) / 2.0f;
+
+    RenderContext ctx = { window, layout, selectedIndex, targetIndex, isMovingEffect, maxModifiers};
+
+    int impactIndex = 0;
     for (int i = 0; i < maxModifiers; ++i) {
-        float xPos = startX + spacing * i;
-
-        if (i < modifiers.size() && modifiers[i] != nullptr) {
-            const auto& modifier = modifiers[i];
-            
-            std::string label = getLabelCode(modifier->GetType());
-            sf::Color col = getColorCode(modifier->GetType());
-            
-            bool isSelectedPos = (currentGlobalIndex == (isMovingEffect ? targetIndex : selectedIndex));
-            bool isSourcePos = (isMovingEffect && currentGlobalIndex == selectedIndex);
-            
-            sf::Color drawCol = col;
-            if(isSourcePos) drawCol.a = 50;
-            
-            drawEffectSlot(window, xPos, startY, boxSize, label, drawCol, isSelectedPos, isSourcePos);
-
-            if (isSelectedPos && isMovingEffect && !isSourcePos){
-                drawEffectSlot(window, xPos, startY, boxSize, movingLabel, movingColor, true, false);
-            }
-            if (modifier->extraImpact()) { 
-                float impactX = xPos;
-                int currentImpactGlobalIndex = modifiers.size() + impactIdx; 
-                bool isImpSelected = (currentImpactGlobalIndex == (isMovingEffect ? targetIndex : selectedIndex));
-                
-                if (impactIdx < impacts.size()) {
-                    drawEffectSlot(window, impactX, startY + spacing, boxSize, "I", sf::Color::Red, isImpSelected, false);
-                    impactIdx++;
-                } else {
-                    drawEffectSlot(window, impactX, startY + spacing, boxSize, "I", sf::Color(50, 50, 50, 100), isImpSelected, false);
-                }
-            }
-        } 
-        else {
-            bool isSelectedPos = (currentGlobalIndex == (isMovingEffect ? targetIndex : selectedIndex));
-            drawEffectSlot(window, xPos, startY, boxSize, "", sf::Color(50, 50, 50, 50), isSelectedPos, false);
+        renderSingleModifier(ctx, i, modifiers);
+        if(i < modifiers.size() && modifiers[i] && modifiers[i]->extraImpact()) {
+            renderSingleImpact(ctx, i, impactIndex, maxModifiers, impacts);
+            impactIndex++;
         }
     }
+    renderSingleImpact(ctx, maxModifiers, impactIndex, maxModifiers, impacts);
 
-    sf::Color lastImpactCol = (impactIdx < impacts.size()) ? sf::Color::Red : sf::Color(50, 50, 50, 50);
-    drawEffectSlot(window, startX + spacing * maxModifiers, startY + spacing, boxSize, "I", lastImpactCol, (selectedIndex == (modifiers.size() + impactIdx)), false);
+    renderMovingOverlay(ctx, modifiers);
 }
 
-void RearrangeRender::drawGhostEffect(sf::RenderWindow& window, float x, float y, float size, const std::string& label, const sf::Color& color) {
+void RearrangeRender::renderSingleModifier(const RenderContext& ctx, int index, const std::vector<std::unique_ptr<IProjectileEffect>>& modifiers) {
+    float xPos = ctx.layout.startX + ctx.layout.spacing * index;
+    float yPos = ctx.layout.startY;
+
+    std::string label = "";
+    sf::Color color = sf::Color(50, 50, 50); 
+    
+    bool hasEffect = (index < modifiers.size() && modifiers[index] != nullptr);
+
+    if (hasEffect) {
+        label = getLabelCode(modifiers[index]->GetType());
+        color = getColorCode(modifiers[index]->GetType());
+    }
+
+    bool isTarget = (index == (ctx.isMovingEffect ? ctx.targetIndex : ctx.selectedIndex));
+    bool isSource = (ctx.isMovingEffect && index == ctx.selectedIndex);
+
+    drawEffectSlot(ctx.window, xPos, yPos, ctx.layout.boxSize, label, color, isTarget, isSource);
+}
+
+void RearrangeRender::renderSingleImpact(const RenderContext& ctx, int index, int impactIndex, int modifiersSize, const std::vector<std::unique_ptr<IProjectileEffect>>& impacts) {
+    float xPos = ctx.layout.startX + ctx.layout.spacing * index;
+    float yPos = ctx.layout.startY + ctx.layout.spacing;
+
+    std::string label = "";
+    sf::Color color = sf::Color(50, 50, 50); 
+    
+    bool hasEffect = (impactIndex < impacts.size() && impacts[impactIndex] != nullptr);
+
+    if (hasEffect) {
+        label = getLabelCode(impacts[impactIndex]->GetType());
+        color = getColorCode(impacts[impactIndex]->GetType());
+    }
+    int globalImpactIndex = modifiersSize + impactIndex;
+    bool isTarget = (globalImpactIndex == (ctx.isMovingEffect ? ctx.targetIndex : ctx.selectedIndex));
+    bool isSource = (ctx.isMovingEffect && globalImpactIndex == ctx.selectedIndex);
+
+    drawEffectSlot(ctx.window, xPos, yPos, ctx.layout.boxSize, label, color, isTarget, isSource);
+}
+
+void RearrangeRender::renderMovingOverlay(const RenderContext& ctx, const std::vector<std::unique_ptr<IProjectileEffect>>& modifiers) {
+    if (!ctx.isMovingEffect || ctx.selectedIndex < 0 || ctx.selectedIndex >= modifiers.size()) return;
+    if (!modifiers[ctx.selectedIndex]) return;
+
+    float xPos = ctx.layout.startX + ctx.layout.spacing * ctx.targetIndex;
+    float yPos = ctx.layout.startY;
+
+    std::string label = getLabelCode(modifiers[ctx.selectedIndex]->GetType());
+    sf::Color color = getColorCode(modifiers[ctx.selectedIndex]->GetType());
+
+    drawEffectSlot(ctx.window, xPos, yPos, ctx.layout.boxSize, label, color, true, false);
+}
+
+void RearrangeRender::drawBox(sf::RenderWindow& window, float x, float y, float size, sf::Color fillColor, sf::Color outlineColor, float outlineThickness) {
     sf::RectangleShape box(sf::Vector2f(size, size));
     box.setPosition(x, y);
-    
-    sf::Color ghostColor = color;
-    ghostColor.a = 120;
-    
-    box.setFillColor(ghostColor);
-    box.setOutlineColor(sf::Color::White);
-    box.setOutlineThickness(1.0f);
-    
+    box.setFillColor(fillColor);
+    box.setOutlineColor(outlineColor);
+    box.setOutlineThickness(outlineThickness);
     window.draw(box);
+}
 
-    if (!label.empty()) {
-        static sf::Font font;
-        if(font.getInfo().family.empty()) font.loadFromFile("assets/fonts/Circle.otf");
+void RearrangeRender::drawLabel(sf::RenderWindow& window, float x, float y, float size, const std::string& label, sf::Color color) {
+    if (label.empty()) return;
 
-        sf::Text t(label, font, 20);
-        sf::FloatRect bounds = t.getLocalBounds();
-        t.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
-        t.setPosition(x + size / 2.0f, y + size / 2.0f);
-        t.setFillColor(sf::Color(255, 255, 255, 200));
-        window.draw(t);
-    }
+    sf::Text t(label, getFont(), 20);
+    sf::FloatRect bounds = t.getLocalBounds();
+    t.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
+    t.setPosition(x + size / 2.0f, y + size / 2.0f);
+    t.setFillColor(color);
+    window.draw(t);
 }
 
 void RearrangeRender::drawEffectSlot(sf::RenderWindow& window, float x, float y, float size, const std::string& label, const sf::Color& color, bool isSelected, bool isSource) {    
-    sf::RectangleShape box(sf::Vector2f(size, size));
-    box.setPosition(x, y);
-    
     sf::Color fillColor = color;
-    if (isSource) {
-        fillColor.a = 30;
-    } 
-    else {
-        fillColor.a = 80;
-    } 
+    fillColor.a = isSource ? 30 : 80;
+    sf::Color outlineColor = isSelected ? sf::Color::Green : color;
+    float thickness = isSelected ? 3.0f : 2.0f;
 
-    if (isSelected) {
-        box.setOutlineColor(sf::Color::White);
-        box.setOutlineThickness(3.0f);
-    } else {
-        box.setOutlineColor(color);
-        box.setOutlineThickness(2.0f);
-    }
-    
-    window.draw(box);
-
-    if (!label.empty()) {
-        static sf::Font font;
-        static bool fontLoaded = font.loadFromFile("assets/fonts/Circle.otf"); 
-
-        sf::Text t(label, font, 20);
-        sf::FloatRect bounds = t.getLocalBounds();
-        t.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
-        t.setPosition(x + size / 2.0f, y + size / 2.0f);
-        t.setFillColor(sf::Color::White);
-        window.draw(t);
-    }
+    drawBox(window, x, y, size, fillColor, outlineColor, thickness);
+    drawLabel(window, x, y, size, label, sf::Color::Black);
 }
 
 std::string RearrangeRender::getLabelCode(EffectType type) {
@@ -159,3 +140,16 @@ sf::Color RearrangeRender::getColorCode(EffectType type) {
             return sf::Color::Cyan;
     }
 }
+
+sf::Font& RearrangeRender::getFont() {
+    static sf::Font font;
+    static bool loaded = false;
+    if (!loaded) {
+        if (!font.loadFromFile("assets/fonts/Circle.otf")) {
+            std::cerr << "Error loading font" << std::endl;
+        }
+        loaded = true;
+    }
+    return font;
+}
+
