@@ -10,6 +10,7 @@
 #include "Effects/ProjectileEffects/HomingEffect.h"
 #include "Effects/ProjectileEffects/FireProjectileEffect.h"
 #include "Effects/ProjectileEffects/BleedProjectileEffect.h"
+#include "Effects/ProjectileEffects/SpinningProjectileEffect.h"
 
 class EffectFactory {
 public:

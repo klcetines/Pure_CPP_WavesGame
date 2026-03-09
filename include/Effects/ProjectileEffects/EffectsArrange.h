@@ -20,7 +20,7 @@ class EffectsArrange {
         const std::vector<std::unique_ptr<IProjectileEffect>>& getImpacts() const;
 
         void clearEffects();
-        void nextEffect();
+        void nextEffect(Projectile& projectile);
         bool modifiersItsEmpty() const;
         bool impactsItsEmpty() const;
         bool modifiersIsFull() const;
@@ -29,7 +29,10 @@ class EffectsArrange {
         int getMaxImpacts() const;
 
         std::unique_ptr<EffectsArrange> Clone() const;
+        std::unique_ptr<EffectsArrange> CloneFromIndex(int index) const;
+        
         EffectType GetType() const;
+        bool hasActiveEffect(EffectType type) const;
 
         void OnFire(Projectile& projectile);
         void OnUpdate(Projectile& projectile, float deltaTime);
@@ -37,6 +40,8 @@ class EffectsArrange {
         void OnDistanceTraveled(Projectile& projectile, float distance);
         void OnExpire(Projectile& projectile);
         void swapEffects(int index1, int index2);
+
+        void triggerSpecificEffect(EffectType type, Projectile& projectile);
 
 
     private:

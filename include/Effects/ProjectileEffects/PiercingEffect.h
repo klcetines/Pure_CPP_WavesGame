@@ -7,9 +7,12 @@
 class PiercingEffect : public IProjectileEffect {
     public:    
         EffectType GetType() const override;
+        std::string getModifierSymbol() const override;
+        uint32_t getColorCode() const override;
         ProjectileAction OnImpact(IActor& enemy) override;
         std::unique_ptr<IProjectileEffect> Clone() const override;
         bool extraImpact() const override;
+        bool isPassive() const override;
 };
 
 #endif // PIERCING_EFFECT_H

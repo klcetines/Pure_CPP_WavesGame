@@ -42,12 +42,12 @@ void RearrangeRender::renderSingleModifier(const RenderContext& ctx, int index, 
 
     std::string label = "";
     sf::Color color = sf::Color(50, 50, 50); 
-    
-    bool hasEffect = (index < modifiers.size() && modifiers[index] != nullptr);
 
+    bool hasEffect = (index < modifiers.size() && modifiers[index] != nullptr);
     if (hasEffect) {
-        label = getLabelCode(modifiers[index]->GetType());
-        color = getColorCode(modifiers[index]->GetType());
+        label = modifiers[index]->getModifierSymbol();
+        uint32_t hex = modifiers[index]->getColorCode();
+        color = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
     }
 
     bool isTarget = (index == (ctx.isMovingEffect ? ctx.targetIndex : ctx.selectedIndex));
@@ -64,11 +64,12 @@ void RearrangeRender::renderSingleImpact(const RenderContext& ctx, int index, in
     sf::Color color = sf::Color(50, 50, 50); 
     
     bool hasEffect = (impactIndex < impacts.size() && impacts[impactIndex] != nullptr);
-
     if (hasEffect) {
-        label = getLabelCode(impacts[impactIndex]->GetType());
-        color = getColorCode(impacts[impactIndex]->GetType());
+        label = impacts[impactIndex]->getModifierSymbol();
+        uint32_t hex = impacts[impactIndex]->getColorCode();
+        color = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
     }
+    
     int globalImpactIndex = modifiersSize + impactIndex;
     bool isTarget = (globalImpactIndex == (ctx.isMovingEffect ? ctx.targetIndex : ctx.selectedIndex));
     bool isSource = (ctx.isMovingEffect && globalImpactIndex == ctx.selectedIndex);
@@ -83,8 +84,9 @@ void RearrangeRender::renderMovingOverlay(const RenderContext& ctx, const std::v
     float xPos = ctx.layout.startX + ctx.layout.spacing * ctx.targetIndex;
     float yPos = ctx.layout.startY;
 
-    std::string label = getLabelCode(modifiers[ctx.selectedIndex]->GetType());
-    sf::Color color = getColorCode(modifiers[ctx.selectedIndex]->GetType());
+    std::string label = modifiers[ctx.selectedIndex]->getModifierSymbol();
+    uint32_t hex = modifiers[ctx.selectedIndex]->getColorCode();
+    sf::Color color = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
 
     drawEffectSlot(ctx.window, xPos, yPos, ctx.layout.boxSize, label, color, true, false);
 }

@@ -3,7 +3,15 @@
 #include <cstdlib>
 
 PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f direction, float speed, float damage, const EffectsArrange& effects, float range)
-    : _position(start), _alive(true), _lifetime(0.f), _damage(damage), _maxRange(range), _traveledDistance(0.f), _effects(effects.Clone()){
+    : _damage(damage)
+{
+    _position = start;
+    _maxRange = range;
+    _traveledDistance = 0.f;
+    _alive = true;
+    _lifetime = 0.f;
+    _effects = effects.Clone();
+    
     _shape.setRadius(6);
     _shape.setFillColor(Color::Black);
     _shape.setOrigin(6, 6);
@@ -24,25 +32,29 @@ PlayerProjectile::~PlayerProjectile() {
 
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
-    if (closestEnemy && _effects && _effects->GetType() == EffectType::Homing) {
-        handleHomingBehavior(dt, closestEnemy);
+    if (closestEnemy && _effects && _effects->hasActiveEffect(EffectType::Homing)) {
+        handleHomingLogic(dt, closestEnemy);
     }
+    
+    if (_effects && _effects->hasActiveEffect(EffectType::Piercing)) {
+        handlePiercingLogic();
+    }
+
+    Projectile::update(dt); 
 
     if (_effects) {
         _effects->OnUpdate(*this, dt);
     }
-
-    updatePiercingLogic();
-
-    moveProjectile(dt);
     
-    _lifetime += dt;
+    _shape.setPosition(_position);
+    _collisionBox.center = _position;
+
     if (_traveledDistance >= _maxRange || _lifetime > _maxLifetime) {
         _alive = false;
     }
 }
 
-void PlayerProjectile::handleHomingBehavior(float dt, shared_ptr<Enemy> target) {
+void PlayerProjectile::handleHomingLogic(float dt, shared_ptr<Enemy> target) {
     Vector2f targetPos = target->getHeadPosition();
     Vector2f directionToTarget = targetPos - _position;
     
@@ -53,33 +65,16 @@ void PlayerProjectile::handleHomingBehavior(float dt, shared_ptr<Enemy> target) 
     float currentSpeed = getVectorLength(_velocity);
     Vector2f currentDir = (currentSpeed != 0) ? _velocity / currentSpeed : Vector2f(0,0);
 
-    float homingFactor = 5.0f; // Speed of homing adjustment
+    float homingFactor = 7.5f; // Speed of homing adjustment
     Vector2f newDir = currentDir + (desiredDir - currentDir) * homingFactor * dt;
     
     _velocity = normalizeVector(newDir) * currentSpeed;
 }
 
-void PlayerProjectile::moveProjectile(float dt) {
-    Vector2f movement = _velocity * dt;
-    
-    _position += movement;
-    _shape.setPosition(_position);
-    
-    _traveledDistance += getVectorLength(movement);
-    
-    if(_effects) {
-        _effects->OnDistanceTraveled(*this, _traveledDistance);
-    }
-    _collisionBox.center = _position;
-}
-
-void PlayerProjectile::updatePiercingLogic() {
+void PlayerProjectile::handlePiercingLogic() {
     if (_lastHitEnemy != nullptr) {
         if (!_collisionBox.intersects(_lastHitEnemy->getCollisionBox())) {
-            
-            if (_effects && _effects->GetType() == EffectType::Piercing) {
-                _effects->nextEffect();
-            }
+            _effects->triggerSpecificEffect(EffectType::Piercing, *this);
             _lastHitEnemy = nullptr; 
         }
     }
@@ -89,7 +84,7 @@ void PlayerProjectile::handleImpact(IActor& animatedObject) {
     Enemy* enemy = dynamic_cast<Enemy*>(&animatedObject);
     
     if (!enemy) return;
-
+    
     int enemyId = enemy->getId();
 
     if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
@@ -114,6 +109,7 @@ void PlayerProjectile::handleImpact(IActor& animatedObject) {
         destroy();
     }
 }
+
 float PlayerProjectile::getVectorLength(const Vector2f& v) {
     return std::sqrt(v.x * v.x + v.y * v.y);
 }
@@ -128,22 +124,6 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
     _shape.setPosition(_position.x + offsetX, _position.y + offsetY);
     window.draw(_shape);
 }       
-
-bool PlayerProjectile::isAlive() const { 
-    return _alive; 
-}
-
-Vector2f PlayerProjectile::getPosition() const { 
-    return _position; 
-}
-
-float PlayerProjectile::getDamage() const { 
-    return _damage; 
-}
-
-float PlayerProjectile::getSize() const { 
-    return _shape.getRadius(); 
-}
 
 CollisionShape PlayerProjectile::getCollisionBox() const { 
     return _collisionBox; 

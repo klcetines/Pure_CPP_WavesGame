@@ -23,7 +23,8 @@ public:
     const vector<shared_ptr<Projectile>>& getProjectiles() const;
 
 private:
-    vector<shared_ptr<Projectile>> _projectiles;
+    std::vector<std::shared_ptr<Projectile>> _projectiles;
+    std::vector<std::shared_ptr<Projectile>> _projectilesToAdd;
 };
 
 #endif

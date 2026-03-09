@@ -26,7 +26,7 @@ Enemy::Enemy(const string& name, float x, float y, float life):
         _useSprite = false;
     }
 
-    _collisionBox = CollisionShape(Vector2f(x, y), _size.x/2.5, _size.y/2.5, 0.0f);
+    _collisionBox = CollisionShape(Vector2f(x, y), _size.x/2.5, _size.y/2.5, -90.0f);
     _data.Speed = 2.0f;
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
@@ -103,7 +103,7 @@ Vector2f Enemy::getHeadPosition() const {
         dir.x /= len;
         dir.y /= len;
     }
-    float offset = 3*(_size.y/4.0f);
+    float offset = 3*(_size.y/5.0f);
     return {_position.x + dir.x * offset, _position.y + dir.y * offset};
 }
 
@@ -150,7 +150,7 @@ const ActorEffectComponent* Enemy::getEffectComponent() const {
 void Enemy::takeDamage(float damage) {
     _data.Life->takeDamage(damage);
     _damageFlashTimer = 0.1f;
-    applyKnockback();
+    if(_name != "Dummy")applyKnockback();
 }
 
 void Enemy::applyKnockback() {

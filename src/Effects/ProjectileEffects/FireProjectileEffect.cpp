@@ -5,6 +5,14 @@ EffectType FireProjectileEffect::GetType() const {
     return EffectType::Impact; 
 }
 
+std::string FireProjectileEffect::getModifierSymbol() const {
+    return "F"; 
+}
+
+uint32_t FireProjectileEffect::getColorCode() const {
+    return 0xFF4500; 
+}
+
 ProjectileAction FireProjectileEffect::OnImpact(IActor& enemy) {
     ActorEffectComponent* effectComp = enemy.getEffectComponent();
     if (!effectComp) return ProjectileAction::Destroy;

@@ -18,12 +18,14 @@ class EnemiesManager {
         void spawnEnemyNear(const Vector2f& playerPos);
         const vector<shared_ptr<Enemy>>& getEnemies() const;
         shared_ptr<Enemy> getClosestEnemy(const Vector2f& playerPos) const;
+        void toggleTestMode(const Vector2f& playerPos);
 
     private:
         shared_ptr<GameStatistics> stats;
         vector<shared_ptr<Enemy>> enemies;
         float spawnTimer;
         float spawnInterval;
+        bool _testMode;
 
         pair<float, float> getRandomSpawnPosition(const Vector2f& playerPos, float radius);
 };

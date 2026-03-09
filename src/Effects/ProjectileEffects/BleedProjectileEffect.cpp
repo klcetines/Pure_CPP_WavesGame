@@ -5,6 +5,14 @@ EffectType BleedProjectileEffect::GetType() const {
     return EffectType::Impact; 
 }
 
+std::string BleedProjectileEffect::getModifierSymbol() const {
+    return "B";
+}
+
+uint32_t BleedProjectileEffect::getColorCode() const {
+    return 0xC22910; 
+}
+
 ProjectileAction BleedProjectileEffect::OnImpact(IActor& enemy) {
     ActorEffectComponent* effectComp = enemy.getEffectComponent();
     if (!effectComp) return ProjectileAction::Destroy;

@@ -52,6 +52,14 @@ void GameSession::processDebugInput(RenderWindow& window) {
     } else {
         debugTogglePressed = false;
     }
+
+    static bool testTogglePressed = false;
+    if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::LShift) && Keyboard::isKeyPressed(Keyboard::T)) {
+        if (!testTogglePressed) {
+            enemiesManager->toggleTestMode(player->getPosition());
+            testTogglePressed = true;
+        }
+    } else { testTogglePressed = false; }
 }
 
 void GameSession::processShopInput(RenderWindow& window) {
@@ -299,19 +307,18 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
     for (int i = 0; i < maxSlots; i++) {
         xPos = startX + (boxSize + padding) * i;
         if (i < modifiers.size()) {
-            string label = "M";
-            Color col = Color::Cyan;
-            
-            if (modifiers[i]->GetType() == EffectType::Piercing) { label = "P"; col = Color::Yellow; }
-            if (modifiers[i]->GetType() == EffectType::Homing)   { label = "H"; col = Color::Cyan; }
+            string label = modifiers[i]->getModifierSymbol();
+            uint32_t hex = modifiers[i]->getColorCode();
+            sf::Color col = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
 
             drawEffectSlot(window, xPos, startY, boxSize, label, col);
             if (modifiers[i]->extraImpact())
             {
                 xPos = startX + (boxSize + padding) * i;
                 if(impact < impacts.size()){
-                    string label = "I"; 
-                    Color col = Color::Red;
+                    string label = impacts[impact]->getModifierSymbol(); 
+                    uint32_t hex = impacts[impact]->getColorCode();
+                    sf::Color col = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
                     drawEffectSlot(window, xPos, startY_Impact, boxSize, label, col);
                     impact++;
                 }
@@ -325,12 +332,15 @@ void GameSession::RenderEffectsArrange(RenderWindow& window) {
         }
     }
     Color lastImpactCol = Color::Red;
+    string label = "I";
     if(impact < impacts.size()){
-        lastImpactCol = Color::Red;
+        label = impacts[impact]->getModifierSymbol(); 
+        uint32_t hex = impacts[impact]->getColorCode();
+        sf::Color col = sf::Color((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
     }
     else lastImpactCol = Color(50, 50, 50, 50);
 
-    drawEffectSlot(window, startX + (boxSize + padding) * maxSlots, startY_Impact, boxSize, "I", lastImpactCol);
+    drawEffectSlot(window, startX + (boxSize + padding) * maxSlots, startY_Impact, boxSize, label, lastImpactCol);
 }
 
 void GameSession::drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color) {

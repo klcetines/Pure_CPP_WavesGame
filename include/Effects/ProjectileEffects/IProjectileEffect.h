@@ -16,6 +16,7 @@ enum class EffectType {
 enum class ProjectileAction {
     Continue,
     Trigger,
+    Spawn,
     Destroy
 };
 
@@ -23,11 +24,15 @@ class IProjectileEffect {
 public:
     virtual EffectType GetType() const { return EffectType::Generic; }
 
+    virtual std::string getModifierSymbol() const { return "M"; }
+
+    virtual uint32_t getColorCode() const { return 0xFFFFFF; }
+
     virtual ~IProjectileEffect() = default;
 
     virtual ProjectileAction OnFire(Projectile& projectile) { return ProjectileAction::Continue; }
 
-    virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime) { return ProjectileAction::Continue; };
+    virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime, int myIndex) { return ProjectileAction::Continue; };
 
     virtual ProjectileAction OnImpact(IActor& enemy) { return ProjectileAction::Destroy; }
     
@@ -38,6 +43,8 @@ public:
     virtual std::unique_ptr<IProjectileEffect> Clone() const = 0;
 
     virtual bool extraImpact() const { return false; }
+
+    virtual bool isPassive() const { return false; }
 };
 
 #endif // I_PROJECTILE_EFFECT_H

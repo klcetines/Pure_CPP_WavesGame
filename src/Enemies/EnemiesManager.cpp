@@ -3,38 +3,46 @@
 #include <cstdlib>
 
 EnemiesManager::EnemiesManager(shared_ptr<GameStatistics> stats)
-    : stats(stats), spawnTimer(0), spawnInterval(2.0f){}
+    : stats(stats), spawnTimer(0), spawnInterval(2.0f), _testMode(false){}
 
 void EnemiesManager::update(float dt, const Vector2f& playerPos) {
-
-    spawnTimer += dt;
-    if (spawnTimer >= spawnInterval) {
-        spawnEnemyNear(playerPos);
-        spawnTimer = 0;
+    if (!_testMode) {
+        spawnTimer += dt;
+        if (spawnTimer >= spawnInterval) {
+            spawnEnemyNear(playerPos);
+            spawnTimer = 0;
+        }
     }
 
     for (auto& enemy : enemies) {
         enemy->update(dt);
-        auto epos = enemy->getPosition();
-        float dx = playerPos.x - epos.x;
-        float dy = playerPos.y - epos.y;
-        float dist = sqrt(dx*dx + dy*dy);
-        if (dist > 30.0f) {
-            float vx = (dx / dist) * enemy->getSpeed();
-            float vy = (dy / dist) * enemy->getSpeed();
-            enemy->move(vx, vy);
+        if (!_testMode) {
+            auto epos = enemy->getPosition();
+            float dx = playerPos.x - epos.x;
+            float dy = playerPos.y - epos.y;
+            float dist = sqrt(dx*dx + dy*dy);
+            if (dist > 30.0f) {
+                float vx = (dx / dist) * enemy->getSpeed();
+                float vy = (dy / dist) * enemy->getSpeed();
+                enemy->move(vx, vy);
+            }
         }
     }
 
     auto it = remove_if(enemies.begin(), enemies.end(),
         [this](const shared_ptr<Enemy>& e) {
             if (e->getData().Life->getLife() <= 0) {
-                if (stats) stats->addKill();
+                if (stats && !_testMode) stats->addKill();
                 return true;
             }
             return false;
         });
     enemies.erase(it, enemies.end());
+
+    if (_testMode && enemies.empty()) {
+        auto dummy = make_shared<Enemy>("Dummy", playerPos.x, playerPos.y + 300.0f);
+        enemies.push_back(dummy);
+    }
 
 }
 
@@ -78,4 +86,13 @@ shared_ptr<Enemy> EnemiesManager::getClosestEnemy(const Vector2f& playerPos) con
         }
     }
     return closest;
+}
+
+void EnemiesManager::toggleTestMode(const Vector2f& playerPos) {
+    _testMode = !_testMode;
+    enemies.clear(); 
+    if (_testMode) {
+        auto dummy = make_shared<Enemy>("Dummy", playerPos.x + 200.f, playerPos.y);
+        enemies.push_back(dummy);
+    }
 }
