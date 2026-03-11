@@ -218,7 +218,9 @@ ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy) 
         if (action == ProjectileAction::Trigger) {
             triggered = true;
             triggerType = _modifiers[i]->GetType(); // Guardamos quién hizo el trigger
-        } else if (action == ProjectileAction::Destroy) {
+            //--------Pero si es el ultimo destruir también --------
+        } 
+        else if (action == ProjectileAction::Destroy) {
             finalAction = ProjectileAction::Destroy;
         }
         i++;

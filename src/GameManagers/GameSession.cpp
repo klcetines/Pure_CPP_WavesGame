@@ -230,28 +230,32 @@ void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float 
     window.draw(point);
 }
 
-void GameSession::drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector2f pointB, float radius, float offsetX, float offsetY){
+void GameSession::drawDebugCapsule(RenderWindow& window, const CollisionShape& capsule, float offsetX, float offsetY){
 
-    CircleShape bottom(radius);
-    bottom.setOrigin(radius, radius);
-    bottom.setPosition(pointA.x + offsetX, pointA.y + offsetY);
-    bottom.setFillColor(Color::Transparent);
-    bottom.setOutlineColor(Color::Blue);
-    bottom.setOutlineThickness(2.f);
-    window.draw(bottom);
-
-    CircleShape top(radius);
-    top.setOrigin(radius, radius);
-    top.setPosition(pointB.x + offsetX, pointB.y + offsetY);
-    top.setFillColor(Color::Transparent);
-    top.setOutlineColor(Color::Blue);
-    top.setOutlineThickness(2.f);
-    window.draw(top);
-
+    Vector2f pointA = capsule.center;
+    Vector2f pointB = pointA + Vector2f(cos(capsule.rotationDeg * 3.14159265f / 180.f), sin(capsule.rotationDeg * 3.14159265f / 180.f)) * capsule.height;
+    float radius = capsule.radius;
+    
+    CircleShape circle1(radius);
+    circle1.setOrigin(radius, radius);
+    circle1.setPosition(pointA.x + offsetX, pointA.y + offsetY);
+    circle1.setFillColor(Color::Transparent);
+    circle1.setOutlineColor(Color::Blue);
+    circle1.setOutlineThickness(2.f);
+    window.draw(circle1);
+    
+    CircleShape circle2(radius);
+    circle2.setOrigin(radius, radius);
+    circle2.setPosition(pointB.x + offsetX, pointB.y + offsetY);
+    circle2.setFillColor(Color::Transparent);
+    circle2.setOutlineColor(Color::Blue);
+    circle2.setOutlineThickness(2.f);
+    window.draw(circle2);
+    
     Vector2f dir = pointB - pointA;
     float length = sqrt(dir.x * dir.x + dir.y * dir.y);
     float angleDeg = atan2(dir.y, dir.x) * 180.0f / 3.14159265f;
-
+    
     RectangleShape rect(Vector2f(length, radius * 2));
     rect.setOrigin(0, radius);
     rect.setPosition(pointA.x + offsetX, pointA.y + offsetY);
@@ -260,7 +264,7 @@ void GameSession::drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector
     rect.setOutlineColor(Color::Green);
     rect.setOutlineThickness(2.f);
     window.draw(rect);
-
+    
     Vertex line[] = {
         Vertex(Vector2f(pointA.x + offsetX, pointA.y + offsetY), Color::Yellow),
         Vertex(Vector2f(pointB.x + offsetX, pointB.y + offsetY), Color::Yellow)
@@ -277,17 +281,19 @@ void GameSession::debugHitboxesDisplay(RenderWindow& window, const Character& ch
             drawDebugHitbox(window, ebox.center.x + offsetX, ebox.center.y + offsetY, ebox.radius);
         }
         else if (ebox.type == ShapeType::Capsule) {
-            Vector2f pointA = ebox.center;
-            float angleRad = ebox.rotationDeg * 3.14159265f / 180.0f;
-            Vector2f axisDir(cos(angleRad), sin(angleRad));
-            Vector2f pointB = pointA + axisDir * ebox.height;
-            drawDebugCapsule(window, pointA, pointB, ebox.radius, offsetX, offsetY);        
+            drawDebugCapsule(window, ebox, offsetX, offsetY);        
         }
     }
 
     for (const auto& proj : projectilesManager->getProjectiles()) {
         auto ppos = proj->getPosition();
-        drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, proj->getSize());
+        auto pbox = proj->getCollisionBox();
+        if(pbox.type == ShapeType::Circle) {
+            drawDebugHitbox(window, ppos.x + offsetX, ppos.y + offsetY, pbox.radius);
+        }
+        else if (pbox.type == ShapeType::Capsule) {
+            drawDebugCapsule(window, pbox, offsetX, offsetY);        
+        }
     }
 }
 

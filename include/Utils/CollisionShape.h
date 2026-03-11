@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
+
 using namespace sf;
 using namespace std;
 
@@ -14,34 +17,32 @@ public:
     Vector2f center;
     float radius;      
     FloatRect rect;
-    float height, rotationDeg;
+    float height;
+    float rotationDeg;
 
+    // Constructores
     CollisionShape();
     CollisionShape(const Vector2f& center, float radius); 
     CollisionShape(const FloatRect& rect);
     CollisionShape(const Vector2f& center, float radius, float height, float rotationDeg);
 
-    static bool circleContains(const Vector2f& center, float radius, const Vector2f& point);
-    static bool rectContains(const FloatRect& rect, const Vector2f& point);
-    static bool capsuleContains(const Vector2f& center, float width, float height, float rotationDeg, const Vector2f& point);
-
+    // Función principal pública
     bool intersects(const CollisionShape& other) const;
 
-    void drawDebug() const;
-
-    Vector2f rotatePoint(float x_A, float y_A, float height, float angleDeg) const;    
-
-
 private:
-    bool circleCollides(const Vector2f& centerA, float radiusA, const Vector2f& centerB, float radiusB) const;
+    // Resolutores específicos por forma
     bool circleIntersections(const CollisionShape& other) const;
     bool rectangleIntersects(const CollisionShape& other) const;
     bool capsuleIntersections(const CollisionShape& other) const;
-    bool capsuleCollides(const Vector2f& centerA, float radiusA, float heightA, float rotationDegA, const Vector2f& centerB, float radiusB) const;
-    Vector2f findClosestPointOnCapsuleAxis(const Vector2f& center, float width, float height, float rotationDeg, const Vector2f& point) const;
-    bool capsuleCollisionOnCapsule(const CollisionShape& other) const;
-    Vector2f findOtherClosestPoint(Vector2f firstA, Vector2f lastA, Vector2f firstB, Vector2f lastB) const;
-    Vector2f closestPointOnLineSegment(Vector2f A, Vector2f B, Vector2f point) const;
+    
+    // Herramientas matemáticas para Cápsulas
+    float pointToSegmentDistSq(const Vector2f& p, const Vector2f& a, const Vector2f& b) const;
+    float crossProduct2D(const Vector2f& v, const Vector2f& w) const;
+    bool segmentsIntersect(const Vector2f& p1, const Vector2f& p2, const Vector2f& p3, const Vector2f& p4) const;
+    
+    // Utilidades geométricas
+    Vector2f getFirstCenter() const;
+    Vector2f getLastCenter() const;
 };
 
 #endif // COLLISION_SHAPE_H

@@ -68,7 +68,7 @@ private:
     void enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile);
 
     void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
-    void drawDebugCapsule(RenderWindow& window, Vector2f pointA, Vector2f pointB, float radius, float offsetX, float offsetY);
+    void drawDebugCapsule(RenderWindow& window, const CollisionShape& capsule, float offsetX, float offsetY);
     void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr);
 
     void RenderEffectsArrange(RenderWindow& window);

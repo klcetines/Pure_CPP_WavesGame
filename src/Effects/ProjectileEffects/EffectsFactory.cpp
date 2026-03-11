@@ -11,6 +11,7 @@ void EffectFactory::Initialize(){
     Instance().RegisterEffect(2, []() { return std::make_unique<FireProjectileEffect>(); });
     Instance().RegisterEffect(3, []() { return std::make_unique<BleedProjectileEffect>(); });
     Instance().RegisterEffect(4, []() { return std::make_unique<SpinningProjectileEffect>(); });
+    Instance().RegisterEffect(5, []() { return std::make_unique<LaserEffect>(); });
 }
 
 void EffectFactory::RegisterEffect(const int id, CreatorFunc func) {

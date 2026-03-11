@@ -26,7 +26,7 @@ private:
     float _maxLifetime = 5.0f;
     float _damage;
     
-    CircleShape _shape;
+    std::unique_ptr<sf::Shape> _shape;
     CollisionShape _collisionBox;
 
     unordered_set<int> _hitEnemies;
@@ -35,8 +35,10 @@ private:
     void handleHomingLogic(float dt, shared_ptr<Enemy> target);
     void handlePiercingLogic();
     
+    void createShapeFromEffects();
     float getVectorLength(const Vector2f& v);
     Vector2f normalizeVector(const Vector2f& v);
+    void updateCollisionBox() override;
 };
 
 #endif

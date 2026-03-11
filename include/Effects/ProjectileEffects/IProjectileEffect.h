@@ -10,6 +10,7 @@ enum class EffectType {
     Generic,
     Homing,
     Piercing,
+    Laser,
     Impact
 };
 
