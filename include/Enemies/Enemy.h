@@ -23,7 +23,7 @@ struct EnemyData
     float AttackSpeed;
 };
 
-class Enemy : public IActor {
+class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
     public:
         Enemy(const string& name, float x, float y, float life = 100.0f);
         ~Enemy() = default;
@@ -43,6 +43,7 @@ class Enemy : public IActor {
         EnemyData getData() const;
         float getLife() const override;
         float getSize() const override;
+        bool isAlive() const override;
         
         ActorEffectComponent* getEffectComponent() override;
         const ActorEffectComponent* getEffectComponent() const override;
@@ -51,7 +52,7 @@ class Enemy : public IActor {
         
         float getRotation() const;
         CollisionShape getCollisionBox() const;
-        void takeDamage(float damage) override;
+        void takeDamage(float damage, bool isContinious = false) override;
     
     private:
         int _id;

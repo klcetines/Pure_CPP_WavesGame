@@ -20,7 +20,7 @@ class EffectsArrange {
         const std::vector<std::unique_ptr<IProjectileEffect>>& getImpacts() const;
 
         void clearEffects();
-        void nextEffect(Projectile& projectile);
+        bool nextEffect(Projectile& projectile);
         bool modifiersItsEmpty() const;
         bool impactsItsEmpty() const;
         bool modifiersIsFull() const;
@@ -30,6 +30,7 @@ class EffectsArrange {
 
         std::unique_ptr<EffectsArrange> Clone() const;
         std::unique_ptr<EffectsArrange> CloneFromIndex(int index) const;
+        std::unique_ptr<EffectsArrange> CloneNextPhase() const;
         
         EffectType GetType() const;
         bool hasActiveEffect(EffectType type) const;

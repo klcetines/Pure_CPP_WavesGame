@@ -46,7 +46,7 @@ void EffectsArrange::clearEffects(){
     currentImpactIndex = 0;
 }
 
-void EffectsArrange::nextEffect(Projectile& projectile){
+bool EffectsArrange::nextEffect(Projectile& projectile){
     if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
         currentEffectIndex++;
         
@@ -61,6 +61,8 @@ void EffectsArrange::nextEffect(Projectile& projectile){
             i++;
         }
     }
+
+    return currentEffectIndex < _modifiers.size();
 }
 
 bool EffectsArrange::modifiersItsEmpty() const{
@@ -109,6 +111,27 @@ std::unique_ptr<EffectsArrange> EffectsArrange::CloneFromIndex(int index) const 
         clone->addImpact(impact->Clone());
     }
     return clone;
+}
+
+std::unique_ptr<EffectsArrange> EffectsArrange::CloneNextPhase() const {
+    bool hasPassive = false;
+    bool hasActive = false;
+    int i = currentEffectIndex;
+
+    while (i < _modifiers.size()) {
+        bool isPassive = _modifiers[i]->isPassive();
+        if (isPassive) {
+            if (hasPassive) break;
+            hasPassive = true;
+        } else {
+            if (hasActive) break;
+            hasActive = true;
+        }
+        i++;
+    }
+
+    if (i >= _modifiers.size()) return nullptr;
+    return CloneFromIndex(i);
 }
 
 EffectType EffectsArrange::GetType() const {
@@ -218,7 +241,6 @@ ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy) 
         if (action == ProjectileAction::Trigger) {
             triggered = true;
             triggerType = _modifiers[i]->GetType(); // Guardamos quién hizo el trigger
-            //--------Pero si es el ultimo destruir también --------
         } 
         else if (action == ProjectileAction::Destroy) {
             finalAction = ProjectileAction::Destroy;

@@ -21,7 +21,7 @@ public:
     virtual bool isAlive() const;
     virtual void destroy() = 0;
 
-    virtual void handleImpact(IActor& enemy);
+    virtual void handleImpact(std::shared_ptr<IActor> enemy);
 
     virtual float getDamage() const;
     virtual float getSize() const;

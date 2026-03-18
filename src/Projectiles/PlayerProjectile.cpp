@@ -16,7 +16,7 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f direction, float spe
 
     _velocity = normalizeVector(direction) * speed;
     
-    _collisionBox = CollisionShape(start, 6, 6, 0.0f);
+    _collisionBox = CollisionShape(start, 6.0f);
     
     _hitEnemies = unordered_set<int>();
     
@@ -30,8 +30,6 @@ PlayerProjectile::~PlayerProjectile() {
 
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
-    float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
-    _shape->setRotation(angle);
     if (closestEnemy && _effects && _effects->hasActiveEffect(EffectType::Homing)) {
         handleHomingLogic(dt, closestEnemy);
     }
@@ -41,10 +39,16 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
     }
 
     if(_effects && _effects->hasActiveEffect(EffectType::Laser)) {
+        float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
+        _shape->setRotation(angle);
         updateCollisionBox();
         _lifetime += dt;
     }
-    else{
+    else {
+        if (_effects && _effects->hasActiveEffect(EffectType::Piercing)) {
+            float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
+            _shape->setRotation(angle);
+        }
         Projectile::update(dt);
     }
 
@@ -53,7 +57,6 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
     }
     
     _shape->setPosition(_position);
-    _collisionBox.center = _position;
 
     if (_traveledDistance >= _maxRange || _lifetime > _maxLifetime) {
         _alive = false;
@@ -78,51 +81,53 @@ void PlayerProjectile::handleHomingLogic(float dt, shared_ptr<Enemy> target) {
 }
 
 void PlayerProjectile::handlePiercingLogic() {
-    if (_lastHitEnemy != nullptr) {
-        if (!_collisionBox.intersects(_lastHitEnemy->getCollisionBox())) {
-            _effects->triggerSpecificEffect(EffectType::Piercing, *this);
-            _lastHitEnemy = nullptr; 
-        }
+    auto target = _lastHitEnemy.lock();
+    if (!target) return;
+    
+    if (!_collisionBox.intersects(target->getCollisionBox())) {
+        _lastHitEnemy.reset();
+        _effects->nextEffect(*this);
     }
 }     
 
-void PlayerProjectile::handleImpact(IActor& animatedObject) {
-    Enemy* enemy = dynamic_cast<Enemy*>(&animatedObject);
-    
+void PlayerProjectile::handleImpact(std::shared_ptr<IActor> animatedObject) {
+    std::shared_ptr<Enemy> enemy = std::dynamic_pointer_cast<Enemy>(animatedObject);
     if (!enemy) return;
-    
+
     int enemyId = enemy->getId();
+    bool isLaser = _effects && _effects->hasActiveEffect(EffectType::Laser);
 
-    if (_hitEnemies.find(enemyId) != _hitEnemies.end()) {
-        return;
+    if (!isLaser) {
+        if (_hitEnemies.count(enemyId)) return;
+        _hitEnemies.insert(enemyId);
     }
+    float finalDamage = isLaser ? (_damage * 0.03f) : _damage;
+    enemy->takeDamage(finalDamage, isLaser);
 
-    _hitEnemies.insert(enemyId);
     _lastHitEnemy = enemy;
-    
-    enemy->takeDamage(_damage);
-    if(enemy->getLife() <= 0){
-        _lastHitEnemy = nullptr;
-    }
-
-    if (_effects && (!_effects->modifiersItsEmpty() || !_effects->impactsItsEmpty())) {
-        ProjectileAction result = _effects->OnImpact(*this, *enemy);
-        if (result == ProjectileAction::Destroy) {
+    if(!isLaser){ 
+        if (_effects && (!_effects->modifiersItsEmpty() || !_effects->impactsItsEmpty())) {
+            ProjectileAction result = _effects->OnImpact(*this, *enemy);
+            if (result == ProjectileAction::Destroy) {
+                destroy();
+            }
+        } 
+        else {
             destroy();
         }
-    } 
-    else {
-        destroy();
     }
 }
 
 void PlayerProjectile::createShapeFromEffects() {
     if (_effects && _effects->hasActiveEffect(EffectType::Laser)) {
-        auto rect = std::make_unique<sf::RectangleShape>(sf::Vector2f(40.f, 12.f));
-        rect->setOrigin(20.f, 6.f);
+        auto rect = std::make_unique<sf::RectangleShape>(sf::Vector2f(_maxRange, 12.f));
+        
+        rect->setOrigin(0.f, 6.f); 
         rect->setFillColor(sf::Color::Red);
 
         _shape = std::move(rect);
+        float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
+        _shape->setRotation(angle);
     }
     else if (_effects && _effects->hasActiveEffect(EffectType::Piercing)) {
         auto tri = std::make_unique<sf::ConvexShape>(3);
@@ -164,7 +169,6 @@ CollisionShape PlayerProjectile::getCollisionBox() const {
 
 void PlayerProjectile::updateCollisionBox(){
     if(_effects && _effects->hasActiveEffect(EffectType::Laser)) {
-
         sf::Vector2f direction = normalizeVector(_velocity);
         float length = _maxRange;
         
@@ -172,9 +176,10 @@ void PlayerProjectile::updateCollisionBox(){
         
         float rotation = atan2(direction.y, direction.x) * 180.0f / 3.14159265f;
         
-        _collisionBox = CollisionShape(capsuleCenter, 6.0f, length, rotation);    
+        _collisionBox = CollisionShape(capsuleCenter, 6.0f, length, rotation);
     } 
     else {
+        _collisionBox.center = _position;
         _collisionBox.radius = 6; 
     }
 }

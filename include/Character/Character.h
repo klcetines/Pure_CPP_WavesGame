@@ -31,7 +31,7 @@ public:
     ActorEffectComponent* getEffectComponent() override;
     const ActorEffectComponent* getEffectComponent() const override;
                          
-    void takeDamage(float damage) override;
+    void takeDamage(float damage, bool isContinious = false) override;
     string getName() const;
     Vector2f getPosition() const;
     float getLife() const;
@@ -39,6 +39,7 @@ public:
     CollisionShape getCollisionBox() const;
     float getSize() const;
     float getSpeed() const override;
+    bool isAlive() const override;
 
 
 private:

@@ -210,16 +210,16 @@ void GameSession::applyUpgrade(const Effect& effect) {
 
 void GameSession::enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile) {
     if (enemy && projectile) {    
-        projectile->handleImpact(*enemy);
+        projectile->handleImpact(enemy);
     }
 }
 
 void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX, float offsetY) {
-    CircleShape hitbox(radius/2);
+    CircleShape hitbox(radius);
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Blue);
     hitbox.setOutlineThickness(2.f);
-    hitbox.setOrigin(radius/2, radius/2);
+    hitbox.setOrigin(radius, radius);
     hitbox.setPosition(x + offsetX, y + offsetY);
     window.draw(hitbox);
 
@@ -232,8 +232,8 @@ void GameSession::drawDebugHitbox(RenderWindow& window, float x, float y, float 
 
 void GameSession::drawDebugCapsule(RenderWindow& window, const CollisionShape& capsule, float offsetX, float offsetY){
 
-    Vector2f pointA = capsule.center;
-    Vector2f pointB = pointA + Vector2f(cos(capsule.rotationDeg * 3.14159265f / 180.f), sin(capsule.rotationDeg * 3.14159265f / 180.f)) * capsule.height;
+    Vector2f pointA = capsule.getFirstCenter();
+    Vector2f pointB = capsule.getLastCenter();
     float radius = capsule.radius;
     
     CircleShape circle1(radius);

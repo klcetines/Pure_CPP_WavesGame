@@ -18,7 +18,7 @@ public:
     void update(float dt, shared_ptr<Enemy> closestEnemy = nullptr);
 
     void draw(RenderWindow& window, float offsetX, float offsetY) override;
-    void handleImpact(IActor& actor) override;
+    void handleImpact(std::shared_ptr<IActor> actor) override;
     void destroy() override;
     CollisionShape getCollisionBox() const override;
     
@@ -30,7 +30,7 @@ private:
     CollisionShape _collisionBox;
 
     unordered_set<int> _hitEnemies;
-    Enemy* _lastHitEnemy = nullptr;
+    std::weak_ptr<Enemy> _lastHitEnemy;
 
     void handleHomingLogic(float dt, shared_ptr<Enemy> target);
     void handlePiercingLogic();

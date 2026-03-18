@@ -8,7 +8,7 @@ Character::Character(const string& name, float x, float y)
     , stats()
     , graphics(size)
     , combat(stats)
-    , collisionBox(Vector2f(x, y), size * 1.6f)
+    , collisionBox(Vector2f(x, y), size*0.8f)
 {
     graphics.loadSprite("assets/sprites/Characters/tomato_tv.png", x, y);
 }
@@ -63,7 +63,7 @@ const ActorEffectComponent* Character::getEffectComponent() const {
     return &_effectComponent;
 }
 
-void Character::takeDamage(float damage) {
+void Character::takeDamage(float damage, bool isContinuous) {
     stats.getLife().takeDamage(damage);
 }
 
@@ -80,6 +80,10 @@ void Character::applyKnockback(shared_ptr<Enemy> enemy) {
 
 float Character::getSpeed() const {
     return stats.getSpeed();
+}
+
+bool Character::isAlive() const {
+    return stats.getLifeAmmount() > 0;
 }
 
 string Character::getName() const { 

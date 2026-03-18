@@ -24,7 +24,7 @@ bool Projectile::isAlive() const {
     return _alive;
 }
 
-void Projectile::handleImpact(IActor& enemy) {
+void Projectile::handleImpact(std::shared_ptr<IActor> enemy) {
 }
 
 float Projectile::getDamage() const {
@@ -71,6 +71,7 @@ void Projectile::setSpawnCallback(SpawnCallback callback) {
 
 void Projectile::spawnChild(std::shared_ptr<Projectile> child) {
     if (_spawnCallback) {
+        child->setSpawnCallback(_spawnCallback);
         _spawnCallback(child);
     }
 }

@@ -25,7 +25,8 @@ public:
     virtual CollisionShape getCollisionBox() const = 0;
     virtual float getSpeed() const = 0;
     virtual float getSize() const = 0;
-    virtual void takeDamage(float damage) = 0;
+    virtual void takeDamage(float damage, bool isContinious = false) = 0;
+    virtual bool isAlive() const = 0;
 
     virtual ActorEffectComponent* getEffectComponent() = 0;
     virtual const ActorEffectComponent* getEffectComponent() const = 0;

@@ -15,6 +15,7 @@ uint32_t SpinningProjectileEffect::getColorCode() const{
 
 ProjectileAction SpinningProjectileEffect::OnFire(Projectile& projectile){
     _shotsFired = 0;
+    _degreesSpin = 0.0f;
     _lastDistance = projectile.getTraveledDistance();
     _distUntilShot = projectile.getMaxRange() / 10.0f; 
     _distBetweenShot = (projectile.getMaxRange() - (_distUntilShot * 2)) / 7.0f;

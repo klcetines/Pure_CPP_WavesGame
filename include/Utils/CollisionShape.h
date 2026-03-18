@@ -28,6 +28,9 @@ public:
 
     // Función principal pública
     bool intersects(const CollisionShape& other) const;
+    
+    Vector2f getFirstCenter() const;
+    Vector2f getLastCenter() const;
 
 private:
     // Resolutores específicos por forma
@@ -40,9 +43,6 @@ private:
     float crossProduct2D(const Vector2f& v, const Vector2f& w) const;
     bool segmentsIntersect(const Vector2f& p1, const Vector2f& p2, const Vector2f& p3, const Vector2f& p4) const;
     
-    // Utilidades geométricas
-    Vector2f getFirstCenter() const;
-    Vector2f getLastCenter() const;
 };
 
 #endif // COLLISION_SHAPE_H

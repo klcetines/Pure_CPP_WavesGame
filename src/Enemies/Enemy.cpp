@@ -13,7 +13,7 @@ Enemy::Enemy(const string& name, float x, float y, float life):
 
     if (SpriteLoader::assignSprite(_sprite, "assets/sprites/Enemies/rat_tv.png", _size.x, _size.y)) {
         Vector2u texSize = _sprite.getTexture()->getSize();
-        _sprite.setOrigin(texSize.x / 2.0f, texSize.y / 4.0f);
+        _sprite.setOrigin(texSize.x / 2.0f, texSize.y / 2.0f);
         _sprite.setPosition(x, y);
         _useSprite = true;
     } 
@@ -139,6 +139,10 @@ float Enemy::getSize() const {
     return _size.x;
 }
 
+bool Enemy::isAlive() const {
+    return _data.Life->isAlive();
+}
+
 ActorEffectComponent* Enemy::getEffectComponent() {
         return &_effectComponent;
 }
@@ -147,10 +151,15 @@ const ActorEffectComponent* Enemy::getEffectComponent() const {
     return &_effectComponent;
 }
 
-void Enemy::takeDamage(float damage) {
-    _data.Life->takeDamage(damage);
-    _damageFlashTimer = 0.1f;
-    if(_name != "Dummy")applyKnockback();
+void Enemy::takeDamage(float damage, bool isContinuous) {
+    _data.Life->takeDamage(damage); 
+    if (!isContinuous) {
+        _damageFlashTimer = 0.1f;
+        if(_name != "Dummy") applyKnockback();
+    } 
+    else {
+        _damageFlashTimer = 0.05f; 
+    }
 }
 
 void Enemy::applyKnockback() {

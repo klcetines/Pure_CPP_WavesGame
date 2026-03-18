@@ -25,20 +25,17 @@ uint32_t LaserEffect::getColorCode() const{
 
 ProjectileAction LaserEffect::OnFire(Projectile& projectile){
     _startingPoint = projectile.getPosition();
-    
     sf::Vector2f direction = normalizeVector(projectile.getVelocity());
-    
     _lastPoint = _startingPoint + direction * projectile.getMaxRange();
     
     float speed = getVectorLength(projectile.getVelocity());
     if (speed > 0) {
-        _maxLifetime = projectile.getMaxRange() / speed;
+        _maxLifetime = (projectile.getMaxRange() / speed) * 0.3f;
     } else {
         _maxLifetime = 0.1f;
     }
     
     _lifetime = 0.0f;
-    
     return ProjectileAction::Continue;
 }
 
@@ -46,9 +43,27 @@ ProjectileAction LaserEffect::OnUpdate(Projectile& projectile, float deltaTime, 
     _lifetime += deltaTime;
     
     if (_lifetime >= _maxLifetime) {
-        return ProjectileAction::Destroy;
-    }
+        auto* playerProj = dynamic_cast<PlayerProjectile*>(&projectile);
+        if (playerProj) {
+            auto nextEffects = playerProj->getEffects().CloneNextPhase();
+            if (nextEffects && !nextEffects->modifiersItsEmpty()) {
+                sf::Vector2f direction = normalizeVector(projectile.getVelocity());
+                sf::Vector2f spawnPos = projectile.getPosition() + direction * projectile.getMaxRange();
+                float speed = getVectorLength(projectile.getVelocity());
 
+                auto childProj = std::make_shared<PlayerProjectile>(
+                    spawnPos,
+                    direction,
+                    speed,
+                    projectile.getDamage(),
+                    *nextEffects,
+                    projectile.getMaxRange()
+                );
+                projectile.spawnChild(childProj);
+            }
+        }
+        return ProjectileAction::Trigger; 
+    }
     return ProjectileAction::Continue;
 }
 
