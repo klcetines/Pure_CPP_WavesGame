@@ -41,7 +41,6 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
     if(_effects && _effects->hasActiveEffect(EffectType::Laser)) {
         float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
         _shape->setRotation(angle);
-        updateCollisionBox();
         _lifetime += dt;
     }
     else {
@@ -52,11 +51,13 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
         Projectile::update(dt);
     }
 
+
     if (_effects) {
         _effects->OnUpdate(*this, dt);
     }
-    
+
     _shape->setPosition(_position);
+    createShapeFromEffects();
 
     if (_traveledDistance >= _maxRange || _lifetime > _maxLifetime) {
         _alive = false;

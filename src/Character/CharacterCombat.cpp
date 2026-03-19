@@ -61,6 +61,11 @@ float CharacterCombat::calculateFacingAngle(const Vector2f& direction) const {
 Vector2f CharacterCombat::calculateBulletSpawnPosition(const Vector2f& origin, 
                                                      const Vector2f& direction, 
                                                      int bulletIndex) const {
-    Vector2f offset = direction * (bulletIndex * BULLET_SPACING);
-    return origin + offset;
+    Vector2f perpendicular(-direction.y, direction.x);
+    
+    float offset = (bulletIndex % 2 == 0) ? 
+        (bulletIndex / 2 + 1) * BULLET_SPACING :
+        -(bulletIndex / 2 + 1) * BULLET_SPACING;
+    
+    return origin + perpendicular * offset;
 }

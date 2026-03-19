@@ -3,5 +3,4 @@ Albert Prince,1,Now your projectiles pierce among enemies.,projectile:0
 Peter Picapiedra,1,Now your projectiles go to the enemies.,projectile:1
 FidgetSplinter,1,Spawn more projectiles,projectile:4
 Laser,1,Bzzzt,projectile:5
-Hot Chilly,500,Flamin' hot projectiles!,projectile:2
-Tank Pong,500,As fast as they go... as soon they die!,projectile:3
+Tomatino,200,Tomato buddy shoots by your side. Splat!,bullets:1
