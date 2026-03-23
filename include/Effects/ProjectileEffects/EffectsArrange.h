@@ -2,7 +2,7 @@
 #define EFFECTS_ARRANGE_H
 
 #include "Effects/ProjectileEffects/IProjectileEffect.h"
-#include "Projectiles/Projectile.h"
+#include "Projectiles/PlayerProjectile.h"
 #include "Enemies/Enemy.h"
 #include "iostream"
 #include <vector>
@@ -17,7 +17,10 @@ class EffectsArrange {
         void addImpact(std::unique_ptr<IProjectileEffect> effect);
 
         const std::vector<std::unique_ptr<IProjectileEffect>>& getModifiers() const;
+        std::vector<std::unique_ptr<IProjectileEffect>>& getModifiers();
+        
         const std::vector<std::unique_ptr<IProjectileEffect>>& getImpacts() const;
+        std::vector<std::unique_ptr<IProjectileEffect>>& getImpacts();
 
         void clearEffects();
         bool nextEffect(Projectile& projectile);
@@ -30,7 +33,6 @@ class EffectsArrange {
 
         std::unique_ptr<EffectsArrange> Clone() const;
         std::unique_ptr<EffectsArrange> CloneFromIndex(int index) const;
-        std::unique_ptr<EffectsArrange> CloneNextPhase() const;
         
         EffectType GetType() const;
         bool hasActiveEffect(EffectType type) const;
@@ -43,6 +45,7 @@ class EffectsArrange {
         void swapEffects(int index1, int index2);
 
         void triggerSpecificEffect(EffectType type, Projectile& projectile);
+        void recalcMaxImpacts();
 
 
     private:
@@ -55,7 +58,14 @@ class EffectsArrange {
 
         int maxModifiers;
         int maxImpacts;
-};
+
+        bool _pendingOnFire;
+
+        void processImpactEffects(Enemy& enemy);
+        ProjectileAction evaluateModifiers(Enemy& enemy, Projectile& projectile);
+        ProjectileAction handleTriggeredEffect(Projectile& projectile);
+
+};  
 
 
 #endif // EFFECTS_ARRANGE_H

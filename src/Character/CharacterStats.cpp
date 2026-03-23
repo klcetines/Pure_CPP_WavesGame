@@ -77,6 +77,10 @@ int CharacterStats::getMaxEffectsCount() const {
     return maxEffectsCount;
 }
 
+EquipContext CharacterStats::getEquipContext() {
+    return { _projectileEffects.get(), _effectsInventory.get() };
+}
+
 bool CharacterStats::handleAddImpact(std::unique_ptr<IProjectileEffect> newEffect){
     if(newEffect->GetType() == EffectType::Impact) {
         if(!_projectileEffects->impactsIsFull()) {

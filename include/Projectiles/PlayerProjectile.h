@@ -15,12 +15,16 @@ public:
     PlayerProjectile(Vector2f start, Vector2f direction, float speed, float damage, const EffectsArrange& effects, float range = 300.0f);
     ~PlayerProjectile();
 
+    void setSpawnCallback(SpawnCallback callback) override;
     void update(float dt, shared_ptr<Enemy> closestEnemy = nullptr);
 
     void draw(RenderWindow& window, float offsetX, float offsetY) override;
     void handleImpact(std::shared_ptr<IActor> actor) override;
     void destroy() override;
     CollisionShape getCollisionBox() const override;
+    float getDamage() const override;
+    void updateCollisionBox() override;
+    void createShapeFromEffects();
     
 private:
     float _maxLifetime = 5.0f;
@@ -35,10 +39,9 @@ private:
     void handleHomingLogic(float dt, shared_ptr<Enemy> target);
     void handlePiercingLogic();
     
-    void createShapeFromEffects();
     float getVectorLength(const Vector2f& v);
     Vector2f normalizeVector(const Vector2f& v);
-    void updateCollisionBox() override;
+    void processImpactEffects(Enemy& enemy);
 };
 
 #endif

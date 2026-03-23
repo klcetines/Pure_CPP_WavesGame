@@ -13,7 +13,7 @@ uint32_t SpinningProjectileEffect::getColorCode() const{
     return 0xFFDDDDDD;
 }
 
-ProjectileAction SpinningProjectileEffect::OnFire(Projectile& projectile){
+ProjectileAction SpinningProjectileEffect::OnFire(Projectile& projectile, int myIndex){
     _shotsFired = 0;
     _degreesSpin = 0.0f;
     _lastDistance = projectile.getTraveledDistance();
@@ -57,6 +57,7 @@ ProjectileAction SpinningProjectileEffect::OnUpdate(Projectile& projectile, floa
         _distUntilShot = _distBetweenShot;
         
         if (_shotsFired >= 7) {
+            projectile.destroy();
             action = ProjectileAction::Trigger;
         }
         

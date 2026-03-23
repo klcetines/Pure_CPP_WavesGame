@@ -12,6 +12,9 @@ public:
     bool isFull() const;
     void addEffect(const IProjectileEffect& effect);
     void removeEffect(const IProjectileEffect& effect);
+    std::vector<std::unique_ptr<IProjectileEffect>>& getEffects();
+    const std::vector<std::unique_ptr<IProjectileEffect>>& getEffects() const;
+    int getMaxInventorySize() const;
 
 private:
     std::vector<std::unique_ptr<IProjectileEffect>> _unusedEffects;

@@ -29,12 +29,20 @@ const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getModif
     return _modifiers;
 }
 
+std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange::getModifiers() {
+    return _modifiers;
+}
+
 void EffectsArrange::addImpact(std::unique_ptr<IProjectileEffect> effect){
     if (!effect) return;
     _impacts.push_back(std::move(effect));
 }
 
 const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange:: getImpacts() const{
+    return _impacts;
+}
+
+std::vector<std::unique_ptr<IProjectileEffect>>& EffectsArrange::getImpacts() {
     return _impacts;
 }
 
@@ -49,17 +57,7 @@ void EffectsArrange::clearEffects(){
 bool EffectsArrange::nextEffect(Projectile& projectile){
     if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
         currentEffectIndex++;
-        
-        int i = currentEffectIndex;
-        bool passive = true;
-        
-        while(i < _modifiers.size() && passive) {
-            _modifiers[i]->OnFire(projectile);
-            if (!_modifiers[i]->isPassive()) {
-                passive = false;
-            }
-            i++;
-        }
+        _pendingOnFire = true;
     }
 
     return currentEffectIndex < _modifiers.size();
@@ -113,27 +111,6 @@ std::unique_ptr<EffectsArrange> EffectsArrange::CloneFromIndex(int index) const 
     return clone;
 }
 
-std::unique_ptr<EffectsArrange> EffectsArrange::CloneNextPhase() const {
-    bool hasPassive = false;
-    bool hasActive = false;
-    int i = currentEffectIndex;
-
-    while (i < _modifiers.size()) {
-        bool isPassive = _modifiers[i]->isPassive();
-        if (isPassive) {
-            if (hasPassive) break;
-            hasPassive = true;
-        } else {
-            if (hasActive) break;
-            hasActive = true;
-        }
-        i++;
-    }
-
-    if (i >= _modifiers.size()) return nullptr;
-    return CloneFromIndex(i);
-}
-
 EffectType EffectsArrange::GetType() const {
     if (!_modifiers.empty() && currentEffectIndex < _modifiers.size()) {
         return _modifiers[currentEffectIndex]->GetType();
@@ -143,26 +120,14 @@ EffectType EffectsArrange::GetType() const {
 
 bool EffectsArrange::hasActiveEffect(EffectType type) const {
     if (_modifiers.empty() || currentEffectIndex >= _modifiers.size()) return false;
-    
-    bool hasPassive = false;
-    bool hasActive = false;
-    int i = currentEffectIndex;
-    
-    while (i < _modifiers.size()) {
-        bool isPassive = _modifiers[i]->isPassive();
-        
-        if (isPassive) {
-            if (hasPassive) break; 
-            hasPassive = true;
-        } else {
-            if (hasActive) break; 
-            hasActive = true;
-        }
-        
+    for (size_t i = currentEffectIndex; i < _modifiers.size(); ++i) {
         if (_modifiers[i]->GetType() == type) {
-            return true; 
+            return true;
         }
-        i++;
+        
+        if (!_modifiers[i]->isPassive()) {
+            break; 
+        }
     }
     return false;
 }
@@ -174,7 +139,9 @@ void EffectsArrange::OnFire(Projectile& projectile){
     bool passive = true;
     
     while(i < _modifiers.size() && passive) {
-        _modifiers[i]->OnFire(projectile);
+        if(_modifiers[i]->OnFire(projectile, i) == ProjectileAction::Trigger) {
+            triggerSpecificEffect(_modifiers[i]->GetType(), projectile); 
+        }
         if (!_modifiers[i]->isPassive()) {
             passive = false;
         }
@@ -184,12 +151,18 @@ void EffectsArrange::OnFire(Projectile& projectile){
 
 void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime) {
     if (_modifiers.empty() || currentEffectIndex >= _modifiers.size()) return;
+    
+    if (_pendingOnFire) {
+        _pendingOnFire = false;
+        OnFire(projectile);
+    }
 
     bool hasPassive = false;
     bool hasActive = false;
     int i = currentEffectIndex;
     
     while(i < _modifiers.size()) {
+        
         bool isPassive = _modifiers[i]->isPassive();
         if (isPassive) {
             if (hasPassive) break;
@@ -202,61 +175,26 @@ void EffectsArrange::OnUpdate(Projectile& projectile, float deltaTime) {
 
         if (_modifiers[i]->OnUpdate(projectile, deltaTime, i) == ProjectileAction::Trigger) {
             triggerSpecificEffect(_modifiers[i]->GetType(), projectile);
-            break; 
+            break;
         }
         i++;
     }
 }
 
 ProjectileAction EffectsArrange::OnImpact(Projectile& projectile, Enemy& enemy) {
-    if (currentImpactIndex < _impacts.size()) {
-        _impacts[currentImpactIndex]->OnImpact(enemy);
-        currentImpactIndex++; 
-    }
-
+    processImpactEffects(enemy);
+    
     if (_modifiers.empty() || currentEffectIndex >= _modifiers.size()) {
         return ProjectileAction::Destroy;
     }
 
-    bool hasPassive = false;
-    bool hasActive = false;
-    int i = currentEffectIndex;
-    ProjectileAction finalAction = ProjectileAction::Continue;
+    ProjectileAction action = evaluateModifiers(enemy, projectile);
     
-    bool triggered = false;
-    EffectType triggerType;
-
-    while(i < _modifiers.size()) {
-        bool isPassive = _modifiers[i]->isPassive();
-        if (isPassive) {
-            if (hasPassive) break;
-            hasPassive = true;
-        } else {
-            if (hasActive) break;
-            hasActive = true;
-        }
-
-        ProjectileAction action = _modifiers[i]->OnImpact(enemy);
-        
-        if (action == ProjectileAction::Trigger) {
-            triggered = true;
-            triggerType = _modifiers[i]->GetType(); // Guardamos quién hizo el trigger
-        } 
-        else if (action == ProjectileAction::Destroy) {
-            finalAction = ProjectileAction::Destroy;
-        }
-        i++;
+    if (action == ProjectileAction::Trigger) {
+        return handleTriggeredEffect(projectile);
     }
-
-    if (triggered) {
-        triggerSpecificEffect(triggerType, projectile);
-        if (currentEffectIndex >= _modifiers.size()) {
-            return ProjectileAction::Destroy;
-        }
-        return ProjectileAction::Continue; 
-    }
-        
-    return finalAction;
+    
+    return action;
 }
 
 void EffectsArrange::OnDistanceTraveled(Projectile& projectile, float distance){
@@ -276,28 +214,29 @@ void EffectsArrange::OnExpire(Projectile& projectile){
 }
 
 void EffectsArrange::swapEffects(int index1, int index2) {
-    int totalEffects = maxModifiers + _impacts.size();
+    int currentMods = _modifiers.size();
+    int currentImps = _impacts.size();
 
-    if (index1 < 0 || index1 >= totalEffects || index2 < 0 || index2 >= totalEffects) {
-        return; 
-    }
+    bool valid1 = (index1 < currentMods) || (index1 >= maxModifiers && index1 - maxModifiers < currentImps);
+    bool valid2 = (index2 < currentMods) || (index2 >= maxModifiers && index2 - maxModifiers < currentImps);
+
+    if (!valid1 || !valid2) return; 
 
     std::unique_ptr<IProjectileEffect>* effect1;
     std::unique_ptr<IProjectileEffect>* effect2;
 
-    if (index1 < _modifiers.size()) {
+    if (index1 < currentMods) {
         effect1 = &_modifiers[index1];
-    } 
-    else {
+    } else {
         effect1 = &_impacts[index1 - maxModifiers];
     }
 
-    if (index2 < _modifiers.size()) {
+    if (index2 < currentMods) {
         effect2 = &_modifiers[index2];
-    } 
-    else {
+    } else {
         effect2 = &_impacts[index2 - maxModifiers];
     }
+    
     std::swap(*effect1, *effect2);
 }
 
@@ -320,8 +259,75 @@ void EffectsArrange::triggerSpecificEffect(EffectType type, Projectile& projecti
         if (_modifiers[i]->GetType() == type) {
             currentEffectIndex = i;
             nextEffect(projectile);
+
+            auto* playerProj = dynamic_cast<PlayerProjectile*>(&projectile);
+            if (playerProj) {
+                playerProj->updateCollisionBox();
+                playerProj->createShapeFromEffects(); 
+            }
+
             break;
         }
     }
 }
 
+void EffectsArrange::recalcMaxImpacts() {
+    int base = 1;
+    for (const auto& mod : _modifiers) {
+        if (mod && mod->extraImpact()) base++;
+    }
+    maxImpacts = base;
+    _impacts.reserve(maxImpacts);
+}
+
+void EffectsArrange::processImpactEffects(Enemy& enemy) {
+    if (currentImpactIndex < _impacts.size()) {
+        _impacts[currentImpactIndex]->OnImpact(enemy);
+        currentImpactIndex++;
+    }
+}
+
+ProjectileAction EffectsArrange::evaluateModifiers(Enemy& enemy, Projectile& projectile) {
+    bool hasPassive = false;
+    bool hasActive = false;
+    int i = currentEffectIndex;
+    ProjectileAction finalAction = ProjectileAction::Continue;
+    EffectType triggerType;
+    bool triggered = false;
+
+    while(i < _modifiers.size()) {
+        bool isPassive = _modifiers[i]->isPassive();
+        if (isPassive) {
+            if (hasPassive) break;
+            hasPassive = true;
+        } else {
+            if (hasActive) break;
+            hasActive = true;
+        }
+
+        ProjectileAction action = _modifiers[i]->OnImpact(enemy);
+        
+        if (action == ProjectileAction::Trigger) {
+            triggered = true;
+            triggerType = _modifiers[i]->GetType();
+        } 
+        else if (action == ProjectileAction::Destroy) {
+            finalAction = ProjectileAction::Destroy;
+        }
+        i++;
+    }
+
+    if (triggered) {
+        triggerSpecificEffect(triggerType,  projectile);
+        return ProjectileAction::Trigger;
+    }
+    
+    return finalAction;
+}
+
+ProjectileAction EffectsArrange::handleTriggeredEffect(Projectile& projectile) {
+    if (currentEffectIndex >= _modifiers.size()) {
+        return ProjectileAction::Destroy;
+    }
+    return ProjectileAction::Continue;
+}

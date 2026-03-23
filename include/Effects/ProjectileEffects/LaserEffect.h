@@ -10,7 +10,7 @@ class LaserEffect : public IProjectileEffect {
         EffectType GetType() const override;
         std::string getModifierSymbol() const override;
         uint32_t getColorCode() const override;
-        ProjectileAction OnFire(Projectile& projectile);
+        ProjectileAction OnFire(Projectile& projectile, int myIndex);
         ProjectileAction OnUpdate(Projectile& projectile, float deltaTime, int myIndex) override;
         ProjectileAction OnImpact(IActor& enemy) override;
         std::unique_ptr<IProjectileEffect> Clone() const override;

@@ -3,9 +3,8 @@
 
 #include "Utils/Life.h"
 #include "Utils/Effect.h"
-#include "Effects/ProjectileEffects/EffectsArrange.h"
+#include "Utils/EquipContext.h"
 #include "Effects/ProjectileEffects/EffectsFactory.h"
-#include "Effects/ProjectileEffects/EffectsInventory.h"
 #include <iostream>
 
 
@@ -24,6 +23,7 @@ public:
     float getProjectileSpeed() const;
     EffectsArrange& getProjectileEffects();
     int getMaxEffectsCount() const;
+    EquipContext getEquipContext();
 
 private:
     Life* _life;

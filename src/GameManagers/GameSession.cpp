@@ -69,11 +69,10 @@ void GameSession::processShopInput(RenderWindow& window) {
 }
 
 void GameSession::processRearrangementInput(RenderWindow& window) {
-    if(Keyboard::isKeyPressed(Keyboard::O)) {
-        auto& effects = player->getStats().getProjectileEffects(); 
-        Rearrange::getInstance(&effects)->openRearrangeMenu(window);    
+    if (Keyboard::isKeyPressed(Keyboard::O)) {
+        EquipContext ctx = player->getStats().getEquipContext();
+        Rearrange::getInstance(ctx)->openRearrangeMenu(window);
     }
-
 }
 
 void GameSession::updatePlayer(float dt) {

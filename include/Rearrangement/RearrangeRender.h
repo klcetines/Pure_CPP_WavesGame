@@ -30,8 +30,16 @@ namespace RearrangeRender {
     
     void renderSingleModifier(const RenderContext& ctx, int index, const std::vector<std::unique_ptr<IProjectileEffect>>& modifiers);
     void renderSingleImpact(const RenderContext& ctx, int index, int impactIndex, int modifiersSize, const std::vector<std::unique_ptr<IProjectileEffect>>& impacts);
-    void renderMovingOverlay(const RenderContext& ctx, const std::vector<std::unique_ptr<IProjectileEffect>>& modifiers);
+    void renderInventoryRow(const RenderContext& ctx,
+                        const std::vector<std::unique_ptr<IProjectileEffect>>& inventory,
+                        int globalOffset, int inventorySlots,
+                        float startX, float startY);
 
+    void renderMovingOverlay(const RenderContext& ctx,
+                         const std::vector<std::unique_ptr<IProjectileEffect>>& modifiers,
+                         const std::vector<std::unique_ptr<IProjectileEffect>>& inventory,
+                         int inventoryOffset,
+                         float invStartX, float invStartY);
     void drawBox(sf::RenderWindow& window, float x, float y, float size, sf::Color fillColor, sf::Color outlineColor, float outlineThickness);
     void drawLabel(sf::RenderWindow& window, float x, float y, float size, const std::string& label, sf::Color color);
     void drawEffectSlot(sf::RenderWindow& window, float x, float y, float size, const std::string& label, const sf::Color& color, bool isSelected, bool isSource);

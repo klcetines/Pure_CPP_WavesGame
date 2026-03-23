@@ -31,7 +31,7 @@ public:
 
     virtual ~IProjectileEffect() = default;
 
-    virtual ProjectileAction OnFire(Projectile& projectile) { return ProjectileAction::Continue; }
+    virtual ProjectileAction OnFire(Projectile& projectile, int myIndex) { return ProjectileAction::Continue; }
 
     virtual ProjectileAction OnUpdate(Projectile& projectile, float deltaTime, int myIndex) { return ProjectileAction::Continue; };
 

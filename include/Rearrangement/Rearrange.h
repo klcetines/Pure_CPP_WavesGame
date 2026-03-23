@@ -5,11 +5,12 @@
 #include "Rearrangement/RearrangeRender.h"
 #include "Rearrangement/RearrangeEvents.h"
 #include "Utils/Effect.h"
-#include "Effects/ProjectileEffects/EffectsArrange.h"
+#include "Utils/EquipContext.h"
 
 class Rearrange {
 public:
-    static Rearrange* getInstance(EffectsArrange* effectsArrange = nullptr);
+    static Rearrange* getInstance(EquipContext ctx);
+
     ~Rearrange() = default;
     void openRearrangeMenu(sf::RenderWindow& window);
         
@@ -17,10 +18,15 @@ public:
     void moveSelectionToPreviousEffect();
     void selectEffect();
     void closeRearrangeMenu();
-    EffectsArrange* getEffectsArrange() const;
+    EquipContext* getEquipContext() const;
 
     std::string getLabelCode(EffectType type);
     sf::Color getColorCode(EffectType type);
+
+    void swapSlotWithInventory(int slotIndex, int inventoryIndex);
+    int  getTotalSlotsWithInventory() const;
+    int  getTotalInventorySlots() const;
+    int getTotalSlots() const;
 
 private:
     Rearrange();
@@ -31,9 +37,10 @@ private:
 
     bool isOpen;
     
-    static EffectsArrange* _effectsArrange;
+    static EquipContext _ctx;
     static Rearrange* _instance;
+    int nextValidIndex(int current, int delta) const;
+    bool sourceEffectIsImpactType() const;
     
-    int getTotalSlots() const;
 };
 #endif // REARRANGE_H

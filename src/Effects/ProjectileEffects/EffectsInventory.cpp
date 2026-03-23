@@ -18,3 +18,13 @@ void EffectsInventory::addEffect(const IProjectileEffect& effect){
         _unusedEffects.push_back(unique_ptr<IProjectileEffect>(effect.Clone()));
     }
 }
+
+std::vector<std::unique_ptr<IProjectileEffect>>& EffectsInventory::getEffects() {
+    return _unusedEffects;
+}
+const std::vector<std::unique_ptr<IProjectileEffect>>& EffectsInventory::getEffects() const {
+    return _unusedEffects;
+}
+int EffectsInventory::getMaxInventorySize() const {
+    return maxInventorySize;
+}

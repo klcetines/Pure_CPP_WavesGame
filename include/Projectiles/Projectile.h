@@ -35,6 +35,7 @@ public:
     using SpawnCallback = std::function<void(std::shared_ptr<Projectile>)>;
     virtual void setSpawnCallback(SpawnCallback callback);
     virtual void spawnChild(std::shared_ptr<Projectile> child);
+    virtual void updateCollisionBox();
 
 protected:
     Vector2f _position;
@@ -50,7 +51,6 @@ protected:
     
     virtual void updatePosition(const Vector2f& movement);
     virtual void updateDistanceTraveled(const Vector2f& movement);
-    virtual void updateCollisionBox();
 };
 
 #endif // PROJECTILE_H

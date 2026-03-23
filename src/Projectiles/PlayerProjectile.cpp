@@ -12,26 +12,31 @@ PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f direction, float spe
     _lifetime = 0.f;
     _effects = effects.Clone();
 
-    createShapeFromEffects();
-
     _velocity = normalizeVector(direction) * speed;
     
     _collisionBox = CollisionShape(start, 6.0f);
+    createShapeFromEffects();
     
     _hitEnemies = unordered_set<int>();
-    
-    if (_effects && !_effects->modifiersItsEmpty()) {
-        _effects->OnFire(*this);
-    }
 }
 
 PlayerProjectile::~PlayerProjectile() {
 }
 
+void PlayerProjectile::setSpawnCallback(SpawnCallback callback) {
+    Projectile::setSpawnCallback(callback);
+    
+    if (_effects && !_effects->modifiersItsEmpty()) {
+        _effects->OnFire(*this);
+    }
+    updateCollisionBox();
+}
 
 void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
     if (closestEnemy && _effects && _effects->hasActiveEffect(EffectType::Homing)) {
         handleHomingLogic(dt, closestEnemy);
+        float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
+        _shape->setRotation(angle);
     }
     
     if (_effects && _effects->hasActiveEffect(EffectType::Piercing)) {
@@ -44,10 +49,6 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
         _lifetime += dt;
     }
     else {
-        if (_effects && _effects->hasActiveEffect(EffectType::Piercing)) {
-            float angle = atan2(_velocity.y, _velocity.x) * 180.f / 3.14159265f;
-            _shape->setRotation(angle);
-        }
         Projectile::update(dt);
     }
 
@@ -56,8 +57,9 @@ void PlayerProjectile::update(float dt, shared_ptr<Enemy> closestEnemy) {
         _effects->OnUpdate(*this, dt);
     }
 
-    _shape->setPosition(_position);
-    createShapeFromEffects();
+    if (_shape) {
+        _shape->setPosition(_position);
+    }
 
     if (_traveledDistance >= _maxRange || _lifetime > _maxLifetime) {
         _alive = false;
@@ -166,6 +168,10 @@ void PlayerProjectile::draw(RenderWindow& window, float offsetX, float offsetY) 
 
 CollisionShape PlayerProjectile::getCollisionBox() const { 
     return _collisionBox; 
+}
+
+float PlayerProjectile::getDamage() const {
+    return _damage;
 }
 
 void PlayerProjectile::updateCollisionBox(){
