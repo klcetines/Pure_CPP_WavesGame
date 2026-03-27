@@ -14,6 +14,10 @@ public:
     void updateOnDistance(IActor& character, float distance) override;
     void refreshDuration() override;
     ActorEffectType GetType() const override;
+
+    float getTickProgress() const override;
+    int getCharges() const override;
+    
 private:    
     float duration = 3.0f;
     float timeSinceApply = 0.0f;

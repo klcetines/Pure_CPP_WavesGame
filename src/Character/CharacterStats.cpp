@@ -58,6 +58,7 @@ void CharacterStats::applyEffect(const Effect& effect) {
         }
     }
 }
+
 Life& CharacterStats::getLife() {
     return *_life;
 }

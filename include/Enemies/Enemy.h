@@ -23,6 +23,8 @@ struct EnemyData
     float AttackSpeed;
 };
 
+class ActorUI;
+
 class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
     public:
         Enemy(const string& name, float x, float y, float life = 100.0f);
@@ -53,6 +55,8 @@ class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
         float getRotation() const;
         CollisionShape getCollisionBox() const;
         void takeDamage(float damage, bool isContinious = false) override;
+        void setFrozen(bool frozen) override;
+        bool isFrozen() const override;
     
     private:
         int _id;
@@ -65,6 +69,7 @@ class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
         Sprite _sprite;
 
         ActorEffectComponent _effectComponent;
+        std::shared_ptr<ActorUI> _ui;
 
         bool _useSprite = false;
         Vector2f _lastMoveDir = {0.f, -1.f};
@@ -73,6 +78,8 @@ class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
         CollisionShape _collisionBox;
         float _damageFlashTimer = 0.0f;
 
+        bool _isFrozen;
+        
         void applyKnockback();
 };      
 

@@ -6,7 +6,7 @@
 #include <SFML/Window.hpp>
 
 Shop::Shop(shared_ptr<GameStatistics> stats, GameSession& gameSession) : _stats(stats), _gameSession(gameSession) {
-    loadItemsFromFile("assets/shop_itemstest.csv");
+    loadItemsFromFile("assets/shop_items.csv");
     _maxShopItems = min(static_cast<int>(items.size()), 4);
     _showcaseItems.resize(_maxShopItems);
     restockShowcaseItems();

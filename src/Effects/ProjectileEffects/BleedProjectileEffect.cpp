@@ -10,7 +10,7 @@ std::string BleedProjectileEffect::getModifierSymbol() const {
 }
 
 uint32_t BleedProjectileEffect::getColorCode() const {
-    return 0xC22910; 
+    return 0xFFC22910; 
 }
 
 ProjectileAction BleedProjectileEffect::OnImpact(IActor& enemy) {
@@ -26,7 +26,7 @@ ProjectileAction BleedProjectileEffect::OnImpact(IActor& enemy) {
         effectComp->AddEffect(std::move(bleedEffect));
     }
 
-    return ProjectileAction::Trigger;
+    return ProjectileAction::Continue;
 }
 
 std::unique_ptr<IProjectileEffect> BleedProjectileEffect::Clone() const {

@@ -13,6 +13,7 @@
 #include "Effects/ProjectileEffects/SpinningProjectileEffect.h"
 #include "Effects/ProjectileEffects/LaserEffect.h"
 #include "Effects/ProjectileEffects/ShotgunEffect.h"
+#include "Effects/ProjectileEffects/IceProjectileEffect.h"
 
 class EffectFactory {
 public:

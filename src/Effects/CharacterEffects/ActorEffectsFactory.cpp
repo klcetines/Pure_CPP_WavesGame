@@ -8,6 +8,7 @@ ActorEffectsFactory& ActorEffectsFactory::Instance() {
 void ActorEffectsFactory::Initialize(){
     Instance().RegisterEffect(2, []() { return std::make_unique<FireActorEffect>(); });
     Instance().RegisterEffect(3, []() { return std::make_unique<BleedActorEffect>(); });
+    Instance().RegisterEffect(7, []() { return std::make_unique<IceActorEffect>(); });
 }
 
 void ActorEffectsFactory::RegisterEffect(const int id, CreatorFunc func) {

@@ -109,3 +109,11 @@ CollisionShape Character::getCollisionBox() const {
 float Character::getSize() const { 
     return size; 
 }
+
+void Character::setFrozen(bool frozen) {
+    _isFrozen = frozen;
+}
+
+bool Character::isFrozen() const {
+    return _isFrozen;
+}

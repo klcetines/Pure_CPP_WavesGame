@@ -35,6 +35,7 @@ private:
 
     unordered_set<int> _hitEnemies;
     std::weak_ptr<Enemy> _lastHitEnemy;
+    bool _effectApplied = false;
 
     void handleHomingLogic(float dt, shared_ptr<Enemy> target);
     void handlePiercingLogic();

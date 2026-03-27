@@ -57,3 +57,7 @@ IActorEffect* ActorEffectComponent::get(ActorEffectType type) {
     }
     return nullptr;
 }
+
+const std::map<ActorEffectType, std::unique_ptr<IActorEffect>>& ActorEffectComponent::GetActiveEffects() const {
+    return _activeEffects;
+}

@@ -10,7 +10,7 @@ std::string FireProjectileEffect::getModifierSymbol() const {
 }
 
 uint32_t FireProjectileEffect::getColorCode() const {
-    return 0xFF4500; 
+    return 0xFFFF4500; 
 }
 
 ProjectileAction FireProjectileEffect::OnImpact(IActor& enemy) {
@@ -26,7 +26,7 @@ ProjectileAction FireProjectileEffect::OnImpact(IActor& enemy) {
         effectComp->AddEffect(std::move(fireEffect));
     }
 
-    return ProjectileAction::Trigger;
+    return ProjectileAction::Continue;
 }
 
 std::unique_ptr<IProjectileEffect> FireProjectileEffect::Clone() const {

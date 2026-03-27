@@ -53,8 +53,8 @@ class EffectsArrange {
 
         std::vector<std::unique_ptr<IProjectileEffect>> _impacts;
 
-        int currentEffectIndex;
-        int currentImpactIndex;
+        int _currentEffectIndex;
+        int _currentImpactIndex;
 
         int maxModifiers;
         int maxImpacts;

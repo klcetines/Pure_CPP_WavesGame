@@ -42,3 +42,12 @@ void FireActorEffect::refreshDuration(){
 ActorEffectType FireActorEffect::GetType() const {
     return ActorEffectType::Fire;
 }
+
+float FireActorEffect::getTickProgress() const {
+    if (damageInterval <= 0.0f) return 0.0f;
+    return 1.0f - (std::max(0.0f, timeUntilDamage) / damageInterval); 
+}
+
+int FireActorEffect::getCharges() const {
+    return charges;
+}

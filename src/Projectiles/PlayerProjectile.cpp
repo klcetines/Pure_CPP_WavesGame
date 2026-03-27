@@ -104,20 +104,26 @@ void PlayerProjectile::handleImpact(std::shared_ptr<IActor> animatedObject) {
         if (_hitEnemies.count(enemyId)) return;
         _hitEnemies.insert(enemyId);
     }
+
     float finalDamage = isLaser ? (_damage * 0.03f) : _damage;
     enemy->takeDamage(finalDamage, isLaser);
 
     _lastHitEnemy = enemy;
-    if(!isLaser){ 
-        if (_effects && (!_effects->modifiersItsEmpty() || !_effects->impactsItsEmpty())) {
-            ProjectileAction result = _effects->OnImpact(*this, *enemy);
-            if (result == ProjectileAction::Destroy) {
-                destroy();
-            }
-        } 
-        else {
+
+    if (_effects && (!_effects->modifiersItsEmpty() || !_effects->impactsItsEmpty())) {
+        ProjectileAction result;
+
+        if(!_effectApplied) result = _effects->OnImpact(*this, *enemy);
+        else result = ProjectileAction::Continue;
+        if (result == ProjectileAction::Destroy && !isLaser) {
             destroy();
         }
+        else{
+            _effectApplied = true;
+        }
+    } 
+    else {
+        destroy();
     }
 }
 

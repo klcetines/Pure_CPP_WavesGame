@@ -1,10 +1,10 @@
-#ifndef FIRE_ACTOR_EFFECT_H
-#define FIRE_ACTOR_EFFECT_H
+#ifndef ICE_ACTOR_EFFECT_H
+#define ICE_ACTOR_EFFECT_H
 
 #include "Utils/IActor.h"
 #include "Effects/CharacterEffects/IActorEffect.h"
 
-class FireActorEffect : public IActorEffect {
+class IceActorEffect : public IActorEffect {
 public:
     void onApply(IActor& character) override;
     void addCharges(int charges) override;
@@ -13,20 +13,18 @@ public:
     void update(IActor& character, float deltaTime) override;
     void refreshDuration() override;
     ActorEffectType GetType() const override;
-
+    
     float getTickProgress() const override;
     int getCharges() const override;
 
 private:    
-    float duration = 3.0f;
+    float duration = 5.0f;
     float timeSinceApply = 0.0f;
-
-    float timeUntilDamage = -1.0f;
-    float damageInterval = 1.0f;
-
-    float damagePerEffect = 10.0f;
     int charges = 0;
 
+    bool isFreezing = false;
+    float freezeDuration = 3.0f;
+    float freezeTimer = 0.0f;
 };
 
-#endif // FIRE_ACTOR_EFFECT_H
+#endif // ICE_ACTOR_EFFECT_H

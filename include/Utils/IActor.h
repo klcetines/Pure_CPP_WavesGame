@@ -30,13 +30,16 @@ public:
 
     virtual ActorEffectComponent* getEffectComponent() = 0;
     virtual const ActorEffectComponent* getEffectComponent() const = 0;
+    virtual void setFrozen(bool frozen) = 0;
+    virtual bool isFrozen() const = 0;
 
-private:
+protected:
     string name;
     Vector2f position;
     float size;
     float damageCooldown;
 
+    bool _isFrozen;
     CollisionShape collisionBox;
 };
 

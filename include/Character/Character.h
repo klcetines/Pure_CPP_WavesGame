@@ -40,7 +40,8 @@ public:
     float getSize() const;
     float getSpeed() const override;
     bool isAlive() const override;
-
+    void setFrozen(bool frozen) override;
+    bool isFrozen() const override;
 
 private:
     static constexpr float DEFAULT_SIZE = 40.0f;

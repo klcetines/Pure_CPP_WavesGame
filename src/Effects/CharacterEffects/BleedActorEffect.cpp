@@ -47,3 +47,12 @@ void BleedActorEffect::refreshDuration(){
 ActorEffectType BleedActorEffect::GetType() const {
     return ActorEffectType::Bleed;
 }
+
+float BleedActorEffect::getTickProgress() const {
+    if (damageInterval <= 0.0f) return 0.0f;
+    return 1.0f - (std::max(0.0f, distanceUntilDamage) / damageInterval); 
+}
+
+int BleedActorEffect::getCharges() const {
+    return charges;
+}

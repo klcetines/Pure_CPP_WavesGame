@@ -6,6 +6,7 @@ class IActor;
 enum class ActorEffectType {
     Fire,
     Bleed,
+    Ice,
     Poison,
     Blessing,
     StatBuff
@@ -24,6 +25,9 @@ class IActorEffect {
         virtual void updateOnDistance(IActor& character, float distance) {}
         virtual void refreshDuration() = 0;
         virtual ActorEffectType GetType() const = 0;
+
+        virtual float getTickProgress() const = 0;
+        virtual int getCharges() const = 0;
 
     private:
         int charges = 0;

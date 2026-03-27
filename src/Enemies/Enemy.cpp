@@ -1,4 +1,5 @@
 #include "Enemies/Enemy.h"
+#include "Utils/ActorUI.h"
 
 int Enemy::_nextId = 1;
 
@@ -31,6 +32,8 @@ Enemy::Enemy(const string& name, float x, float y, float life):
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
     _data.Life = new Life(life);
+    _ui = std::make_shared<ActorUI>(this);
+    _isFrozen = false;
 }
 
 void Enemy::update(float dt) {
@@ -39,6 +42,7 @@ void Enemy::update(float dt) {
 }
 
 void Enemy::move(float dx, float dy) {
+    if (_isFrozen) return;
     _position.x += dx;
     _position.y += dy;
     shape.setPosition(_position.x, _position.y);
@@ -62,7 +66,10 @@ void Enemy::move(float dx, float dy) {
 void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
     if (_useSprite) {
         _facingAngle = atan2(_lastMoveDir.y, _lastMoveDir.x) * 180.0f / 3.14159265f - 90.0f;
-        if(_damageFlashTimer > 0.0f){
+        if (_isFrozen) {
+            _sprite.setColor(Color(100, 200, 255, 200));
+        }
+        else if(_damageFlashTimer > 0.0f){
             _sprite.setColor(Color(255, 0, 0, 128));
         }
         else{
@@ -75,6 +82,10 @@ void Enemy::draw(RenderWindow& window, float offsetX, float offsetY) {
     else {
         shape.setPosition(_position.x + offsetX, _position.y + offsetY);
         window.draw(shape);
+    }
+
+    if (_ui) {
+        _ui->draw(window, offsetX, offsetY);
     }
 }
 
@@ -160,6 +171,14 @@ void Enemy::takeDamage(float damage, bool isContinuous) {
     else {
         _damageFlashTimer = 0.05f; 
     }
+}
+
+void Enemy::setFrozen(bool frozen) {
+    _isFrozen = frozen;
+}
+
+bool Enemy::isFrozen() const {
+    return _isFrozen;
 }
 
 void Enemy::applyKnockback() {

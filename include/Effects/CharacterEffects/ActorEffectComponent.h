@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <cmath>
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
 #include "Effects/CharacterEffects/IActorEffect.h"
 
@@ -22,7 +23,9 @@ public:
     void RemoveEffect(ActorEffectType type);
     bool ItsEmpty() const;
     bool find(ActorEffectType type) const;
-    IActorEffect* get(ActorEffectType type); 
+    IActorEffect* get(ActorEffectType type);
+
+    const std::map<ActorEffectType, std::unique_ptr<IActorEffect>>& GetActiveEffects() const;
 
 private:
     IActor* _owner; 

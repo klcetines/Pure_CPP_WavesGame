@@ -8,6 +8,7 @@
 #include "Effects/CharacterEffects/IActorEffect.h"
 #include "Effects/CharacterEffects/FireActorEffect.h"
 #include "Effects/CharacterEffects/BleedActorEffect.h"
+#include "Effects/CharacterEffects/IceActorEffect.h"
 
 class ActorEffectsFactory {
 public:
