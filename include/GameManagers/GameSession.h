@@ -11,6 +11,8 @@
 #include "Shop/Shop.h"
 #include "Utils/Effect.h"
 #include "Rearrangement/Rearrange.h"
+#include "Map/Map.h"
+#include "Utils/Camera.h"
 
 using namespace sf;
 using namespace std;
@@ -31,6 +33,9 @@ private:
     shared_ptr<EnemiesManager> enemiesManager;
     shared_ptr<ProjectilesManager> projectilesManager;
     shared_ptr<Shop> shop;
+    shared_ptr<Map> map;
+    unique_ptr<Camera> camera;
+    
     Background background;
     Text positionText;
     Text lifeText;
@@ -59,7 +64,7 @@ private:
     void updatePlayerLifeText();
 
     void renderBackground(RenderWindow& window);
-    void renderEntities(RenderWindow& window);
+    void renderEntities(RenderWindow& window, Vector2f offset = Vector2f(0, 0));
     void renderUI(RenderWindow& window);
     void renderDebug(RenderWindow& window);
 

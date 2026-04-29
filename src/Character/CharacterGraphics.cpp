@@ -19,7 +19,7 @@ void CharacterGraphics::loadSprite(const string& path, float x, float y) {
 }
 
 void CharacterGraphics::draw(RenderWindow& window, const Vector2f& position, 
-                           float angle, bool isDamaged, float offsetX, float offsetY) 
+                           float angle, bool isDamaged) 
 {
     static const int BLINK_FRAMES = 8;
     
@@ -29,15 +29,14 @@ void CharacterGraphics::draw(RenderWindow& window, const Vector2f& position,
         if ((blinkCounter / BLINK_FRAMES) % 2 == 0) return;
     }
 
-    Vector2f screenPos(position.x + offsetX, position.y + offsetY);
-
     if (useSprite) {
-        sprite.setPosition(screenPos);
+        sprite.setPosition(position);
         sprite.setRotation(angle);
         sprite.setColor(isDamaged ? Color(255, 0, 0, 128) : Color::White);
         window.draw(sprite);
-    } else {
-        shape.setPosition(screenPos);
+    } 
+    else {
+        shape.setPosition(position);
         shape.setRotation(angle);
         shape.setFillColor(isDamaged ? Color::Red : Color::Green);
         window.draw(shape);

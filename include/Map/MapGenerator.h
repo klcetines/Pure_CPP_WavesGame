@@ -54,13 +54,13 @@ public:
 
 private:
     static void createInitialNodes(Graph& g, int totalRooms);
-    static void buildTree(Graph& g, ImprovedRNG& rng, int branchFactor);
+    static void buildTree(Graph& g, SelfRNG& rng, int branchFactor);
     static void calculateDepthsAndZones(Graph& g);
-    static void assignSpecialRooms(Graph& g, ImprovedRNG& rng);
-    static void buildEdgesAndLoops(Graph& g, ImprovedRNG& rng, int loopDensity);
+    static void assignSpecialRooms(Graph& g, SelfRNG& rng);
+    static void buildEdgesAndLoops(Graph& g, SelfRNG& rng, int loopDensity);
     static void calculateDistances(Graph& g);
-    static void calculateGraphLayout(Graph& g, ImprovedRNG& rng);
-    static void calculateMapLayout(Graph& g, ImprovedRNG& rng);
+    static void calculateGraphLayout(Graph& g, SelfRNG& rng);
+    static void calculateMapLayout(Graph& g, SelfRNG& rng);
     static void calculateStats(Graph& g);
 };
 

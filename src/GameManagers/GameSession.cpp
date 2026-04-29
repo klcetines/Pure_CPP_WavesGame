@@ -1,15 +1,19 @@
 #include "GameManagers/GameSession.h"
 
 GameSession::GameSession(Font& font, const Vector2u& winSize)
-    : font(font),
+    : stats(make_shared<GameStatistics>()),
+      player(make_shared<Character>("TouMate", winSize.x / 2, winSize.y / 2)),
       background("assets/textures/cobblestone_1.png"),
+      font(font),
       screenSize(winSize)
 {
-    stats = make_shared<GameStatistics>();
-    player = make_shared<Character>("TouMate", winSize.x / 2, winSize.y / 2);
+    Config cfg = { 12345, 5, 3, 2 };
+
+    map = make_shared<Map>(cfg, player->getSize(), winSize);
     enemiesManager = make_shared<EnemiesManager>(stats);
     projectilesManager = make_shared<ProjectilesManager>();
     shop = make_shared<Shop>(stats, *this);
+    camera = unique_ptr<Camera>(new Camera(sf::Vector2f(winSize)));
     positionText = Text("Pos: (0, 0)", font, 20);
     positionText.setFillColor(Color::White);
     lifeText = Text("Life: 100", font, 20);
@@ -21,7 +25,9 @@ void GameSession::update(float dt, RenderWindow& window) {
     processDebugInput(window);
     processShopInput(window);
     processRearrangementInput(window);
-
+    
+    camera->follow(player->getPosition());
+    map->update(dt, player->getPosition());
     updatePlayer(dt);
     updateEnemies(dt);
     updateProjectiles(dt);
@@ -95,7 +101,7 @@ void GameSession::atackNearestEnemy() {
 
 void GameSession::updateEnemies(float dt) {
     auto posPlayer = player->getPosition();
-    enemiesManager->update(dt, posPlayer);
+    //enemiesManager->update(dt, posPlayer);
 }
 
 void GameSession::updateProjectiles(float dt) {
@@ -144,8 +150,11 @@ void GameSession::updatePlayerPositionText() {
 }
 
 void GameSession::render(RenderWindow& window) {
-    renderBackground(window);
-    renderEntities(window);
+    sf::Vector2f cameraOffset = camera->getOffset();
+    map->draw(window, cameraOffset, debugHitboxes);
+
+    //renderBackground(window);
+    renderEntities(window, cameraOffset);
     renderUI(window);
     if (debugHitboxes) {
         renderDebug(window);
@@ -157,13 +166,10 @@ void GameSession::renderBackground(RenderWindow& window) {
     background.drawTiled(window, posPlayer.x, posPlayer.y, screenSize.x, screenSize.y);
 }
 
-void GameSession::renderEntities(RenderWindow& window) {
-    auto posPlayer = player->getPosition();
-    float offsetX = screenSize.x / 2 - posPlayer.x;
-    float offsetY = screenSize.y / 2 - posPlayer.y;
-    player->draw(window, offsetX, offsetY);
-    enemiesManager->draw(window, offsetX, offsetY);
-    projectilesManager->draw(window, offsetX, offsetY);
+void GameSession::renderEntities(RenderWindow& window, sf::Vector2f offset) {
+    player->draw(window, offset.x, offset.y);
+    enemiesManager->draw(window, offset.x, offset.y);
+    projectilesManager->draw(window, offset.x, offset.y);
 }
 
 void GameSession::renderUI(RenderWindow& window) {

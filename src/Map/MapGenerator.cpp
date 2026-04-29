@@ -1,7 +1,7 @@
 #include "Map/MapGenerator.h"
-#include <tuple> // Necesario para std::tuple
+#include <tuple>
 
-MapGenerator::Graph MapGenerator::generate(const Config& cfg) {
+Graph MapGenerator::generate(const Config& cfg) {
     SelfRNG rng(cfg.seed);
     Graph g;
 
@@ -34,7 +34,7 @@ void MapGenerator::createInitialNodes(Graph& g, int totalRooms) {
     }
 }
 
-void MapGenerator::buildTree(Graph& g, ImprovedRNG& rng, int branchFactor) {
+void MapGenerator::buildTree(Graph& g, SelfRNG& rng, int branchFactor) {
     std::vector<int> pool;
     for (size_t i = 1; i < g.nodes.size(); ++i) {
         pool.push_back(g.nodes[i].id);
@@ -68,7 +68,7 @@ void MapGenerator::calculateDepthsAndZones(Graph& g) {
     g.zones = {earlyEnd, midEnd, maxDepth};
 }
 
-void MapGenerator::assignSpecialRooms(Graph& g, ImprovedRNG& rng) {
+void MapGenerator::assignSpecialRooms(Graph& g, SelfRNG& rng) {
     auto nodesInZone = [&](int dMin, int dMax, const std::set<int>& exclude) {
         std::vector<Node*> res;
         for (auto& n : g.nodes) {
@@ -145,7 +145,7 @@ void MapGenerator::assignSpecialRooms(Graph& g, ImprovedRNG& rng) {
     }
 }
 
-void MapGenerator::buildEdgesAndLoops(Graph& g, ImprovedRNG& rng, int loopDensity) {
+void MapGenerator::buildEdgesAndLoops(Graph& g, SelfRNG& rng, int loopDensity) {
     std::set<std::string> eSet;
     auto addEdge = [&](int a, int b, bool isLoop = false) -> int {
         if (a == b) return -1;
@@ -226,7 +226,7 @@ void MapGenerator::calculateDistances(Graph& g) {
     for (auto& n : g.nodes) n.dist = dist[n.id];
 }
 
-void MapGenerator::calculateGraphLayout(Graph& g, ImprovedRNG& rng) {
+void MapGenerator::calculateGraphLayout(Graph& g, SelfRNG& rng) {
     std::map<int, std::vector<int>> byDist;
     for (const auto& n : g.nodes) byDist[n.dist].push_back(n.id);
     
@@ -242,7 +242,7 @@ void MapGenerator::calculateGraphLayout(Graph& g, ImprovedRNG& rng) {
     }
 }
 
-void MapGenerator::calculateMapLayout(Graph& g, ImprovedRNG& rng) {
+void MapGenerator::calculateMapLayout(Graph& g, SelfRNG& rng) {
     std::map<std::string, int> grid;
     auto gridKey = [](int x, int y) { return std::to_string(x) + "," + std::to_string(y); };
     
@@ -251,7 +251,7 @@ void MapGenerator::calculateMapLayout(Graph& g, ImprovedRNG& rng) {
         for (auto [dx, dy] : dirs) {
             if (grid.find(gridKey(x + dx, y + dy)) == grid.end()) return {x + dx, y + dy};
         }
-        // Si no hay hueco, empujamos lejos para evitar colisión
+        // If there's no free adjacent cell, return a random nearby position
         return {x + 10 + rng.i(0, 5), y + rng.i(-3, 3)};
     };
 
@@ -291,7 +291,7 @@ void MapGenerator::calculateMapLayout(Graph& g, ImprovedRNG& rng) {
         }
     }
 
-    // Seguro contra fallos: Ubicar cualquier nodo que se haya quedado atrás
+    // Secure all nodes are placed
     for (auto& n : g.nodes) {
         if (!placed.count(n.id)) {
             auto [fx, fy] = freeAround(0, 0);
