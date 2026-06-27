@@ -78,7 +78,9 @@ public:
 
     void update(float dt, const Vector2f& playerWorldPos);
 
-    void draw(RenderWindow& window, sf::Vector2f cameraPos, bool debugGrid = false) const;
+    void draw(RenderWindow& window, sf::Vector2f offset, bool debugGrid = false) const;
+ 
+    Vector2f getCameraCenter() const;
 
     std::vector<const CollisionShape*> getActiveWallShapes() const;
     Vector2f currentRoomCenter() const;
@@ -89,7 +91,7 @@ public:
 
     void discoverRoom(int roomId);
     
-    void drawMinimap(sf::RenderWindow& window, sf::Vector2f playerPosition) const;
+    void drawMinimap(sf::RenderWindow& window, sf::Vector2f playerWorldPos) const;
 
 private:
     void buildRoomData(const Graph& graph);
@@ -147,7 +149,7 @@ private:
     int          _currentRoomId = -1;
     int          _startRoomId   = -1;
 
-    View         _cameraView;
+    Vector2f     _cameraCenter;
     Vector2u     _windowSize;
     float        _playerSize     = CELL_SIZE;
 

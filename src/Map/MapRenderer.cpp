@@ -40,14 +40,9 @@ void MapRenderer::build(const Graph& graph,
     _playerSize  = playerSize*2;
     _windowSize  = windowSize;
     _startRoomId = graph.startId;
-
-    // Camera view: same size as the window, no zoom.
-    _cameraView.setSize(static_cast<float>(windowSize.x),
-                        static_cast<float>(windowSize.y));
-
+ 
     buildRoomData(graph);
-
-    // Start camera on the START room.
+ 
     _currentRoomId = graph.startId;
     setCameraCenter(currentRoomCenter());
 }
@@ -293,32 +288,33 @@ void MapRenderer::addWallSegments(std::vector<CollisionShape>& shapes,
                                    float  wallThickness) const
 {
     auto makeRect = [&](float freeStart, float freeEnd) {
-        FloatRect rect;
+        Vector2f center, halfSize;
         if (wallAxis) {
             // horizontal wall: free axis = X, fixed = Y
-            rect = FloatRect(freeStart, fixedCoord,
-                             freeEnd - freeStart, wallThickness);
-        } 
-        else {
+            float w = freeEnd - freeStart;
+            center   = Vector2f(freeStart + w * 0.5f, fixedCoord + wallThickness * 0.5f);
+            halfSize = Vector2f(w * 0.5f, wallThickness * 0.5f);
+        } else {
             // vertical wall: free axis = Y, fixed = X
-            rect = FloatRect(fixedCoord, freeStart,
-                             wallThickness, freeEnd - freeStart);
+            float h = freeEnd - freeStart;
+            center   = Vector2f(fixedCoord + wallThickness * 0.5f, freeStart + h * 0.5f);
+            halfSize = Vector2f(wallThickness * 0.5f, h * 0.5f);
         }
-        shapes.emplace_back(rect);
+        shapes.emplace_back(center, halfSize);
     };
-
+ 
     if (!hasGap) {
         makeRect(startCoord, endCoord);
         return;
     }
-
+ 
     // Left / top segment
     float gapStart = gapCenter - gapHalfW;
     float gapEnd   = gapCenter + gapHalfW;
-
+ 
     if (gapStart > startCoord)
         makeRect(startCoord, gapStart);
-
+ 
     if (gapEnd < endCoord)
         makeRect(gapEnd, endCoord);
 }
@@ -329,13 +325,16 @@ void MapRenderer::addWallSegments(std::vector<CollisionShape>& shapes,
 void MapRenderer::buildWallVisuals(RoomRenderData& room) const {
     room.wallVA.setPrimitiveType(Quads);
     room.wallVA.clear();
-
+ 
     Color wc = wallColor(room.type);
-
-    // Visualise each CollisionShape's FloatRect directly.
+ 
+    // Visualise each CollisionShape using center and halfSize.
     for (const auto& shape : room.wallShapes) {
-        const FloatRect& r = shape.rect;
-        appendQuad(room.wallVA, r.left, r.top, r.width, r.height, wc);
+        float x = shape.center.x - shape.halfSize.x;
+        float y = shape.center.y - shape.halfSize.y;
+        float w = shape.halfSize.x * 2.f;
+        float h = shape.halfSize.y * 2.f;
+        appendQuad(room.wallVA, x, y, w, h, wc);
     }
 }
 
@@ -384,7 +383,7 @@ Vector2f MapRenderer::startSpawnPosition() const {
 //  setCameraCenter()
 // ─────────────────────────────────────────────────────────────────────────────
 void MapRenderer::setCameraCenter(const Vector2f& center) {
-    _cameraView.setCenter(center);
+    _cameraCenter  = center;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -392,9 +391,11 @@ void MapRenderer::setCameraCenter(const Vector2f& center) {
 // ─────────────────────────────────────────────────────────────────────────────
 int MapRenderer::roomAtPosition(const Vector2f& worldPos) const {
     for (const auto& [id, room] : _rooms) {
-        FloatRect interior(room.worldOrigin.x, room.worldOrigin.y,
-                           ROOM_PIXEL_W, ROOM_PIXEL_H);
-        if (interior.contains(worldPos)) return id;
+        float rx = room.worldOrigin.x;
+        float ry = room.worldOrigin.y;
+        if (worldPos.x >= rx && worldPos.x <= rx + ROOM_PIXEL_W &&
+            worldPos.y >= ry && worldPos.y <= ry + ROOM_PIXEL_H)
+            return id;
     }
     return -1;
 }
@@ -403,52 +404,99 @@ void MapRenderer::discoverRoom(int roomId) {
     _discoveredRooms.insert(roomId);
 }
 
-void MapRenderer::drawMinimap(sf::RenderWindow& window, sf::Vector2f playerPosition) const {
-    sf::View originalView = window.getView();
-
-    sf::View minimapView;
-    
-    minimapView.setViewport(sf::FloatRect(0.02f, 0.75f, 0.2f, 0.2f)); 
-    
-    minimapView.setCenter(playerPosition);
-    minimapView.zoom(4.0f); 
-    
-    window.setView(minimapView);
-
-    sf::RectangleShape bg(minimapView.getSize());
-    bg.setOrigin(bg.getSize().x / 2.f, bg.getSize().y / 2.f);
-    bg.setPosition(playerPosition);
-    bg.setFillColor(sf::Color(0, 0, 0, 150));
+void MapRenderer::drawMinimap(sf::RenderWindow& window, sf::Vector2f playerWorldPos) const {
+        // ── Minimap config ────────────────────────────────────────────────────────
+    const float SCALE       = 0.07f;   // world → minimap pixels
+    const float PAD         = 10.f;    // screen-edge padding
+    const float MAP_W       = static_cast<float>(_windowSize.x) * 0.18f;
+    const float MAP_H       = static_cast<float>(_windowSize.y) * 0.18f;
+    const float ORIGIN_X    = PAD;
+    const float ORIGIN_Y    = static_cast<float>(_windowSize.y) - MAP_H - PAD;
+ 
+    // World position that maps to the minimap centre
+    const Vector2f worldCenter = playerWorldPos;
+ 
+    // Convert a world point to minimap screen coords
+    auto toScreen = [&](float wx, float wy) -> Vector2f {
+        return Vector2f(
+            ORIGIN_X + MAP_W * 0.5f + (wx - worldCenter.x) * SCALE,
+            ORIGIN_Y + MAP_H * 0.5f + (wy - worldCenter.y) * SCALE
+        );
+    };
+ 
+    // ── Background ────────────────────────────────────────────────────────────
+    sf::RectangleShape bg(Vector2f(MAP_W, MAP_H));
+    bg.setPosition(ORIGIN_X, ORIGIN_Y);
+    bg.setFillColor(sf::Color(0, 0, 0, 160));
+    bg.setOutlineColor(sf::Color(100, 100, 100, 200));
+    bg.setOutlineThickness(1.f);
     window.draw(bg);
-
-    sf::RenderStates states;
-    
+ 
+    // ── Scissor: only draw rooms whose minimap rect overlaps the minimap panel ─
     for (int id : _discoveredRooms) {
         if (_rooms.count(id) == 0) continue;
         const auto& room = _rooms.at(id);
-
-        window.draw(room.floorVA, states);
-        window.draw(room.wallVA, states);
-        
+ 
+        // Four corners of this room in minimap space
+        float wx0 = room.worldOrigin.x;
+        float wy0 = room.worldOrigin.y;
+        float wx1 = wx0 + ROOM_PIXEL_W;
+        float wy1 = wy0 + ROOM_PIXEL_H;
+ 
+        Vector2f tl = toScreen(wx0, wy0);
+        float rw = (wx1 - wx0) * SCALE;
+        float rh = (wy1 - wy0) * SCALE;
+ 
+        // Skip if completely outside the minimap panel
+        if (tl.x + rw < ORIGIN_X || tl.x > ORIGIN_X + MAP_W) continue;
+        if (tl.y + rh < ORIGIN_Y || tl.y > ORIGIN_Y + MAP_H) continue;
+ 
+        // Floor
+        Color fc = floorColor(room.type);
+        sf::RectangleShape floorRect(Vector2f(rw, rh));
+        floorRect.setPosition(tl);
+        floorRect.setFillColor(Color(fc.r, fc.g, fc.b, 200));
+        window.draw(floorRect);
+ 
+        // Walls — draw each wall shape as a small rect
+        Color wc = wallColor(room.type);
+        for (const auto& shape : room.wallShapes) {
+            float swx = shape.center.x - shape.halfSize.x;
+            float swy = shape.center.y - shape.halfSize.y;
+            Vector2f stl = toScreen(swx, swy);
+            float sw = shape.halfSize.x * 2.f * SCALE;
+            float sh = shape.halfSize.y * 2.f * SCALE;
+ 
+            sf::RectangleShape wallRect(Vector2f(sw, sh));
+            wallRect.setPosition(stl);
+            wallRect.setFillColor(Color(wc.r, wc.g, wc.b, 220));
+            window.draw(wallRect);
+        }
+ 
+        // Dim non-current rooms slightly
         if (id != _currentRoomId) {
-            // Lógica opcional para ensombrecer zonas antiguas
+            sf::RectangleShape dimmer(Vector2f(rw, rh));
+            dimmer.setPosition(tl);
+            dimmer.setFillColor(Color(0, 0, 0, 80));
+            window.draw(dimmer);
         }
     }
-
-    sf::CircleShape playerDot(20.f);
-    playerDot.setFillColor(sf::Color::Green);
-    playerDot.setOrigin(20.f, 20.f);
-    playerDot.setPosition(playerPosition);
-    window.draw(playerDot);
-
-    window.setView(originalView);
+ 
+    // ── Player dot ────────────────────────────────────────────────────────────
+    Vector2f playerScreen = toScreen(playerWorldPos.x, playerWorldPos.y);
+    const float DOT_R = 3.f;
+    sf::CircleShape dot(DOT_R);
+    dot.setOrigin(DOT_R, DOT_R);
+    dot.setPosition(playerScreen);
+    dot.setFillColor(sf::Color::Green);
+    window.draw(dot);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  update()
 // ─────────────────────────────────────────────────────────────────────────────
 void MapRenderer::update(float dt, const Vector2f& playerWorldPos) {
-    // ── Advance ongoing transition ─────────────────────────────────────────
+   // ── Advance ongoing transition ─────────────────────────────────────────
     if (_transition.active) {
         _transition.progress += dt / _transition.duration;
         if (_transition.progress >= 1.0f) {
@@ -467,11 +515,11 @@ void MapRenderer::update(float dt, const Vector2f& playerWorldPos) {
         }
         return;
     }
-
+ 
     // ── Detect room change ─────────────────────────────────────────────────
     int detectedRoom = roomAtPosition(playerWorldPos);
     if (detectedRoom < 0 || detectedRoom == _currentRoomId) return;
-
+ 
     // Player has stepped into a new room — find direction of travel.
     std::optional<Direction> dir;
     if (_adjacency.count(_currentRoomId)) {
@@ -479,20 +527,20 @@ void MapRenderer::update(float dt, const Vector2f& playerWorldPos) {
             if (nbId == detectedRoom) { dir = nbDir; break; }
         }
     }
-
+ 
     // Build target camera centre for the new room.
     Vector2f camTo(0.f, 0.f);
     if (_rooms.count(detectedRoom))
         camTo = Vector2f(_rooms.at(detectedRoom).worldOrigin.x + ROOM_PIXEL_W * 0.5f,
                          _rooms.at(detectedRoom).worldOrigin.y + ROOM_PIXEL_H * 0.5f);
-
+ 
     // Launch transition.
     _transition.active    = true;
     _transition.fromRoom  = _currentRoomId;
     _transition.toRoom    = detectedRoom;
     _transition.direction = dir.value_or(Direction::East);
     _transition.progress  = 0.f;
-    _transition.cameraFrom = _cameraView.getCenter();
+    _transition.cameraFrom = _cameraCenter;
     _transition.cameraTo   = camTo;
 }
 
@@ -518,21 +566,24 @@ std::vector<const CollisionShape*> MapRenderer::getActiveWallShapes() const {
 // ─────────────────────────────────────────────────────────────────────────────
 //  draw()
 // ─────────────────────────────────────────────────────────────────────────────
-void MapRenderer::draw(RenderWindow& window, sf::Vector2f cameraPos, bool debugGrid) const {
-
+void MapRenderer::draw(RenderWindow& window, sf::Vector2f offset, bool debugGrid) const {
     sf::RenderStates states;
-    states.transform.translate(cameraPos.x, cameraPos.y);
-
+    states.transform.translate(offset.x, offset.y);
+ 
     std::vector<int> toDraw = { _currentRoomId };
     if (_transition.active && _transition.toRoom >= 0)
         toDraw.push_back(_transition.toRoom);
-
+ 
     for (int id : toDraw) {
         if (_rooms.count(id) == 0) continue;
         const auto& room = _rooms.at(id);
-
+ 
         window.draw(room.floorVA, states);
         window.draw(room.wallVA, states);
         if (debugGrid) window.draw(room.gridVA, states);
     }
+}
+
+Vector2f MapRenderer::getCameraCenter() const{
+    return _cameraCenter;
 }

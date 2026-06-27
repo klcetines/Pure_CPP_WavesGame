@@ -7,7 +7,12 @@ GameSession::GameSession(Font& font, const Vector2u& winSize)
       font(font),
       screenSize(winSize)
 {
-    Config cfg = { 12345, 5, 3, 2 };
+    Config cfg = { 
+        12345,  //Seed
+        5,      //Normal rooms
+        60,      //Loop density
+        20       //Branch factor
+    };
 
     map = make_shared<Map>(cfg, player->getSize(), winSize);
     enemiesManager = make_shared<EnemiesManager>(stats);
@@ -26,8 +31,8 @@ void GameSession::update(float dt, RenderWindow& window) {
     processShopInput(window);
     processRearrangementInput(window);
     
-    camera->follow(player->getPosition());
     map->update(dt, player->getPosition());
+    camera->follow(map->mapRenderer->getCameraCenter());
     updatePlayer(dt);
     updateEnemies(dt);
     updateProjectiles(dt);
@@ -150,15 +155,12 @@ void GameSession::updatePlayerPositionText() {
 }
 
 void GameSession::render(RenderWindow& window) {
-    sf::Vector2f cameraOffset = camera->getOffset();
-    map->draw(window, cameraOffset, debugHitboxes);
+    sf::Vector2f screenCenter(screenSize.x * 0.5f, screenSize.y * 0.5f);
+    sf::Vector2f worldTarget = map->mapRenderer->getCameraCenter();
+    sf::Vector2f offset = screenCenter - worldTarget;
 
-    //renderBackground(window);
-    renderEntities(window, cameraOffset);
-    renderUI(window);
-    if (debugHitboxes) {
-        renderDebug(window);
-    }
+    map->draw(window, offset, debugHitboxes);
+    renderEntities(window, offset);
 }
 
 void GameSession::renderBackground(RenderWindow& window) {
