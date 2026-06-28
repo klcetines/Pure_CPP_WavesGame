@@ -1,5 +1,7 @@
 #include "Enemies/Enemy.h"
 #include "Utils/ActorUI.h"
+using namespace sf;
+using namespace std;
 
 int Enemy::_nextId = 1;
 
@@ -31,7 +33,7 @@ Enemy::Enemy(const string& name, float x, float y, float life):
     _data.Speed = 2.0f;
     _data.Damage = 10.0f;
     _data.AttackSpeed = 1.0f;
-    _data.Life = new Life(life);
+    _data.life = new Life(life);
     _ui = std::make_shared<ActorUI>(this);
     _isFrozen = false;
 }
@@ -143,7 +145,7 @@ CollisionShape Enemy::getCollisionBox() const {
 }
 
 float Enemy::getLife() const {
-    return _data.Life->getLife();
+    return _data.life->getLife();
 }
 
 float Enemy::getSize() const {
@@ -151,7 +153,7 @@ float Enemy::getSize() const {
 }
 
 bool Enemy::isAlive() const {
-    return _data.Life->isAlive();
+    return _data.life->isAlive();
 }
 
 ActorEffectComponent* Enemy::getEffectComponent() {
@@ -163,7 +165,7 @@ const ActorEffectComponent* Enemy::getEffectComponent() const {
 }
 
 void Enemy::takeDamage(float damage, bool isContinuous) {
-    _data.Life->takeDamage(damage); 
+    _data.life->takeDamage(damage); 
     if (!isContinuous) {
         _damageFlashTimer = 0.1f;
         if(_name != "Dummy") applyKnockback();

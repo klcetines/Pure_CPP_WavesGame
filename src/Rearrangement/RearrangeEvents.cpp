@@ -1,5 +1,7 @@
 #include "Rearrangement/RearrangeEvents.h"
 #include "Rearrangement/Rearrange.h"
+using namespace sf;
+using namespace std;
 
 void RearrangeEvents::handleRearrangeInput(Rearrange& rearrange, sf::RenderWindow& window, bool& running) {
     sf::Event event;

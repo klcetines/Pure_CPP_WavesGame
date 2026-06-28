@@ -5,44 +5,65 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
-using namespace sf;
-using namespace std;
 
 enum class ShapeType { Circle, Rectangle, Capsule };
 
 class CollisionShape {
 public:
     ShapeType type;
-    Vector2f center;
-    float radius;      
-    FloatRect rect;
+    sf::Vector2f center;
+    float radius;   
+    sf::Vector2f  halfSize;   
     float height;
     float rotationDeg;
 
-    // Constructores
+    // ── Constructors ────────────────────────────────────────────────────────
     CollisionShape();
-    CollisionShape(const Vector2f& center, float radius); 
-    CollisionShape(const FloatRect& rect);
-    CollisionShape(const Vector2f& center, float radius, float height, float rotationDeg);
+    CollisionShape(const sf::Vector2f& center, float radius);
+    CollisionShape(const sf::Vector2f& center, const sf::Vector2f& halfSize);
+    CollisionShape(const sf::Vector2f& center, float radius, float height, float rotationDeg);
 
-    // Función principal pública
+    // ── Detection ───────────────────────────────────────────────────────────
     bool intersects(const CollisionShape& other) const;
-    
-    Vector2f getFirstCenter() const;
-    Vector2f getLastCenter() const;
+   
+    // ── Resolution ──────────────────────────────────────────────────────────
+    std::optional<sf::Vector2f> resolve(const CollisionShape& other) const;
+
+
+    // ── Capsule helpers ─────────────────────────────────────────────────────
+    sf::Vector2f getFirstCenter() const;
+    sf::Vector2f getLastCenter()  const;
 
 private:
-    // Resolutores específicos por forma
+    // ── Intersection helpers ─────────────────────────────────────────────
     bool circleIntersections(const CollisionShape& other) const;
-    bool rectangleIntersects(const CollisionShape& other) const;
+    bool rectangleIntersections(const CollisionShape& other) const;
     bool capsuleIntersections(const CollisionShape& other) const;
     
-    // Herramientas matemáticas para Cápsulas
-    float pointToSegmentDistSq(const Vector2f& p, const Vector2f& a, const Vector2f& b) const;
-    float crossProduct2D(const Vector2f& v, const Vector2f& w) const;
-    bool segmentsIntersect(const Vector2f& p1, const Vector2f& p2, const Vector2f& p3, const Vector2f& p4) const;
-    
+    // ── Resolution helpers ───────────────────────────────────────────────
+    std::optional<sf::Vector2f> resolveCircleCircle (const CollisionShape& other) const;
+    std::optional<sf::Vector2f> resolveCircleRect (const CollisionShape& other) const;
+    std::optional<sf::Vector2f> resolveRectRect (const CollisionShape& other) const;
+    std::optional<sf::Vector2f> resolveCapsuleCircle (const CollisionShape& other) const;
+    std::optional<sf::Vector2f> resolveCapsuleCapsule (const CollisionShape& other) const;
+    std::optional<sf::Vector2f> resolveCapsuleRect (const CollisionShape& other) const;
+
+    // ── Math utilities ────────────────────────────────────────────────────
+    float pointToSegmentDistSq(const sf::Vector2f& p,
+                                const sf::Vector2f& a,
+                                const sf::Vector2f& b) const;
+    sf::Vector2f closestPointOnSegment(const sf::Vector2f& p,
+                                   const sf::Vector2f& a,
+                                   const sf::Vector2f& b) const;
+    float crossProduct2D(const sf::Vector2f& v, const sf::Vector2f& w) const;
+    bool  segmentsIntersect(const sf::Vector2f& p1, const sf::Vector2f& p2,
+                             const sf::Vector2f& p3, const sf::Vector2f& p4) const;
+    sf::Vector2f closestPointOnRect(const sf::Vector2f& p,
+                                             const sf::Vector2f& rCenter,
+                                             const sf::Vector2f& rHalf) const;
+                             
 };
 
 #endif // COLLISION_SHAPE_H

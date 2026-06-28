@@ -1,4 +1,5 @@
 #include "Shop/ShopRender.h"
+using namespace std;
 
 using namespace sf;
 

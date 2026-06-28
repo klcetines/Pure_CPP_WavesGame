@@ -1,4 +1,6 @@
 #include "Effects/CharacterEffects/FireActorEffect.h"
+using namespace sf;
+using namespace std;
 
 void FireActorEffect::onApply(class IActor& character) {
     charges++;

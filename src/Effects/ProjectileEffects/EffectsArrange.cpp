@@ -1,4 +1,6 @@
 #include "Effects/ProjectileEffects/EffectsArrange.h"
+using namespace sf;
+using namespace std;
 
 EffectsArrange::EffectsArrange(){
     maxModifiers = 2;

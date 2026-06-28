@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/IceProjectileEffect.h"
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
+using namespace sf;
+using namespace std;
 
 EffectType IceProjectileEffect::GetType() const {
     return EffectType::Impact; 

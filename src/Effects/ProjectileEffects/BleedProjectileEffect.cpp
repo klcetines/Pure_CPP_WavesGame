@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/BleedProjectileEffect.h"
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
+using namespace sf;
+using namespace std;
 
 EffectType BleedProjectileEffect::GetType() const {
     return EffectType::Impact; 

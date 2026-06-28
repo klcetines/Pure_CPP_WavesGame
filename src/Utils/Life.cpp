@@ -1,4 +1,5 @@
 #include "Utils/Life.h"
+using namespace std;
 
 Life::Life(float maxLife)
     : life(maxLife), maxLife(maxLife) {}

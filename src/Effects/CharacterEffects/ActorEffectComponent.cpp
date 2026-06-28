@@ -1,4 +1,5 @@
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
+using namespace std;
 
 ActorEffectComponent::ActorEffectComponent(IActor* owner) 
     : _owner(owner) {}

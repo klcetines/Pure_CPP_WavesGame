@@ -7,20 +7,18 @@
 #include "Enemies/Enemy.h"
 #include <SFML/Graphics.hpp>
 
-using namespace sf;
-using namespace std;
 
 class ProjectilesManager {
 public:
     ProjectilesManager();
     
-    void add(shared_ptr<Projectile> proj);
+    void add(std::shared_ptr<Projectile> proj);
 
-    void update(float dt, shared_ptr<Enemy> closestEnemy = nullptr);
+    void update(float dt, std::shared_ptr<Enemy> closestEnemy = nullptr);
 
-    void draw(RenderWindow& window, float offsetX, float offsetY);
+    void draw(sf::RenderWindow& window, float offsetX, float offsetY);
 
-    const vector<shared_ptr<Projectile>>& getProjectiles() const;
+    const std::vector<std::shared_ptr<Projectile>>& getProjectiles() const;
 
 private:
     std::vector<std::shared_ptr<Projectile>> _projectiles;

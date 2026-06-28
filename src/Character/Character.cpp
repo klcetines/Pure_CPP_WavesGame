@@ -1,4 +1,6 @@
 #include "Character/Character.h"
+using namespace sf;
+using namespace std;
 
 Character::Character(const string& name, float x, float y)
     : name(name)
@@ -27,8 +29,10 @@ void Character::move(float dx, float dy) {
 }
 
 void Character::draw(RenderWindow& window, float offsetX, float offsetY) {
-    graphics.draw(window, position, combat.getFacingAngle(), 
-                 (damageCooldown > 0), offsetX, offsetY);
+    Vector2f screenPos(position.x + offsetX, position.y + offsetY);
+    
+    graphics.draw(window, screenPos, combat.getFacingAngle(), 
+                 (damageCooldown > 0));
 }
 
 shared_ptr<vector<shared_ptr<PlayerProjectile>>> Character::attack(const Vector2f& target) {

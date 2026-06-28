@@ -1,6 +1,8 @@
 #include "Projectiles/PlayerProjectile.h"
 #include <cmath>
 #include <cstdlib>
+using namespace sf;
+using namespace std;
 
 PlayerProjectile::PlayerProjectile(Vector2f start, Vector2f direction, float speed, float damage, const EffectsArrange& effects, float range)
     : _damage(damage)

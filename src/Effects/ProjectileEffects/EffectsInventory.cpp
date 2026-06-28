@@ -1,4 +1,6 @@
 #include "Effects/ProjectileEffects/EffectsInventory.h"
+using namespace sf;
+using namespace std;
 
 EffectsInventory::EffectsInventory(){
     maxInventorySize = 10;

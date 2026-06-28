@@ -1,5 +1,7 @@
 #include "Effects/CharacterEffects/IceActorEffect.h"
 #include <algorithm>
+using namespace sf;
+using namespace std;
 
 void IceActorEffect::onApply(IActor& character) {
     charges++;

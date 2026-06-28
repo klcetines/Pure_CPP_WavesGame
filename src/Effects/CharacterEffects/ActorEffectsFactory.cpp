@@ -1,4 +1,6 @@
 #include "Effects/CharacterEffects/ActorEffectsFactory.h"
+using namespace sf;
+using namespace std;
 
 ActorEffectsFactory& ActorEffectsFactory::Instance() {
     static ActorEffectsFactory instance;

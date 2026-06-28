@@ -1,4 +1,6 @@
 #include "Rearrangement/Rearrange.h"
+using namespace sf;
+using namespace std;
 
 EquipContext Rearrange::_ctx;
 Rearrange* Rearrange::_instance = nullptr;

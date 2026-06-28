@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/LaserEffect.h"
 #include "Projectiles/PlayerProjectile.h"
+using namespace sf;
+using namespace std;
 
 float getVectorLength(const sf::Vector2f& v) {
     return std::sqrt(v.x * v.x + v.y * v.y);

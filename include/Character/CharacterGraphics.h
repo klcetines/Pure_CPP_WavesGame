@@ -10,7 +10,7 @@ public:
     CharacterGraphics(float size);
     void loadSprite(const std::string& path, float x, float y);
     void draw(sf::RenderWindow& window, const sf::Vector2f& position, 
-              float angle, bool isDamaged, float offsetX = 0, float offsetY = 0);
+              float angle, bool isDamaged);
     void setDeadAppearance();
 
 private:

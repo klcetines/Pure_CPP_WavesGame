@@ -1,6 +1,8 @@
 #include "Enemies/EnemiesManager.h"
 #include <cmath>
 #include <cstdlib>
+using namespace sf;
+using namespace std;
 
 EnemiesManager::EnemiesManager(shared_ptr<GameStatistics> stats)
     : stats(stats), spawnTimer(0), spawnInterval(2.0f), _testMode(false){}
@@ -31,7 +33,7 @@ void EnemiesManager::update(float dt, const Vector2f& playerPos) {
 
     auto it = remove_if(enemies.begin(), enemies.end(),
         [this](const shared_ptr<Enemy>& e) {
-            if (e->getData().Life->getLife() <= 0) {
+            if (e->getData().life->getLife() <= 0) {
                 if (stats && !_testMode) stats->addKill();
                 return true;
             }

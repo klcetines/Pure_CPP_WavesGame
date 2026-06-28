@@ -1,6 +1,8 @@
 #include "Projectiles/Projectile.h"
 #include "Effects/ProjectileEffects/EffectsArrange.h"
 #include <cmath>
+using namespace sf;
+using namespace std;
 
 Projectile::Projectile() {
     _effects = nullptr;

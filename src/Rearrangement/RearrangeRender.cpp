@@ -1,5 +1,7 @@
 #include "Rearrangement/RearrangeRender.h"
 #include "Rearrangement/Rearrange.h"
+using namespace sf;
+using namespace std;
 
 static constexpr int INV_COLS = 5;
 

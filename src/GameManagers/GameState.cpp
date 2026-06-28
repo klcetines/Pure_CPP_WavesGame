@@ -1,4 +1,5 @@
 #include "GameManagers/GameState.h"
+using namespace std;
 
 GameState::GameState() : state(GameStateType::MainMenu) {}
 

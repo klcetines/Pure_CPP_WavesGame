@@ -1,4 +1,6 @@
 #include "Effects/ProjectileEffects/PiercingEffect.h"
+using namespace sf;
+using namespace std;
 
 EffectType PiercingEffect::GetType() const {
     return EffectType::Piercing; 

@@ -11,39 +11,42 @@
 #include "Shop/Shop.h"
 #include "Utils/Effect.h"
 #include "Rearrangement/Rearrange.h"
+#include "Map/Map.h"
+#include "Utils/Camera.h"
 
-using namespace sf;
-using namespace std;
 
 class GameSession {
 public:
-    GameSession(Font& font, const Vector2u& winSize);
+    GameSession(sf::Font& font, const sf::Vector2u& winSize);
 
-    void update(float dt, RenderWindow& window);
-    void render(RenderWindow& window);
+    void update(float dt, sf::RenderWindow& window);
+    void render(sf::RenderWindow& window);
     bool isPlayerDead() const;
-    shared_ptr<Character> getPlayer() const;
+    std::shared_ptr<Character> getPlayer() const;
     void applyUpgrade(const Effect& effect);
 
 private:
-    shared_ptr<GameStatistics> stats;
-    shared_ptr<Character> player;
-    shared_ptr<EnemiesManager> enemiesManager;
-    shared_ptr<ProjectilesManager> projectilesManager;
-    shared_ptr<Shop> shop;
+    std::shared_ptr<GameStatistics> stats;
+    std::shared_ptr<Character> player;
+    std::shared_ptr<EnemiesManager> enemiesManager;
+    std::shared_ptr<ProjectilesManager> projectilesManager;
+    std::shared_ptr<Shop> shop;
+    std::shared_ptr<Map> map;
+    std::unique_ptr<Camera> camera;
+    
     Background background;
-    Text positionText;
-    Text lifeText;
-    Font& font;
+    sf::Text positionText;
+    sf::Text lifeText;
+    sf::Font& font;
 
-    Vector2u screenSize;
+    sf::Vector2u screenSize;
 
     bool debugHitboxes = false;
 
-    void processPlayerInput(RenderWindow& window);
-    void processDebugInput(RenderWindow& window);
-    void processShopInput(RenderWindow& window);
-    void processRearrangementInput(RenderWindow& window);
+    void processPlayerInput(sf::RenderWindow& window);
+    void processDebugInput(sf::RenderWindow& window);
+    void processShopInput(sf::RenderWindow& window);
+    void processRearrangementInput(sf::RenderWindow& window);
 
     void updatePlayer(float dt);
 
@@ -58,21 +61,21 @@ private:
     void updatePlayerPositionText();
     void updatePlayerLifeText();
 
-    void renderBackground(RenderWindow& window);
-    void renderEntities(RenderWindow& window);
-    void renderUI(RenderWindow& window);
-    void renderDebug(RenderWindow& window);
+    void renderBackground(sf::RenderWindow& window);
+    void renderEntities(sf::RenderWindow& window, sf::Vector2f offset = sf::Vector2f(0, 0));
+    void renderUI(sf::RenderWindow& window);
+    void renderDebug(sf::RenderWindow& window);
 
-    void openShopMenu(RenderWindow& window);
+    void openShopMenu(sf::RenderWindow& window);
 
-    void enemyCollidedByProjectile(shared_ptr<Enemy> enemy, shared_ptr<Projectile> projectile);
+    void enemyCollidedByProjectile(std::shared_ptr<Enemy> enemy, std::shared_ptr<Projectile> projectile);
 
-    void drawDebugHitbox(RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
-    void drawDebugCapsule(RenderWindow& window, const CollisionShape& capsule, float offsetX, float offsetY);
-    void debugHitboxesDisplay(RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const shared_ptr<Character>& player = nullptr);
+    void drawDebugHitbox(sf::RenderWindow& window, float x, float y, float radius, float offsetX = 0, float offsetY = 0);
+    void drawDebugCapsule(sf::RenderWindow& window, const CollisionShape& capsule, float offsetX, float offsetY);
+    void debugHitboxesDisplay(sf::RenderWindow& window, const Character& character, float offsetX = 0, float offsetY = 0, EnemiesManager* enemiesManager = nullptr, ProjectilesManager* projectilesManager = nullptr, const std::shared_ptr<Character>& player = nullptr);
 
-    void RenderEffectsArrange(RenderWindow& window);
-    void drawEffectSlot(RenderWindow& window, float x, float y, float size, const string& label, const Color& color);
+    void RenderEffectsArrange(sf::RenderWindow& window);
+    void drawEffectSlot(sf::RenderWindow& window, float x, float y, float size, const std::string& label, const sf::Color& color);
 
 };
 

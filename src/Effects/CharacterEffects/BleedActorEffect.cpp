@@ -1,4 +1,6 @@
 #include "Effects/CharacterEffects/BleedActorEffect.h"
+using namespace sf;
+using namespace std;
 
 void BleedActorEffect::onApply(class IActor& character) {
     damageInterval = 100.0f;

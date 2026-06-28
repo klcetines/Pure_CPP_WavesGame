@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/ShotgunEffect.h"
 #include "Projectiles/PlayerProjectile.h"
+using namespace sf;
+using namespace std;
 
 EffectType ShotgunEffect::GetType() const{
     return EffectType::Generic;
