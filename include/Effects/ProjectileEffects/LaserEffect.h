@@ -16,8 +16,8 @@ class LaserEffect : public IProjectileEffect {
         std::unique_ptr<IProjectileEffect> Clone() const override;
         bool extraImpact() const override;
     private:
-        Vector2f _startingPoint;
-        Vector2f _lastPoint;
+        sf::Vector2f _startingPoint;
+        sf::Vector2f _lastPoint;
         float _lifetime;
         float _maxLifetime;
 

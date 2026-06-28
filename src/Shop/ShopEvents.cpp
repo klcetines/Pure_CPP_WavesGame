@@ -1,4 +1,5 @@
 #include "Shop/ShopEvents.h"
+using namespace std;
 
 using namespace sf;
 

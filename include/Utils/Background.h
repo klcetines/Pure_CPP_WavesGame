@@ -7,18 +7,16 @@
 #include <cmath>
 
 
-using namespace sf;
-using namespace std;
 
 class Background {
     public:
-        Background(const string& texturePath);
+        Background(const std::string& texturePath);
         ~Background() = default;
-        void drawTiled(RenderWindow& window, float px, float py, int screenW, int screenH);
+        void drawTiled(sf::RenderWindow& window, float px, float py, int screenW, int screenH);
 
     private:
-        Texture texture;
-        Sprite sprite;
+        sf::Texture texture;
+        sf::Sprite sprite;
 };
 
 #endif // BACKGROUND_H

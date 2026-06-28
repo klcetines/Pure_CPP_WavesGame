@@ -6,14 +6,12 @@
 #include <map>
 #include <memory>
 
-using namespace std;
-using namespace sf;
 
 class SpriteLoader {
 public:
 
-    static shared_ptr<Texture> getTexture(const string& path);
-    static bool assignSprite(Sprite& sprite, const string& path, float desiredWidth, float desiredHeight);
+    static std::shared_ptr<sf::Texture> getTexture(const std::string& path);
+    static bool assignSprite(sf::Sprite& sprite, const std::string& path, float desiredWidth, float desiredHeight);
 
 };
 

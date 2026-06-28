@@ -1,4 +1,6 @@
 #include "Effects/ProjectileEffects/HomingEffect.h"
+using namespace sf;
+using namespace std;
 
 EffectType HomingEffect::GetType() const {
     return EffectType::Homing; 

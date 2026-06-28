@@ -15,11 +15,11 @@
 #include "Effects/ProjectileEffects/ShotgunEffect.h"
 #include "Effects/ProjectileEffects/IceProjectileEffect.h"
 
-class EffectFactory {
+class EffectsFactory {
 public:
     using CreatorFunc = std::function<std::unique_ptr<IProjectileEffect>()>;
 
-    static EffectFactory& Instance();
+    static EffectsFactory& Instance();
 
     static void Initialize();
 

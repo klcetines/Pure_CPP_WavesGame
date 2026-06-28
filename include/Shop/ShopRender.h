@@ -13,7 +13,7 @@ namespace ShopRender {
     void renderItemDescription(sf::RenderWindow& window, sf::Font& font, const std::string& description, 
                            float xPos, float yPos);
 
-    string wrapText(const string& text, unsigned int maxLength);
+    std::string wrapText(const std::string& text, unsigned int maxLength);
     void renderItemName(sf::RenderWindow& window, sf::Font& font, const std::string& name, 
                      float xPos, float yPos, float cardWidth);
     void renderItemCost(sf::RenderWindow& window, sf::Font& font, int cost, 

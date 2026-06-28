@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/FireProjectileEffect.h"
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
+using namespace sf;
+using namespace std;
 
 EffectType FireProjectileEffect::GetType() const {
     return EffectType::Impact; 

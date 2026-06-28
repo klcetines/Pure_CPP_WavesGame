@@ -4,6 +4,8 @@
 #include "GameManagers/GameStatistics.h"
 #include "GameManagers/GameSession.h"
 #include <SFML/Window.hpp>
+using namespace sf;
+using namespace std;
 
 Shop::Shop(shared_ptr<GameStatistics> stats, GameSession& gameSession) : _stats(stats), _gameSession(gameSession) {
     loadItemsFromFile("assets/shop_items.csv");

@@ -4,19 +4,18 @@
 #include <string>
 #include <memory>
 
-using namespace std;
 
 class Effect {
 public:
     Effect();
-    Effect(const string& type, float value);
-    string getType() const;
+    Effect(const std::string& type, float value);
+    std::string getType() const;
     float getValue() const;
-    void setType(const string& t);
+    void setType(const std::string& t);
     void setValue(float v);
 
 private:
-    string _type;
+    std::string _type;
     float _value;
 };
 

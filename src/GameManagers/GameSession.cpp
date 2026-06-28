@@ -1,4 +1,6 @@
 #include "GameManagers/GameSession.h"
+using namespace sf;
+using namespace std;
 
 GameSession::GameSession(Font& font, const Vector2u& winSize)
     : stats(make_shared<GameStatistics>()),

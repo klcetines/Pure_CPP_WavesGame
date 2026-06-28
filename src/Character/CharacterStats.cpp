@@ -1,4 +1,6 @@
 #include "Character/CharacterStats.h"
+using namespace sf;
+using namespace std;
 
 CharacterStats::CharacterStats()
     : _life(new Life(100.0f))
@@ -10,7 +12,7 @@ CharacterStats::CharacterStats()
 {
     _projectileEffects = unique_ptr<EffectsArrange> (new EffectsArrange());
     _effectsInventory = unique_ptr<EffectsInventory> (new EffectsInventory());
-    EffectFactory::Initialize();
+    EffectsFactory::Initialize();
     ActorEffectsFactory::Initialize();
 }
 
@@ -40,7 +42,7 @@ void CharacterStats::applyEffect(const Effect& effect) {
         _projectileSpeed = max(50.0f, _projectileSpeed + value);
     }
     else if (type == "projectile") {
-        unique_ptr<IProjectileEffect> newEffect = EffectFactory::Instance().Create(static_cast<int>(value));
+        unique_ptr<IProjectileEffect> newEffect = EffectsFactory::Instance().Create(static_cast<int>(value));
         if (newEffect) {
             if(newEffect->GetType() == EffectType::Impact) {
                 if(!handleAddImpact(std::move(newEffect))){

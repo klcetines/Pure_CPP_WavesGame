@@ -11,8 +11,8 @@ class CharacterCombat {
 public:
     CharacterCombat(CharacterStats& stats);
     
-    shared_ptr<vector<shared_ptr<PlayerProjectile>>> 
-    createAttack(const Vector2f& origin, const Vector2f& target);
+    std::shared_ptr<std::vector<std::shared_ptr<PlayerProjectile>>> 
+    createAttack(const sf::Vector2f& origin, const sf::Vector2f& target);
     
     void updateCooldowns(float dt);
     bool canShoot() const;
@@ -26,10 +26,10 @@ private:
     float shootCooldown;
     float facingAngle;
 
-    Vector2f calculateDirection(const Vector2f& origin, const Vector2f& target) const;
-    float calculateFacingAngle(const Vector2f& direction) const;
-    Vector2f calculateBulletSpawnPosition(const Vector2f& origin, 
-                                            const Vector2f& direction, 
+    sf::Vector2f calculateDirection(const sf::Vector2f& origin, const sf::Vector2f& target) const;
+    float calculateFacingAngle(const sf::Vector2f& direction) const;
+    sf::Vector2f calculateBulletSpawnPosition(const sf::Vector2f& origin, 
+                                            const sf::Vector2f& direction, 
                                             int bulletIndex) const;
 };
 

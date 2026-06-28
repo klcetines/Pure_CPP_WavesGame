@@ -12,12 +12,10 @@
 #include "Effects/CharacterEffects/ActorEffectComponent.h"
 
 
-using namespace sf;
-using namespace std;
 
 struct EnemyData
 {
-    Life* Life;
+    Life* life;
     float Speed;
     float Damage;
     float AttackSpeed;
@@ -27,19 +25,19 @@ class ActorUI;
 
 class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
     public:
-        Enemy(const string& name, float x, float y, float life = 100.0f);
+        Enemy(const std::string& name, float x, float y, float life = 100.0f);
         ~Enemy() = default;
 
         void update(float dt);
         void move(float dx, float dy);
-        void draw(RenderWindow& window, float offsetX, float offsetY);
+        void draw(sf::RenderWindow& window, float offsetX, float offsetY);
 
         int getId() const;
-        string getName() const;
+        std::string getName() const;
         float getSpeed() const override;
         float getDamage() const;
-        Vector2f getPosition() const;
-        Vector2f getHeadPosition() const;
+        sf::Vector2f getPosition() const;
+        sf::Vector2f getHeadPosition() const;
         float getWidth() const;
         float getHeight() const;
         EnemyData getData() const;
@@ -54,7 +52,7 @@ class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
         
         float getRotation() const;
         CollisionShape getCollisionBox() const;
-        void takeDamage(float damage, bool isContinious = false) override;
+        void takeDamage(float damage, bool isContinuous = false) override;
         void setFrozen(bool frozen) override;
         bool isFrozen() const override;
     
@@ -62,19 +60,19 @@ class Enemy : public IActor, public std::enable_shared_from_this<Enemy>{
         int _id;
         static int _nextId;
 
-        string _name;
-        CircleShape shape;
+        std::string _name;
+        sf::CircleShape shape;
         Position _position;
         EnemyData _data;
-        Sprite _sprite;
+        sf::Sprite _sprite;
 
         ActorEffectComponent _effectComponent;
         std::shared_ptr<ActorUI> _ui;
 
         bool _useSprite = false;
-        Vector2f _lastMoveDir = {0.f, -1.f};
+        sf::Vector2f _lastMoveDir = {0.f, -1.f};
         float _facingAngle = 0.0f;
-        Vector2u _size;
+        sf::Vector2u _size;
         CollisionShape _collisionBox;
         float _damageFlashTimer = 0.0f;
 

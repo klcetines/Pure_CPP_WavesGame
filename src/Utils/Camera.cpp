@@ -1,4 +1,6 @@
 #include "Utils/Camera.h"
+using namespace sf;
+using namespace std;
 
 Camera::Camera(sf::Vector2f size) : screenSize(size), position(size / 2.f) {}
 

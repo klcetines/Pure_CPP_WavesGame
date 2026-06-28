@@ -7,27 +7,25 @@
 #include "Enemies/Enemy.h"
 #include "GameManagers/GameStatistics.h"
 
-using namespace sf;
-using namespace std;
 
 class EnemiesManager {
     public:
-        EnemiesManager(shared_ptr<GameStatistics> stats);
-        void update(float dt, const Vector2f& playerPos);
-        void draw(RenderWindow& window, float offsetX, float offsetY);
-        void spawnEnemyNear(const Vector2f& playerPos);
-        const vector<shared_ptr<Enemy>>& getEnemies() const;
-        shared_ptr<Enemy> getClosestEnemy(const Vector2f& playerPos) const;
-        void toggleTestMode(const Vector2f& playerPos);
+        EnemiesManager(std::shared_ptr<GameStatistics> stats);
+        void update(float dt, const sf::Vector2f& playerPos);
+        void draw(sf::RenderWindow& window, float offsetX, float offsetY);
+        void spawnEnemyNear(const sf::Vector2f& playerPos);
+        const std::vector<std::shared_ptr<Enemy>>& getEnemies() const;
+        std::shared_ptr<Enemy> getClosestEnemy(const sf::Vector2f& playerPos) const;
+        void toggleTestMode(const sf::Vector2f& playerPos);
 
     private:
-        shared_ptr<GameStatistics> stats;
-        vector<shared_ptr<Enemy>> enemies;
+        std::shared_ptr<GameStatistics> stats;
+        std::vector<std::shared_ptr<Enemy>> enemies;
         float spawnTimer;
         float spawnInterval;
         bool _testMode;
 
-        pair<float, float> getRandomSpawnPosition(const Vector2f& playerPos, float radius);
+        std::pair<float, float> getRandomSpawnPosition(const sf::Vector2f& playerPos, float radius);
 };
 
 #endif 

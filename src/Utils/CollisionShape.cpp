@@ -1,4 +1,6 @@
 #include "Utils/CollisionShape.h"
+using namespace sf;
+using namespace std;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Constructors

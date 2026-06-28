@@ -1,6 +1,8 @@
 #include "Utils/ActorUI.h"
 #include "Enemies/Enemy.h"
 #include <cmath>
+using namespace sf;
+using namespace std;
 
 ActorUI::ActorUI(Enemy* enemy) : _enemy(enemy) {}
 

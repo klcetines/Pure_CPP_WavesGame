@@ -1,4 +1,5 @@
 #include "GameManagers/GameStatistics.h"
+using namespace std;
 
     GameStatistics::GameStatistics() : enemiesKilled(0), projectilesFired(0), currency(9999) {}
 

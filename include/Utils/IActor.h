@@ -9,23 +9,21 @@
 
 class ActorEffectComponent;
 
-using namespace sf;
-using namespace std;
 
 class IActor {
 public:
-    ~IActor() = default;
+    virtual ~IActor() = default;
     virtual void update(float dt) = 0;
     virtual void move(float dx, float dy) = 0;
-    virtual void draw(RenderWindow& window, float offsetX = 0, float offsetY = 0) = 0;
+    virtual void draw(sf::RenderWindow& window, float offsetX = 0, float offsetY = 0) = 0;
     
-    virtual string getName() const = 0;
-    virtual Vector2f getPosition() const = 0;
+    virtual std::string getName() const = 0;
+    virtual sf::Vector2f getPosition() const = 0;
     virtual float getLife() const = 0;
     virtual CollisionShape getCollisionBox() const = 0;
     virtual float getSpeed() const = 0;
     virtual float getSize() const = 0;
-    virtual void takeDamage(float damage, bool isContinious = false) = 0;
+    virtual void takeDamage(float damage, bool isContinuous = false) = 0;
     virtual bool isAlive() const = 0;
 
     virtual ActorEffectComponent* getEffectComponent() = 0;
@@ -34,8 +32,8 @@ public:
     virtual bool isFrozen() const = 0;
 
 protected:
-    string name;
-    Vector2f position;
+    std::string name;
+    sf::Vector2f position;
     float size;
     float damageCooldown;
 

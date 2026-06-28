@@ -10,7 +10,6 @@
 #include "Utils/CollisionShape.h"
 #include "Map/MapGenerator.h"
 
-using namespace sf;
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -45,15 +44,15 @@ inline Direction opposite(Direction d) {
 struct RoomRenderData {
     int                         nodeId      = -1;
     RoomType                    type        = RoomType::NORMAL;
-    Vector2f                    worldOrigin;        // top-left of interior (pixels)
+    sf::Vector2f                    worldOrigin;        // top-left of interior (pixels)
 
     std::vector<Direction>      openDoors;
 
     std::vector<CollisionShape> wallShapes;
 
-    VertexArray                 floorVA;
-    VertexArray                 wallVA;
-    VertexArray                 gridVA;
+    sf::VertexArray                 floorVA;
+    sf::VertexArray                 wallVA;
+    sf::VertexArray                 gridVA;
 };
 
 struct RoomTransition {
@@ -63,8 +62,8 @@ struct RoomTransition {
     Direction   direction   = Direction::East;
     float       progress    = 0.0f;   // 0 → 1
     float       duration    = 0.35f;  // seconds
-    Vector2f    cameraFrom;
-    Vector2f    cameraTo;
+    sf::Vector2f    cameraFrom;
+    sf::Vector2f    cameraTo;
 };
 
 class MapRenderer {
@@ -74,20 +73,20 @@ public:
 
     void build(const Graph& graph,
                float                      playerSize,
-               const Vector2u&            windowSize);
+               const sf::Vector2u&            windowSize);
 
-    void update(float dt, const Vector2f& playerWorldPos);
+    void update(float dt, const sf::Vector2f& playerWorldPos);
 
-    void draw(RenderWindow& window, sf::Vector2f offset, bool debugGrid = false) const;
+    void draw(sf::RenderWindow& window, sf::Vector2f offset, bool debugGrid = false) const;
  
-    Vector2f getCameraCenter() const;
+    sf::Vector2f getCameraCenter() const;
 
     std::vector<const CollisionShape*> getActiveWallShapes() const;
-    Vector2f currentRoomCenter() const;
+    sf::Vector2f currentRoomCenter() const;
     int currentRoomId() const { return _currentRoomId; }
-    int roomAtPosition(const Vector2f& worldPos) const;
+    int roomAtPosition(const sf::Vector2f& worldPos) const;
 
-    Vector2f startSpawnPosition() const;
+    sf::Vector2f startSpawnPosition() const;
 
     void discoverRoom(int roomId);
     
@@ -99,7 +98,7 @@ private:
                          const Node& node,
                          const Graph& graph);
 
-    Vector2f worldOriginForNode(const Node& n) const;
+    sf::Vector2f worldOriginForNode(const Node& n) const;
 
     std::vector<Direction> computeOpenDoors(int nodeId,
                                             const Graph& graph) const;
@@ -115,9 +114,9 @@ private:
 
     void buildGridVisuals(RoomRenderData& room) const;
 
-    void appendQuad(VertexArray& va,
+    void appendQuad(sf::VertexArray& va,
                     float x, float y, float w, float h,
-                    Color color) const;
+                    sf::Color color) const;
 
     // ── Wall collision segment factory ─────────────────────────────────────
 
@@ -134,11 +133,11 @@ private:
     // ── Camera ──────────────────────────────────────────────────────────────
 
     void updateCamera(float dt);
-    void setCameraCenter(const Vector2f& center);
+    void setCameraCenter(const sf::Vector2f& center);
 
     // ── Room colours ────────────────────────────────────────────────────────
-    Color floorColor(RoomType type) const;
-    Color wallColor(RoomType type)  const;
+    sf::Color floorColor(RoomType type) const;
+    sf::Color wallColor(RoomType type)  const;
 
     // ── Data ────────────────────────────────────────────────────────────────
 
@@ -149,8 +148,8 @@ private:
     int          _currentRoomId = -1;
     int          _startRoomId   = -1;
 
-    Vector2f     _cameraCenter;
-    Vector2u     _windowSize;
+    sf::Vector2f     _cameraCenter;
+    sf::Vector2u     _windowSize;
     float        _playerSize     = CELL_SIZE;
 
     std::unordered_set<int> _discoveredRooms;

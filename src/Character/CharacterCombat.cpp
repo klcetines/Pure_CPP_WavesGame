@@ -1,4 +1,6 @@
 #include "Character/CharacterCombat.h"
+using namespace sf;
+using namespace std;
 
 CharacterCombat::CharacterCombat(CharacterStats& stats)
     : stats(stats)

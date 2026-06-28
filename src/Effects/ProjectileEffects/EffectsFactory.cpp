@@ -1,11 +1,13 @@
 #include "Effects/ProjectileEffects/EffectsFactory.h"
+using namespace sf;
+using namespace std;
 
-EffectFactory& EffectFactory::Instance() {
-    static EffectFactory instance;
+EffectsFactory& EffectsFactory::Instance() {
+    static EffectsFactory instance;
     return instance;
 }
 
-void EffectFactory::Initialize(){
+void EffectsFactory::Initialize(){
     Instance().RegisterEffect(0, []() { return std::make_unique<PiercingEffect>(); });
     Instance().RegisterEffect(1, []() { return std::make_unique<HomingEffect>(); });
     Instance().RegisterEffect(2, []() { return std::make_unique<FireProjectileEffect>(); });
@@ -16,17 +18,17 @@ void EffectFactory::Initialize(){
     Instance().RegisterEffect(7, []() { return std::make_unique<IceProjectileEffect>(); });
 }
 
-void EffectFactory::RegisterEffect(const int id, CreatorFunc func) {
+void EffectsFactory::RegisterEffect(const int id, CreatorFunc func) {
     creators[id] = func;
 }
 
-std::unique_ptr<IProjectileEffect> EffectFactory::Create(const int id) {
+std::unique_ptr<IProjectileEffect> EffectsFactory::Create(const int id) {
     auto it = creators.find(id);
     if (it != creators.end()) {
         return it->second();
     }
     else{
-        std::cout << "EffectFactory: Unknown effect id '" << id << "'" << std::endl;
+        std::cout << "EffectsFactory: Unknown effect id '" << id << "'" << std::endl;
     }
     return nullptr;
 }

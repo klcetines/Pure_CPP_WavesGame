@@ -3,17 +3,17 @@ project(Pure_CPP_WavesGame)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Buscar SFML automáticamente
+# Locate SFML
 find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
 
-# Buscar todos los .cpp en src/
+# Collect all .cpp files under src/
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# Ejecutable
+# Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Incluir tu carpeta "include"
+# Add the include directory
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-# Vincular SFML
+# Link SFML
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)

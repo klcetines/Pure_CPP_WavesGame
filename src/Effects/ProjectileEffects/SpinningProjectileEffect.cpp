@@ -1,5 +1,7 @@
 #include "Effects/ProjectileEffects/SpinningProjectileEffect.h"
 #include "Projectiles/PlayerProjectile.h"
+using namespace sf;
+using namespace std;
 
 EffectType SpinningProjectileEffect::GetType() const{
     return EffectType::Generic;

@@ -1,4 +1,6 @@
 #include "Character/CharacterGraphics.h"
+using namespace sf;
+using namespace std;
 
 CharacterGraphics::CharacterGraphics(float size)
     : size(size)

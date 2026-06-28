@@ -1,4 +1,6 @@
 #include "Utils/Background.h"
+using namespace sf;
+using namespace std;
 
 Background::Background(const string& texturePath) {
     if (!texture.loadFromFile(texturePath)) {

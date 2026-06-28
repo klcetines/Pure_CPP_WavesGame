@@ -1,4 +1,6 @@
 #include "Character/Character.h"
+using namespace sf;
+using namespace std;
 
 Character::Character(const string& name, float x, float y)
     : name(name)

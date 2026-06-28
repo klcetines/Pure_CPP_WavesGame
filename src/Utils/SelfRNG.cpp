@@ -1,4 +1,5 @@
 #include "Utils/SelfRNG.h"
+using namespace std;
 
 SelfRNG::SelfRNG(unsigned int seed) : engine(seed) {
 

@@ -1,4 +1,6 @@
 #include "Map/Map.h"
+using namespace sf;
+using namespace std;
 
 Map::Map(const Config& cfg, float playerSize, const Vector2u& windowSize) {
     g = MapGenerator::generate(cfg);

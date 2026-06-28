@@ -13,27 +13,25 @@
 #include "Projectiles/PlayerProjectile.h"
 #include "Enemies/Enemy.h"
 
-using namespace sf;
-using namespace std;
 
 class Character : public IActor {
 public:
-    Character(const string& name, float x, float y);
+    Character(const std::string& name, float x, float y);
     
     void update(float dt);
     void move(float dx, float dy);
-    void draw(RenderWindow& window, float offsetX = 0, float offsetY = 0);
-    shared_ptr<vector<shared_ptr<PlayerProjectile>>> attack(const Vector2f& target);
+    void draw(sf::RenderWindow& window, float offsetX = 0, float offsetY = 0);
+    std::shared_ptr<std::vector<std::shared_ptr<PlayerProjectile>>> attack(const sf::Vector2f& target);
     
-    void handleCollisions(const vector<shared_ptr<Enemy>>& enemies, 
+    void handleCollisions(const std::vector<std::shared_ptr<Enemy>>& enemies, 
                          float offsetX, float offsetY);
 
     ActorEffectComponent* getEffectComponent() override;
     const ActorEffectComponent* getEffectComponent() const override;
                          
-    void takeDamage(float damage, bool isContinious = false) override;
-    string getName() const;
-    Vector2f getPosition() const;
+    void takeDamage(float damage, bool isContinuous = false) override;
+    std::string getName() const;
+    sf::Vector2f getPosition() const;
     float getLife() const;
     CharacterStats& getStats();
     CollisionShape getCollisionBox() const;
@@ -48,8 +46,8 @@ private:
     static constexpr float DAMAGE_COOLDOWN = 1.0f;
     static constexpr float KNOCKBACK_DISTANCE = 25.0f;
 
-    string name;
-    Vector2f position;
+    std::string name;
+    sf::Vector2f position;
     float size;
     float damageCooldown;
 
@@ -60,8 +58,8 @@ private:
     CharacterCombat combat;
     CollisionShape collisionBox;
 
-    void handleDamage(shared_ptr<Enemy> enemy);
-    void applyKnockback(shared_ptr<Enemy> enemy);
+    void handleDamage(std::shared_ptr<Enemy> enemy);
+    void applyKnockback(std::shared_ptr<Enemy> enemy);
 };
 
 #endif // CHARACTER_H

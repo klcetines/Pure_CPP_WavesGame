@@ -8,7 +8,6 @@
 
 class EffectsArrange;
 
-using namespace sf;
 
 class Projectile {
 public:
@@ -17,7 +16,7 @@ public:
     
     virtual void update(float dt);
     
-    virtual void draw(RenderWindow& window, float offsetX, float offsetY) = 0;
+    virtual void draw(sf::RenderWindow& window, float offsetX, float offsetY) = 0;
     virtual bool isAlive() const;
     virtual void destroy() = 0;
 
@@ -25,8 +24,8 @@ public:
 
     virtual float getDamage() const;
     virtual float getSize() const;
-    virtual Vector2f getPosition() const;
-    virtual Vector2f getVelocity() const;
+    virtual sf::Vector2f getPosition() const;
+    virtual sf::Vector2f getVelocity() const;
     virtual CollisionShape getCollisionBox() const;
     virtual float getTraveledDistance() const;
     virtual float getMaxRange() const;
@@ -38,9 +37,9 @@ public:
     virtual void updateCollisionBox();
 
 protected:
-    Vector2f _position;
-    Vector2f _velocity;
-    unique_ptr<EffectsArrange> _effects;
+    sf::Vector2f _position;
+    sf::Vector2f _velocity;
+    std::unique_ptr<EffectsArrange> _effects;
     float _lifetime = 0.0f;
     
     float _traveledDistance = 0.0f;
@@ -49,8 +48,8 @@ protected:
 
     SpawnCallback _spawnCallback;
     
-    virtual void updatePosition(const Vector2f& movement);
-    virtual void updateDistanceTraveled(const Vector2f& movement);
+    virtual void updatePosition(const sf::Vector2f& movement);
+    virtual void updateDistanceTraveled(const sf::Vector2f& movement);
 };
 
 #endif // PROJECTILE_H

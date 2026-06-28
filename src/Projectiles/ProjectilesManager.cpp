@@ -4,6 +4,7 @@
 #include "Enemies/Enemy.h"
 #include <vector>
 #include <memory>
+using namespace sf;
 
 using namespace std;
 

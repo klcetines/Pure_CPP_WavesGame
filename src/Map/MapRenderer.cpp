@@ -2,6 +2,8 @@
 
 #include <cmath>
 #include <algorithm>
+using namespace sf;
+using namespace std;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Colour palette per room type

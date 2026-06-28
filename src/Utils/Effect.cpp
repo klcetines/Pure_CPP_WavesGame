@@ -1,4 +1,5 @@
 #include "Utils/Effect.h"
+using namespace std;
 
 Effect::Effect() : _type(""), _value(0.0f) {}
 

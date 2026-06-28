@@ -1,5 +1,6 @@
 #include "Map/MapGenerator.h"
 #include <tuple>
+using namespace std;
 
 Graph MapGenerator::generate(const Config& cfg) {
     SelfRNG rng(cfg.seed);
